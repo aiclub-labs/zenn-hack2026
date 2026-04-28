@@ -1,0 +1,36 @@
+name: infra-deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy (subscription scope)
+        run: |
+          az deployment sub create \
+            --location ${{ vars.AZURE_LOCATION }} \
+            --template-file infra/main.bicep \
+            --parameters @infra/main.parameters.json \
+            --parameters memberObjectIds='${{ secrets.MEMBER_OBJECT_IDS }}' \
+                         ownerObjectId='${{ secrets.OWNER_OBJECT_ID }}' \
+                         budgetContactEmails='${{ secrets.BUDGET_CONTACT_EMAILS }}'

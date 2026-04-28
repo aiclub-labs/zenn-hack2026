@@ -1,0 +1,8 @@
+# Default owners — replace with GitHub handles after repo creation.
+# Format: <pattern> <owner1> <owner2> ...
+*                       @TEAM_LEAD
+/infra/                 @TEAM_LEAD @INFRA_OWNER
+/.github/workflows/     @TEAM_LEAD
+/app/agents/            @AGENT_OWNER
+/app/mcp/               @MCP_OWNER
+/ui/                    @UI_OWNER

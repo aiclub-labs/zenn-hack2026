@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "project": { "value": "hack2026" },
+    "location": { "value": "swedencentral" },
+    "memberObjectIds": {
+      "value": []
+    },
+    "ownerObjectId": { "value": "" },
+    "budgetAmount": { "value": 180 },
+    "budgetContactEmails": {
+      "value": []
+    },
+    "tags": {
+      "value": {
+        "project": "hack2026",
+        "managedBy": "bicep"
+      }
+    }
+  }
+}

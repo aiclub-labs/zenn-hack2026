@@ -1,0 +1,21 @@
+{
+  "name": "hack2026-azure-automation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser automation for the irreducible portal-only steps in azure-setup.md (signup, MFA enrollment, PAYG conversion). Uses Playwright; runs under Bun for fast TS execution.",
+  "type": "module",
+  "scripts": {
+    "signup": "bun run playwright-signup.ts",
+    "mfa": "bun run playwright-mfa-enroll.ts",
+    "payg": "bun run playwright-payg-upgrade.ts",
+    "install-browsers": "bunx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.0",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  }
+}

@@ -1,0 +1,105 @@
+# Synthetic, public-safe mock style guide for demo purposes only.
+# Fictional brand "AI Club Consulting" — values are invented, structure is realistic.
+# Per dev-prep §10 resolution (2026-04-23): "demonstrates the capability of enforcing
+# *a* style guide without leaking the real one."
+#
+# Owner: Member 3 (detection rules)
+# Deadline: 2026-04-30
+
+brand:
+  name: "AI Club Consulting"
+  tagline: "Agentic intelligence for enterprise change"
+  primary_logo: "assets/logo-primary.svg"
+  monochrome_logo: "assets/logo-mono.svg"
+
+palette:
+  primary:
+    hex: "#1F3A5F"
+    name: "Deep Indigo"
+    usage: "title bars, primary CTAs"
+  secondary:
+    hex: "#E07A2E"
+    name: "Amber Accent"
+    usage: "callouts, highlights — never on >20% of slide area"
+  neutral:
+    hex: "#3C3C3C"
+    name: "Charcoal"
+    usage: "body text"
+  background:
+    hex: "#FFFFFF"
+    name: "White"
+  forbidden:
+    - "#FF0000"  # never use saturated red — competitor brand
+    - "#00FF00"  # never use neon green
+
+typography:
+  heading:
+    family: "Inter"
+    weights: [600, 700]
+    sizes_pt: [32, 24, 18]
+  body:
+    family: "Inter"
+    weights: [400, 500]
+    sizes_pt: [11, 12]
+  monospace:
+    family: "JetBrains Mono"
+    sizes_pt: [10]
+  forbidden_families:
+    - "Comic Sans MS"
+    - "Papyrus"
+    - "Times New Roman"  # too print-traditional for our brand
+
+slide_rules:
+  title_max_chars: 60
+  body_max_bullets_per_slide: 5
+  body_max_chars_per_bullet: 90
+  required_footer:
+    template: "© {year} AI Club Consulting · {confidentiality}"
+    confidentiality_values: ["Public", "Internal", "Confidential"]
+  page_numbering: required
+  margins_cm:
+    top: 1.5
+    bottom: 1.5
+    left: 2.0
+    right: 2.0
+
+voice_and_tone:
+  preferred_terms:
+    "AI agent": ["agent", "assistant"]
+    "client": ["customer", "user"]
+    "engagement": ["project", "deal"]
+  banned_terms:
+    - "synergy"
+    - "leverage as a verb"
+    - "moving forward"
+    - "circle back"
+  reading_level_target: "grade 11"
+
+cross_page_coherence:
+  enforce_consistent_terminology: true
+  enforce_consistent_capitalization: true   # "AI agent" not "Ai Agent" not "ai agent"
+  enforce_consistent_tense: true
+  flag_contradicting_claims: true           # e.g. "30% reduction" on slide 4 vs "25%" on slide 12
+
+detection_rules:
+  - id: COLOR_001
+    description: "Body text not in palette.neutral or palette.primary"
+    severity: high
+  - id: FONT_001
+    description: "Forbidden font family detected"
+    severity: high
+  - id: BRAND_001
+    description: "Required footer missing or malformed"
+    severity: medium
+  - id: VOICE_001
+    description: "Banned term in body or title"
+    severity: medium
+  - id: COHERENCE_001
+    description: "Numeric claim contradicts another slide"
+    severity: high
+  - id: COHERENCE_002
+    description: "Same concept named inconsistently across slides"
+    severity: low
+
+# Note: real client style guides will replace this file. Detection rule IDs
+# stay stable so agent prompts and test fixtures don't break on swap.

@@ -1,0 +1,5 @@
+.env
+.playwright-profile/
+screenshots/
+node_modules/
+bun.lockb

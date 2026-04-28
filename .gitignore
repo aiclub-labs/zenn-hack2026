@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.DS_Store
+.vscode/
+.idea/
+
+# Local artifacts
+tmp/
+artifacts/
+*.pptx
+!tests/**/*.pptx
+
+# Azure Developer CLI state (contains tenant/sub IDs)
+.azure/
+.env.azure
+
+# Playwright automation (per-script .gitignore covers most, this catches root-level slips)
+.playwright-profile/
+screenshots/

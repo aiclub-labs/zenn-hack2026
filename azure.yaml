@@ -1,0 +1,19 @@
+# azd config — Azure Developer CLI.
+# `azd up` will: provision infra (Bicep) + package service + deploy to Container Apps.
+# `azd down` tears everything back down (respects the shared RG lock — unlock first).
+name: msft-agent-hackathon-2026
+metadata:
+  template: custom@0.1.0
+
+infra:
+  provider: bicep
+  path: infra
+  module: main
+
+services:
+  api:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
