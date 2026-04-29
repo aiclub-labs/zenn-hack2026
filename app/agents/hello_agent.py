@@ -4,10 +4,11 @@ Minimal Semantic Kernel agent used to validate end-to-end wiring.
 Swap this module for theme-specific agents once the problem is frozen
 (e.g., Scanner / Style Arbiter / Planner for PPT Polish Agent).
 """
+from typing import Any
+
 from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.contents import ChatHistory
-from semantic_kernel.services import ChatCompletionClientBase
 
 from app.config import settings
 
@@ -33,7 +34,7 @@ def _build_kernel() -> Kernel:
 
 async def run_hello_agent(user_message: str) -> str:
     kernel = _build_kernel()
-    chat: ChatCompletionClientBase = kernel.get_service("small")  # type: ignore[assignment]
+    chat: Any = kernel.get_service("small")
     history = ChatHistory(system_message=_SYSTEM_PROMPT)
     history.add_user_message(user_message)
     result = await chat.get_chat_message_content(
