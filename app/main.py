@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from importlib.metadata import PackageNotFoundError, version
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -32,6 +33,15 @@ class ChatResponse(BaseModel):
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok", "environment": settings.environment}
+
+
+@app.get("/version")
+async def get_version() -> dict[str, str]:
+    try:
+        pkg_version = version("msft-agent-hackathon-2026")
+    except PackageNotFoundError:
+        pkg_version = "unknown"
+    return {"version": pkg_version, "environment": settings.environment}
 
 
 @app.post("/chat", response_model=ChatResponse)
