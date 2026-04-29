@@ -28,6 +28,14 @@ dev = [
     "mypy>=1.11",
 ]
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["ui*", "infra*", "tests*", "scripts*"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
