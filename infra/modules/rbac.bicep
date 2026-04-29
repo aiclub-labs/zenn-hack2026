@@ -56,14 +56,7 @@ module storageAccess 'rbac-resource-assignment.bicep' = [for (id, i) in memberOb
   }
 }]
 
-// Owner at subscription scope — single designated member.
-// Conditional: ARM rejects empty principalId, so we skip when ownerObjectId hasn't been filled yet
-// (e.g., the very first `azd provision` before bootstrap-phase1 patches parameters.json).
-resource ownerAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(ownerObjectId)) {
-  name: guid(subscriptionId, ownerObjectId, roles.owner)
-  properties: {
-    principalId: ownerObjectId
-    roleDefinitionId: '/providers/Microsoft.Authorization/roleDefinitions/${roles.owner}'
-    principalType: 'User'
-  }
-}
+// Owner at subscription scope is established by sub creation (signup user is Account Admin → Owner).
+// Bicep-stamping a second Owner assignment for the same principal collides with the sub-creation one
+// (ARM: RoleAssignmentExists). The signup-time assignment is stable for the life of the sub.
+// `ownerObjectId` is retained as a parameter for documentation / future re-designation but unused here.
