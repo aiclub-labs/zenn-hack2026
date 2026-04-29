@@ -1,29 +1,29 @@
-## Summary
+## サマリ
 
-<!-- 1-3 bullets: what changed, why -->
+<!-- 1〜3 個の bullet で、何を変えたか・なぜ変えたか -->
 
-## Scope
+## スコープ
 
-- [ ] App / agent code (`app/`)
-- [ ] UI (`ui/`)
-- [ ] Infra (`infra/`) — triggers `infra-ci.yml` what-if
+- [ ] アプリ / エージェントコード（`app/`）
+- [ ] UI（`ui/`）
+- [ ] インフラ（`infra/`） — `infra-ci.yml` の what-if が走る
 - [ ] CI / workflows
-- [ ] Docs only
+- [ ] ドキュメントのみ
 
-## Test plan
+## テスト計画
 
-- [ ] `ruff check .` passes
-- [ ] `mypy app` passes
-- [ ] `pytest -q` passes
-- [ ] (If infra) what-if reviewed in CI run
-- [ ] Manual smoke: `/health` returns ok
+- [ ] `ruff check .` が通る
+- [ ] `mypy app` が通る
+- [ ] `pytest -q` が通る
+- [ ] （インフラ変更時）CI 実行で what-if を確認
+- [ ] 手動スモーク: `/health` が ok を返す
 
-## Hackathon checklist
+## ハッカソンチェックリスト
 
-- [ ] Stays inside Microsoft AI + Azure compute mandates (no non-Azure compute, no non-Microsoft AI in shipped path)
-- [ ] No secrets committed (`.env`, keys, connection strings)
-- [ ] If touching cost-sensitive resources, budget impact noted
+- [ ] Microsoft AI + Azure コンピュート要件を逸脱していない（提出物に non-Azure コンピュートや non-Microsoft AI が混ざっていない）
+- [ ] シークレットを commit していない（`.env`、キー、接続文字列）
+- [ ] コスト影響のあるリソースに触れた場合、予算インパクトを記載
 
-## Notes
+## 補足
 
-<!-- Anything reviewers should know -->
+<!-- レビュアーが知っておくべき事項があれば -->

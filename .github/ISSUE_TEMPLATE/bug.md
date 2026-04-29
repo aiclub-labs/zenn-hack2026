@@ -1,25 +1,25 @@
 ---
-name: Bug report
-about: Something is broken
+name: バグ報告
+about: 動かない・想定と違う挙動
 labels: bug
 ---
 
-## What happened
+## 何が起きたか
 
-## What was expected
+## 期待していた挙動
 
-## How to reproduce
+## 再現手順
 
 1.
 2.
 3.
 
-## Logs / trace
+## ログ / トレース
 
-<!-- App Insights query or local stack trace if any -->
+<!-- App Insights のクエリ、またはローカルのスタックトレース -->
 
-## Environment
+## 環境
 
-- Branch / commit:
-- Runtime: local / Container Apps
-- Region: swedencentral
+- ブランチ / コミット:
+- ランタイム: ローカル / Container Apps
+- リージョン: swedencentral

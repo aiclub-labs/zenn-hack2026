@@ -1,22 +1,22 @@
 ---
-name: Feature / task
-about: A piece of work to do
+name: 機能 / タスク
+about: 実施する作業項目
 labels: enhancement
 ---
 
-## Goal
+## ゴール
 
-## Why
+## なぜ
 
-<!-- judging-rubric tie-in: business impact / approach / completeness -->
+<!-- 審査基準との結び付け: ビジネスインパクト / アプローチの有効性 / 完成度 -->
 
-## Acceptance criteria
+## 受け入れ基準
 
 - [ ]
 - [ ]
 
-## Out of scope
+## スコープ外
 
-## Related
+## 関連
 
-<!-- Links to dev-prep.md / action-plan.md / other issues -->
+<!-- dev-prep.md / action-plan.md / 関連 issue へのリンク -->
