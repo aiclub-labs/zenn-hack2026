@@ -7,6 +7,7 @@ Swap this module for theme-specific agents once the problem is frozen
 from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.contents import ChatHistory
+from semantic_kernel.services import ChatCompletionClientBase
 
 from app.config import settings
 
@@ -32,7 +33,7 @@ def _build_kernel() -> Kernel:
 
 async def run_hello_agent(user_message: str) -> str:
     kernel = _build_kernel()
-    chat = kernel.get_service("small")
+    chat: ChatCompletionClientBase = kernel.get_service("small")  # type: ignore[assignment]
     history = ChatHistory(system_message=_SYSTEM_PROMPT)
     history.add_user_message(user_message)
     result = await chat.get_chat_message_content(
