@@ -2,6 +2,8 @@
 
 ハッカソンプロジェクト用のテーマ非依存スキャフォールド。第 1 候補は PPT Polish Agent（`../idea-shortlist.md` および `../ideation-workbook.md` 参照）ですが、このスキャフォールド自体は特定テーマを前提としていません — バックアップ案（Meeting → Action Agent）への pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。
 
+> **AI レビュー**: PR 上で `@claude` メンションすると Anthropic Claude GitHub App がレビューコメントを返します。advisory レビューであり、merge ゲートは CODEOWNERS / 人間 SME approval のままです。
+
 ## 技術スタック
 
 - **言語**: Python 3.11
