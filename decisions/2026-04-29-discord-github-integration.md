@@ -35,7 +35,9 @@
 
 ### Negative
 - **3 つの bridge bot を維持する負荷**（最小化のため bot 数を 3 に制限）
-- **Anthropic API 課金**（Claude Code GitHub App + Discord bot 両方）
+- **Claude 利用枠の消費**:
+  - **Claude Code GitHub Action**: operator の **Claude Max ($200/月) サブスクリプション** に OAuth で紐付ける運用とする (`CLAUDE_CODE_OAUTH_TOKEN`)。1 コール = pay-per-use の Anthropic API 課金は発生せず、operator の Max quota を消費する。3 名 × ハッカソン期間（6 週）× Markdown 中心レビューの規模では Max plan で十分まかなえる見込み。`@claude-review` の濫用は quota 圧迫リスクとなるため、重要な PR でのみ呼ぶ運用に留める。
+  - **Discord bot 側**: Anthropic API key 経由で別途課金が発生（Max サブスクとは独立）。
 - **discord-bot の拡張コスト** — Phase 3 で `/spec` `/review` を実装、~3 日
 
 ### Neutral
