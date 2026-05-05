@@ -2,15 +2,29 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "project": { "value": "hack2026" },
-    "location": { "value": "swedencentral" },
-    "memberObjectIds": {
-      "value": []
+    "project": {
+      "value": "hack2026"
     },
-    "ownerObjectId": { "value": "" },
-    "budgetAmount": { "value": 180 },
+    "location": {
+      "value": "swedencentral"
+    },
+    "memberObjectIds": {
+      "value": [
+        "df9f49d3-d121-478b-90d7-b5013e4f2663",
+        "36fc9993-3996-4749-b72e-cd8ebea41844",
+        "0648cd6b-6520-4655-829b-f21b5978a92e"
+      ]
+    },
+    "ownerObjectId": {
+      "value": "df9f49d3-d121-478b-90d7-b5013e4f2663"
+    },
+    "budgetAmount": {
+      "value": 180
+    },
     "budgetContactEmails": {
-      "value": []
+      "value": [
+        "moarond4selfdicipline@gmail.com"
+      ]
     },
     "tags": {
       "value": {
