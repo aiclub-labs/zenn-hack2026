@@ -1,5 +1,6 @@
 targetScope = 'subscription'
 
+// TODO(post-M4): flip default to 'Default' once shared RG is stable. Track in STATUS.md follow-ups.
 @description('Policy enforcement mode. Use DoNotEnforce on first provision (avoids RequestDisallowedByPolicy race against Storage creation), then flip to Default after the shared resources land.')
 @allowed([
   'Default'
