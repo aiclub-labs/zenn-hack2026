@@ -1,6 +1,6 @@
 # Microsoft Agent Hackathon 2026 — Scaffold
 
-ハッカソンプロジェクト用のテーマ非依存スキャフォールド。第 1 候補は PPT Polish Agent（`../idea-shortlist.md` および `../ideation-workbook.md` 参照）ですが、このスキャフォールド自体は特定テーマを前提としていません — バックアップ案（Meeting → Action Agent）への pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。
+ハッカソンプロジェクト用のテーマ非依存スキャフォールド。テーマは 2026-05-11 に確定予定で、現時点の候補（新案A 人材マッチング / 新案C 知見アーカイブ / 新案D ドメイン学習）の比較は `../problem-statement.md` 参照。スキャフォールド自体は特定テーマを前提としておらず、候補間の pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。
 
 ## 技術スタック
 
@@ -84,6 +84,8 @@ az deployment sub create \
 
 ## このスキャフォールドに**含まれない**もの（テーマ確定後に追加）
 
-- `python-pptx` および PPT 操作ツール（PPT Polish Agent が確定した場合のみ）
-- Azure AI Speech のバインディング（バックアップの Meeting → Action Agent に pivot する場合のみ）
-- 個別エージェントの persona（Scanner / Style Arbiter / Cross-Page Coherence など） — 第 1 週の Problem Statement 確定後に追加
+- テーマ別データソース・ツール（候補確定後に追加）:
+  - 新案A 人材マッチング: Microsoft Graph (HR) / KC Bridge / GPDR 連携 / マッチング reasoner
+  - 新案C 知見アーカイブ: SharePoint API / NDA・機密分類 (Azure AI Document Intelligence) / retrieval ranker
+  - 新案D ドメイン学習: scheduled jobs (Functions) / Teams 通知 / transcript ingest
+- 個別エージェントの persona（テーマ確定後、`app/agents/` 配下に追加）

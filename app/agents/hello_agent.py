@@ -1,8 +1,8 @@
 """
 Minimal Semantic Kernel agent used to validate end-to-end wiring.
 
-Swap this module for theme-specific agents once the problem is frozen
-(e.g., Scanner / Style Arbiter / Planner for PPT Polish Agent).
+Swap this module for theme-specific agents once the problem is frozen.
+See ../problem-statement.md for current candidates (新案A / 新案C / 新案D).
 """
 from typing import Any
 
