@@ -109,11 +109,22 @@ foreach ($upn in @($M2_UPN, $M3_UPN)) {
   }
   $body = "{`"invitedUserEmailAddress`":`"$upn`",`"inviteRedirectUrl`":`"https://portal.azure.com`",`"sendInvitationMessage`":true}"
   try {
-    az rest --method post `
+    # Capture the response — this tenant routinely fails to deliver invitation emails,
+    # so we MUST print inviteRedeemUrl for the operator to hand-deliver (Discord DM, etc).
+    $inviteResponseRaw = az rest --method post `
       --url "https://graph.microsoft.com/v1.0/invitations" `
       --headers "Content-Type=application/json" `
-      --body $body | Out-Null
-    Write-Host "    invited $upn"
+      --body $body
+    if ($inviteResponseRaw) {
+      $inviteResponse = $inviteResponseRaw | ConvertFrom-Json
+      Write-Host "    invited $upn"
+      Write-Host "      OID:        $($inviteResponse.invitedUser.id)"
+      Write-Host "      UPN:        $($inviteResponse.invitedUser.userPrincipalName)"
+      Write-Host "      RedeemURL:  $($inviteResponse.inviteRedeemUrl)"
+      Write-Host "      ^ HAND-DELIVER this URL to the invitee — email delivery is unreliable in this tenant."
+    } else {
+      Write-Host "    invited $upn (no response payload)"
+    }
   } catch {
     Write-Host "    invite failed for $upn (may already have a pending invite)"
   }
