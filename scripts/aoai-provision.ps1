@@ -23,9 +23,13 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $Deployments = @(
-  @{ Name = 'gpt-4o-mini';            Model = 'gpt-4o-mini';            Version = '2024-07-18'; Capacity = 50 }
-  @{ Name = 'gpt-4o';                 Model = 'gpt-4o';                 Version = '2024-11-20'; Capacity = 10 }
-  @{ Name = 'text-embedding-3-small'; Model = 'text-embedding-3-small'; Version = '1';          Capacity = 50 }
+  # All deployments use GlobalStandard in swedencentral: (1) text-embedding-3-small has no `Standard` SKU here,
+  # (2) gpt-4o-mini 2024-07-18 was rejected on Standard with ServiceModelDeprecated (cutoff 2026-03-31 for new deploys
+  # on regional Standard SKU, even though the model registry still shows GA until 2026-10-01 inference deprecation).
+  # GlobalStandard accepts new deployments on the same model version.
+  @{ Name = 'gpt-4o-mini';            Model = 'gpt-4o-mini';            Version = '2024-07-18'; Capacity = 50; Sku = 'GlobalStandard' }
+  @{ Name = 'gpt-4o';                 Model = 'gpt-4o';                 Version = '2024-11-20'; Capacity = 10; Sku = 'GlobalStandard' }
+  @{ Name = 'text-embedding-3-small'; Model = 'text-embedding-3-small'; Version = '1';          Capacity = 50; Sku = 'GlobalStandard' }
 )
 
 if (-not (Get-Command az -ErrorAction SilentlyContinue)) { throw "az CLI not found" }
@@ -63,7 +67,7 @@ foreach ($d in $Deployments) {
       --deployment-name $d.Name `
       --model-name $d.Model --model-version $d.Version `
       --model-format OpenAI `
-      --sku-name Standard --sku-capacity $d.Capacity `
+      --sku-name $d.Sku --sku-capacity $d.Capacity `
       --only-show-errors | Out-Null
     Write-Host "    deployment $($d.Name) ($($d.Model) v$($d.Version), cap=$($d.Capacity)) created"
   }
