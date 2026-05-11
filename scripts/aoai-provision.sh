@@ -23,13 +23,17 @@ LOC="$1"
 NAME="${2:-aoai-hack2026}"
 RG="${3:-rg-hack2026-shared}"
 
-# Model deployments (name, model-name, model-version, sku-capacity)
+# Model deployments (name, model-name, model-version, sku-capacity, sku-name)
 # gpt-4o-mini = default chat (Scanner / Arbiter); gpt-4o = arbitration / cross-page coherence
 # text-embedding-3-small = retrieval. Capacities sized for $200 / 30-day budget.
+# All deployments use GlobalStandard in swedencentral: (1) text-embedding-3-small has no `Standard` SKU here,
+# (2) gpt-4o-mini 2024-07-18 was rejected on Standard with ServiceModelDeprecated for new deploys (cutoff
+# 2026-03-31, even though the model registry still shows GA until 2026-10-01 inference deprecation).
+# GlobalStandard accepts the same model version.
 DEPLOYMENTS=(
-  "gpt-4o-mini|gpt-4o-mini|2024-07-18|50"
-  "gpt-4o|gpt-4o|2024-11-20|10"
-  "text-embedding-3-small|text-embedding-3-small|1|50"
+  "gpt-4o-mini|gpt-4o-mini|2024-07-18|50|GlobalStandard"
+  "gpt-4o|gpt-4o|2024-11-20|10|GlobalStandard"
+  "text-embedding-3-small|text-embedding-3-small|1|50|GlobalStandard"
 )
 
 command -v az >/dev/null || { echo "az CLI not found" >&2; exit 1; }
@@ -56,7 +60,7 @@ fi
 
 echo "==> [3/4] Deploy models"
 for entry in "${DEPLOYMENTS[@]}"; do
-  IFS='|' read -r DEP_NAME MODEL_NAME MODEL_VERSION CAPACITY <<<"$entry"
+  IFS='|' read -r DEP_NAME MODEL_NAME MODEL_VERSION CAPACITY SKU_NAME <<<"$entry"
   if az cognitiveservices account deployment show \
     -g "$RG" -n "$NAME" --deployment-name "$DEP_NAME" >/dev/null 2>&1; then
     echo "    deployment $DEP_NAME exists (no-op)"
@@ -66,9 +70,9 @@ for entry in "${DEPLOYMENTS[@]}"; do
       --deployment-name "$DEP_NAME" \
       --model-name "$MODEL_NAME" --model-version "$MODEL_VERSION" \
       --model-format OpenAI \
-      --sku-name Standard --sku-capacity "$CAPACITY" \
+      --sku-name "$SKU_NAME" --sku-capacity "$CAPACITY" \
       --only-show-errors >/dev/null
-    echo "    deployment $DEP_NAME ($MODEL_NAME v$MODEL_VERSION, cap=$CAPACITY) created"
+    echo "    deployment $DEP_NAME ($MODEL_NAME v$MODEL_VERSION, sku=$SKU_NAME, cap=$CAPACITY) created"
   fi
 done
 
