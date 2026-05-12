@@ -34,3 +34,14 @@ jobs:
             --parameters memberObjectIds='${{ secrets.MEMBER_OBJECT_IDS }}' \
                          ownerObjectId='${{ secrets.OWNER_OBJECT_ID }}' \
                          budgetContactEmails='${{ secrets.BUDGET_CONTACT_EMAILS }}'
+
+  notify:
+    needs: [deploy]
+    if: ${{ always() && needs.deploy.result != 'skipped' }}
+    uses: ./.github/workflows/_notify-discord.yml
+    with:
+      workflow_name: infra-deploy (az deployment sub create)
+      status: ${{ needs.deploy.result }}
+      summary: "Subscription-scoped Bicep deployment to hack2026"
+      mention: ${{ vars.DISCORD_OPERATOR_MENTION }}
+    secrets: inherit

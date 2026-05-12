@@ -1,0 +1,78 @@
+name: _notify-discord
+
+on:
+  workflow_call:
+    inputs:
+      workflow_name:
+        required: true
+        type: string
+      status:
+        required: true
+        type: string
+      summary:
+        required: false
+        type: string
+        default: ''
+      mention:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_NOTIFY_WEBHOOK_URL }}
+          STATUS: ${{ inputs.status }}
+          WORKFLOW: ${{ inputs.workflow_name }}
+          SUMMARY: ${{ inputs.summary }}
+          MENTION: ${{ inputs.mention }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ACTOR: ${{ github.actor }}
+          REF: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "DISCORD_NOTIFY_WEBHOOK_URL not set — skipping notification."
+            exit 0
+          fi
+          case "$STATUS" in
+            success)   COLOR=3066993;  ICON="✅" ;;
+            failure)   COLOR=15158332; ICON="❌" ;;
+            cancelled) COLOR=10070709; ICON="⚠️" ;;
+            *)         COLOR=8421504;  ICON="ℹ️" ;;
+          esac
+          SHORT_SHA="${SHA:0:7}"
+          CONTENT=""
+          if [ -n "$MENTION" ] && [ "$STATUS" = "failure" ]; then
+            CONTENT="${MENTION} "
+          fi
+          PAYLOAD=$(jq -nc \
+            --arg content "$CONTENT" \
+            --arg title "${ICON} ${WORKFLOW} — ${STATUS}" \
+            --arg desc "$SUMMARY" \
+            --arg url "$RUN_URL" \
+            --arg actor "$ACTOR" \
+            --arg ref "${REF}@${SHORT_SHA}" \
+            --arg event "$EVENT" \
+            --arg thread "${ICON} ${WORKFLOW} @ ${SHORT_SHA}" \
+            --argjson color "$COLOR" \
+            '{
+              content: $content,
+              thread_name: $thread,
+              embeds: [{
+                title: $title,
+                url: $url,
+                description: $desc,
+                color: $color,
+                fields: [
+                  {name: "actor",  value: $actor, inline: true},
+                  {name: "ref",    value: $ref,   inline: true},
+                  {name: "event",  value: $event, inline: true}
+                ]
+              }]
+            }')
+          curl -sS -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK_URL"

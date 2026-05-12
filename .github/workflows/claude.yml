@@ -33,3 +33,13 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+  notify:
+    needs: [claude]
+    if: ${{ always() && needs.claude.result != 'skipped' }}
+    uses: ./.github/workflows/_notify-discord.yml
+    with:
+      workflow_name: claude-code (@claude mention)
+      status: ${{ needs.claude.result }}
+      summary: "Claude Code Action triggered by @claude mention"
+    secrets: inherit

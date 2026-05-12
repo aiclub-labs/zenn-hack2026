@@ -42,3 +42,13 @@ jobs:
             --location ${{ vars.AZURE_LOCATION }} \
             --template-file infra/main.bicep \
             --parameters @infra/main.parameters.json
+
+  notify:
+    needs: [validate]
+    if: ${{ always() && needs.validate.result != 'skipped' }}
+    uses: ./.github/workflows/_notify-discord.yml
+    with:
+      workflow_name: infra-ci (bicep lint + what-if)
+      status: ${{ needs.validate.result }}
+      summary: "Bicep validation for PR"
+    secrets: inherit
