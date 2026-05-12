@@ -58,9 +58,11 @@ jobs:
             --arg actor "$ACTOR" \
             --arg ref "${REF}@${SHORT_SHA}" \
             --arg event "$EVENT" \
+            --arg thread "${ICON} ${WORKFLOW} @ ${SHORT_SHA}" \
             --argjson color "$COLOR" \
             '{
               content: $content,
+              thread_name: $thread,
               embeds: [{
                 title: $title,
                 url: $url,
