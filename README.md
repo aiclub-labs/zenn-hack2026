@@ -89,3 +89,5 @@ az deployment sub create \
   - 新案C 知見アーカイブ: SharePoint API / NDA・機密分類 (Azure AI Document Intelligence) / retrieval ranker
   - 新案D ドメイン学習: scheduled jobs (Functions) / Teams 通知 / transcript ingest
 - 個別エージェントの persona（テーマ確定後、`app/agents/` 配下に追加）
+
+<!-- B3 /gh pr-merge smoke test 2026-05-12T08:16:07Z -->
