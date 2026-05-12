@@ -23,3 +23,13 @@ jobs:
         run: mypy app
       - name: Pytest
         run: pytest -q
+
+  notify:
+    needs: [lint-test]
+    if: ${{ always() && needs.lint-test.result != 'skipped' }}
+    uses: ./.github/workflows/_notify-discord.yml
+    with:
+      workflow_name: ci (lint + typecheck + pytest)
+      status: ${{ needs.lint-test.result }}
+      summary: "ruff / mypy / pytest on Python 3.11"
+    secrets: inherit
