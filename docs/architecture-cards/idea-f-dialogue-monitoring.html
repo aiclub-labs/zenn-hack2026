@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>idea-f — 対話差分監視による暗黙知形式化エージェント | Architecture Card</title>
+<style>
+  :root{--bg:#fafafa;--surface:#fff;--border:#e1e4e8;--text:#24292e;--muted:#6a737d;--accent:#0366d6;--accent-soft:#f1f8ff;--highlight:#fff8c5;--red:#d73a49;--yellow:#d4a017;--green:#28a745;--red-bg:#ffeef0;--yellow-bg:#fff8e6;--green-bg:#e6ffed;--code-bg:#f6f8fa;--teal:#0a7c66;--teal-soft:#e7f6f2;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0;font-size:14px;}
+  .container{max-width:1100px;margin:0 auto;padding:32px 40px 80px;}
+  header.title-block{border-bottom:3px solid var(--accent);padding-bottom:20px;margin-bottom:32px;}
+  h1{font-size:26px;margin:0 0 8px;font-weight:700;}
+  h1 .subtle{color:var(--muted);font-weight:400;font-size:18px;}
+  h2{font-size:20px;margin:40px 0 16px;padding:8px 12px;background:var(--accent-soft);border-left:4px solid var(--accent);}
+  h2.special{background:var(--teal-soft);border-left-color:var(--teal);}
+  h3{font-size:16px;margin:24px 0 10px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+  h4{font-size:14px;margin:16px 0 6px;color:var(--muted);}
+  blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 4px 4px 0;}
+  blockquote p{margin:6px 0;}
+  blockquote.note{background:var(--highlight);border-left-color:var(--yellow);}
+  blockquote.teal{background:var(--teal-soft);border-left-color:var(--teal);}
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;background:var(--surface);font-size:13px;}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top;}
+  th{background:#f6f8fa;font-weight:600;}
+  tr:nth-child(even) td{background:#fafbfc;}
+  code{font-family:"SF Mono",Consolas,Monaco,monospace;background:var(--code-bg);padding:1px 6px;border-radius:3px;font-size:12px;}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:14px 18px;overflow-x:auto;line-height:1.5;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+  ul,ol{padding-left:24px;}
+  li{margin:4px 0;}
+  .meta{color:var(--muted);font-size:13px;margin:8px 0 0;}
+  .meta strong{color:var(--text);}
+  .related{font-size:13px;color:var(--muted);margin-top:6px;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px;}
+  .badge-red{background:var(--red-bg);color:var(--red);}
+  .badge-yellow{background:var(--yellow-bg);color:var(--yellow);}
+  .badge-green{background:var(--green-bg);color:var(--green);}
+  .badge-pull{background:#e7f3ff;color:#0366d6;}
+  .badge-push{background:#fff0f6;color:#bf3989;}
+  .badge-ingest{background:var(--teal-soft);color:var(--teal);}
+  .badge-teal{background:var(--teal-soft);color:var(--teal);}
+  .row-emphasis{background:#fff8e6 !important;}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 22px;margin:16px 0 28px;font-size:13px;}
+  .toc strong{display:block;margin-bottom:8px;}
+  .toc ol{margin:0;padding-left:22px;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .section-summary{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 22px;margin:12px 0;}
+  .section-summary p{margin:4px 0;}
+  .key{color:var(--teal);font-weight:600;}
+  .three-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+  .pillar{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:14px;border-radius:4px;font-size:13px;}
+  .pillar.teal{border-top-color:var(--teal);}
+  .pillar-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+  hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  .check{color:var(--green);font-weight:700;}
+  .warn{color:var(--yellow);font-weight:700;}
+  .pin{color:var(--accent);font-weight:700;}
+  .callout-tbd{background:#fffbea;border:1px dashed var(--yellow);border-radius:4px;padding:12px 18px;margin:12px 0;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="title-block">
+  <h1>idea-f — 対話差分監視による暗黙知形式化エージェント<br><span class="subtle">Architecture Card v1</span></h1>
+  <p class="meta"><strong>作成日</strong>: 2026-05-12 / <strong>ステータス</strong>: チーム承認待ち</p>
+</header>
+
+<blockquote class="teal">
+  <p><strong>目的</strong>: 採択された方向性を 12 セクション format で確定する正本カード。</p>
+  <p>中核アプローチ:</p>
+  <ul>
+    <li>暗黙知ソース: <strong>AI×人間の対話ライブ監視</strong></li>
+    <li>HITL: <strong>5W1H 差分ヒアリング</strong></li>
+    <li>出口: <strong>形式化ループ自体に集中、出口は後段</strong></li>
+  </ul>
+</blockquote>
+
+<div class="toc">
+  <strong>目次</strong>
+  <ol>
+    <li><a href="#s0">30 秒サマリー</a></li>
+    <li><a href="#s1">As-Is → To-Be</a></li>
+    <li><a href="#s1_5">Persona & User Story</a></li>
+    <li><a href="#s2">入出力インターフェース（I/O）</a></li>
+    <li><a href="#s3">Agent topology + 実装部位</a></li>
+    <li><a href="#s4">Azure サービス（具体 SKU + AWS 比較）</a></li>
+    <li><a href="#s5">Tool / MCP インベントリ</a></li>
+    <li><a href="#s5b">スコープ削減ラダー（優先順位 TBD）</a></li>
+    <li><a href="#s6">擬似コーポレートシステム</a></li>
+    <li><a href="#s7">Corpus</a></li>
+    <li><a href="#s8">HITL surface</a></li>
+    <li><a href="#s9">Demo storyboard</a></li>
+    <li><a href="#s10">6週ビルドリスク + 工数試算</a></li>
+    <li><a href="#s11">Differentiation hook</a></li>
+    <li><a href="#s12">Open question</a></li>
+    <li><a href="#review">レビューチェックリスト（オフライン用）</a></li>
+  </ol>
+</div>
+
+<h2 id="s0">0. 30 秒サマリー</h2>
+<div class="section-summary">
+  <p><strong>問題</strong>: 業界 × 領域特化の暗黙知（人間関係 / 顧客固有の意思決定癖 / 過去案件の red-flag パターン等）は個人の頭に閉じ込められ組織知化されない。汎用 LLM では埋められず、「業務価値は domain-specific な暗黙知に宿る」前提に立てば、これが組織 knowledge の最大のロス。</p>
+  <p><strong>提案</strong>: 特定セクター × ユニットの業務対話を agent が監視し、<strong>事前定義「欲しいデータ項目」スキーマと、AI 出力 / 人間入力の差分</strong>を暗黙知として検知 → <strong>5W1H ヒアリングループ</strong>で形式知化 → 重み付き corpus に蓄積 → 次回対話で参照。</p>
+  <p><strong>核となるアプローチ</strong>: 「文書から暗黙知を抽出する」のではなく「<span class="key">対話の最中に暗黙知が発生した瞬間を捕まえる</span>」。事前定義スキーマで対話の暴走を防ぎ、重み付き形式化で人間入力の盲信を避ける。</p>
+  <p><strong>期待されるインパクト</strong>:</p>
+  <ul>
+    <li>暗黙知が文書化を待たず<strong>発生時点で形式化</strong>される</li>
+    <li>次回以降の同種対話で <strong>AI 応答に蓄積知識が反映</strong>、属人化リセット</li>
+    <li>セクター × ユニット単位で<strong>組織知の階層 corpus</strong> が育ち、多マス展開時に水平移植可能</li>
+  </ul>
+</div>
+
+<h2 id="s1">1. As-Is → To-Be</h2>
+
+<h3>As-Is</h3>
+<blockquote class="note">
+  <p>⚠️ <strong>本テーブルは現時点で暫定記述</strong>。「PM / 営業が業務対話の中で日常的に AI に判断を聞く」という前提が、デプロイ対象組織の実態（M365 Copilot 導入状況 / PM-AI 対話の日常性 等）と整合するか未確認。</p>
+  <p><strong>視点の明示</strong>: 本 As-Is は <strong>対象組織の As-Is</strong> を記述する（ハッカソン参加チーム視点ではない）。</p>
+  <p>実態確認後に本テーブルを書き換え、admin 視点の行追加、Copilot との overlap を踏まえた pain 再記述、§11 Differentiation hook 反映を併せて実施する。</p>
+</blockquote>
+<table>
+<thead><tr><th style="width:18%">段階</th><th style="width:52%">何が起きているか</th><th style="width:30%">痛み</th></tr></thead>
+<tbody>
+<tr><td>業務対話</td><td>PM / 営業が <strong>既存社内システム（M365 Copilot / 社内ナレッジ検索 / 営業支援 AI 等）</strong> に判断を聞く → 汎用知識 + 公開ドキュメント範囲で回答</td><td>クライアント固有暗黙知が反映されない</td></tr>
+<tr><td>判断分岐</td><td>システム回答と人間判断が食い違う → 人間がオーバーライドして終わり</td><td>「なぜ違ったか」が記録されず属人化</td></tr>
+<tr><td>次回対話</td><td>同じパターンでシステムが同じ汎用回答</td><td>暗黙知が組織知化されない</td></tr>
+</tbody>
+</table>
+<p><strong>共通の根</strong>: 既存システム×人間の判断差分そのものが暗黙知の在りかなのに、捕まえていない。</p>
+
+<h3>To-Be</h3>
+<table>
+<thead><tr><th style="width:18%">段階</th><th style="width:52%">何が起きるか（PM 視点）</th><th style="width:30%">解決される痛み</th></tr></thead>
+<tbody>
+<tr><td>業務対話</td><td>PM が <strong>既存システム（Copilot 等）に重ねた本 agent layer</strong> に聞く → 既存システムの汎用回答 + <strong>過去 corpus 内の同種暗黙知 record の引用</strong>を返す</td><td>クライアント固有暗黙知が反映され始める（corpus 蓄積が進むほど強化）</td></tr>
+<tr><td>判断分岐</td><td>PM の判断が応答と食い違うと、その場で <strong>5W1H ヒアリング modal が起動 → 形式化 → corpus に追加</strong></td><td>「なぜ違ったか」が形式知化、属人化リセット</td></tr>
+<tr><td>次回対話</td><td>同じ PM / 別 PM が類似質問 → <strong>既存システム + 更新済 corpus</strong> を引用</td><td>暗黙知が組織知化される（一人の経験が組織の応答に反映）</td></tr>
+</tbody>
+</table>
+
+<blockquote class="teal">
+  <p><strong>既存システムとの関係</strong>: 本 agent は既存システム（Copilot 等）の代替ではなく、<strong>「差分捕捉 + 暗黙知 corpus」レイヤを上に重ねる</strong>位置付け。既存システムは汎用知識を、本 agent は組織特化暗黙知を担当する役割分担。</p>
+</blockquote>
+
+<h3>ギャップを埋める主たるメカニズム</h3>
+<p>ギャップを埋めているのは <strong>「差分発生時点で捕捉 → 重み付き形式化 → 次回 retrieval」のループ全体</strong>。3 要素の役割:</p>
+<ol>
+  <li><strong>corpus 蓄積 + 次回 retrieval（主因）</strong>: クライアント固有暗黙知が AI 応答に反映されるのは、過去 record の引用による。これが「汎用回答しか出てこない」痛みへの直接の解。</li>
+  <li><strong>発生時点で捕捉（タイミング）</strong>: 文書化を待たず、対話の判断分岐フェーズで形式化が走る。「あとでまとめる」を不要にする。</li>
+  <li><strong>事前定義スキーマ（ガードレール）</strong>: 「どこを見るか」を絞り、ヒアリング起動の暴走を防ぐ。<strong>gap 解決の主因ではなく precision を守る制約</strong>。</li>
+  <li><strong>重み付き正誤判定（信頼担保）</strong>: 人間入力を 100% 信頼しない（自己批評スコア + 多数決 + フラグ）。corpus の質を時間的に維持する。</li>
+</ol>
+
+<h2 id="s1_5">1.5. Persona & User Story</h2>
+
+<blockquote>
+  <p><strong>スコープ</strong>: 要件詳細（Acceptance Criteria / KPI）は requirements 段階の責務。本節は <strong>「誰が / 何を / なぜ」</strong> の 3 要素 + 1 本のシナリオまで。</p>
+</blockquote>
+
+<h3>Personas</h3>
+
+<h3>スコープ業界・ドメイン</h3>
+<blockquote>
+  <p>本 POC のスコープは <strong>M&amp;A Advisory × Due Diligence（DD）業務、TMT（テクノロジー / メディア / 通信）セクター</strong>。consulting / FA（ファイナンシャル・アドバイザリー）チームを対象組織と想定し、target 企業評価における「業界 × deal 構造 × 経営者」固有の暗黙知を扱う。</p>
+</blockquote>
+
+<table>
+<thead><tr><th>役割</th><th>ペルソナ</th><th>プロファイル</th><th>関わり</th></tr></thead>
+<tbody>
+<tr><td><strong>Primary（demo 主役）</strong></td><td><strong>M&amp;A PM 田中</strong></td><td>TMT セクター担当の M&amp;A advisory PM、deal lead 経験 5 年。DD で target 企業の財務 / 法務 / 事業リスクを評価。M365 Copilot を日常利用。過去案件の <strong>経営者の癖 / 業界特有の post-merger 統合 red-flag / 同業 deal 構造リスク</strong> を頭で抱えており、共有手段がない</td><td>業務対話で本 agent layer に問い、差分発生時に 5W1H ヒアリングに応答、形式化レビューを承認</td></tr>
+<tr><td><strong>Secondary（運用主役）</strong></td><td><strong>admin 役</strong></td><td>TMT セクターのナレッジマネジメント担当 / シニアマネージャー相当。DD 観点スキーマ定義 + corpus 監督 + 重み調整方針を持つ</td><td>DD 観点スキーマ事前定義（経営者リスク / 業界 deal 構造リスク / post-merger 統合リスク 等）、矛盾検知フラグの裁定、Phase 2 以降のアノテータ信頼度運用</td></tr>
+</tbody>
+</table>
+
+<h3>User Story（JTBD 形式）</h3>
+<blockquote>
+  <p><strong>When</strong> M&amp;A PM が DD 業務の中で target 企業評価を既存システム（Copilot 等）に問おうとする時、<br>
+  <strong>I want</strong> AI が組織固有の暗黙知（過去案件の経営者の癖 / 業界特有の red-flag / 同業 deal の落とし穴）を踏まえて回答してほしい、<br>
+  <strong>so I can</strong> ベテラン PM 個人の頭にあった DD 判断ロジックを組織で再利用でき、判断時間短縮 + 後続 PM の deal 立ち上がり加速 + 案件横断で見落としていたリスクの組織的捕捉ができる。</p>
+</blockquote>
+
+<h3>Scenario 1 本（業務対話 → 形式化 → 次回参照の 3-act）</h3>
+<blockquote>
+  <p>詳細な分秒は §9 Demo storyboard 参照。本シナリオはペルソナ × ユーザーストーリーの <strong>動作確認</strong> が主目的。</p>
+</blockquote>
+
+<p><strong>Act 1 — 業務対話</strong>: 田中が TMT セクターの SaaS スタートアップ買収案件 X の DD で「target X、財務 KPI 健全、シナジー試算 positive。買収 GO で問題ない？」と既存システムに聞く。Copilot は「財務指標は業界平均上位、シナジー仮説も妥当」と汎用回答。agent layer が裏で過去 corpus を query → 類似 record があれば inline で引用、なければ素のまま通す。</p>
+
+<p><strong>Act 2 — 差分発生 → 形式化</strong>: 田中が「いや、創業者が前職の被買収時に主要 eng を引き連れて辞めた前例ある。post-merger で同じパターン踏むリスク高い」と入力。agent が schema「経営者リスク（post-merger 行動パターン）」field との一致を検知 → 5W1H modal 起動。田中が回答 → 形式化候補 record 生成 → HITL レビューで自己批評スコア (0-10) と共に提示 → 田中が承認 → corpus 登録。</p>
+
+<p><strong>Act 3 — 次回対話で参照</strong>: 翌月、別 PM（鈴木）が別の TMT SaaS 買収案件 Y の DD で「target Y の創業者、財務は OK だけど…」と既存システムに問う。agent layer が corpus query → Act 2 で蓄積した record（経営者の post-merger 行動パターン）を引用 → 鈴木は最初から「同パターンが Y にも当てはまるか」を踏まえた DD 観点で深掘りできる。<strong>ここでループが閉じる</strong>。</p>
+
+<h2 id="s2">2. 入出力インターフェース（I/O）</h2>
+
+<h3>モード一覧（MVP）</h3>
+<table>
+<thead><tr><th>モード</th><th>起点</th><th>入力</th><th>出力</th><th>受け取り画面</th></tr></thead>
+<tbody>
+<tr><td><strong>スキーマ定義</strong></td><td>admin が事前設定</td><td>暗黙知データ項目（例: M&amp;A DD なら「経営者リスク」「業界 deal 構造リスク」「post-merger 統合リスク」）</td><td>スキーマ JSON</td><td>admin UI</td></tr>
+<tr><td><strong>Retrieval</strong></td><td>ユーザーが業務対話開始</td><td>ユーザー質問</td><td>関連 corpus record 引用</td><td>既存システム応答に inline で挿入</td></tr>
+<tr><td><strong>対話監視</strong></td><td>ユーザーが業務対話開始</td><td>ユーザー自然文 + 既存システム応答（+ 引用 record）</td><td>差分検知ログ（裏）</td><td>通常チャット UI</td></tr>
+<tr><td><strong>差分ヒアリング</strong></td><td>差分閾値超で agent 起動</td><td>5W1H 質問への自由回答</td><td>形式化候補 record</td><td>チャット UI 内で modal 展開</td></tr>
+<tr><td><strong>形式化承認 (HITL)</strong></td><td>ヒアリング完了後</td><td>候補 record + 自己批評スコア (0-10) 表示</td><td>承認/修正/拒否 → corpus 登録</td><td>レビュー UI</td></tr>
+</tbody>
+</table>
+
+<h3>スコープ削減後の出口（出口は後段に集中）</h3>
+<table>
+<thead><tr><th>出口</th><th>MVP 含めるか</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td><strong>次回対話での参照</strong></td><td><span class="badge badge-green">✅ 必達</span></td><td>形式化ループのクローズ条件</td></tr>
+<tr><td><strong>検索 SPA (pull)</strong></td><td><span class="badge badge-yellow">🟡 nice-to-have</span></td><td>MVP の差別化は形式化ループ自体</td></tr>
+<tr><td><strong>朝刊 (push)</strong></td><td><span class="badge badge-red">❌ 削除</span></td><td>アウトプット過多で重い、デモ尺も食う</td></tr>
+</tbody>
+</table>
+
+<h3>画面イメージ（差分ヒアリング modal）</h3>
+<pre>┌─ 業務対話 (Copilot + agent layer) ─────────────────────┐
+│ User:    target X (SaaS) 買収、財務 OK、GO で問題ない？  │
+│ Copilot: 財務指標は業界平均上位、シナジー仮説も妥当。     │
+│ agent:   (過去 record 引用) TMT SaaS 買収では創業者の    │
+│          前職被買収時の行動パターンを確認推奨            │
+│ User:    いや、創業者が前職被買収時に主要 eng を引き連れ │
+│          て辞めた前例ある。post-merger 同パターン懸念    │
+│                                                       │
+│ ⚠️ 差分検知: スキーマ「経営者リスク」と一致            │
+│ ┌─ 5W1H ヒアリング ───────────────────────────────┐   │
+│ │ Why:  なぜそう行動したと推測されるか?              │   │
+│ │ When: 前職の被買収はいつ / どの deal か?           │   │
+│ │ Who:  対象となった eng はどの role / 何人か?       │   │
+│ │ How:  当時 acquirer はどう対応 / 結果どうなったか?  │   │
+│ │ [回答する] [スキップ]                              │   │
+│ └──────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────┘</pre>
+
+<h2 id="s3">3. Agent topology + 実装部位</h2>
+<pre>     ┌─────────────────────────────────────────────────┐
+     │  Orchestrator (Foundry Workflow + MAF 1.0)      │  ← Container Apps / FastAPI
+     └─────────────────────────────────────────────────┘
+        │          │           │          │          │
+   ┌────▼───┐ ┌────▼────┐ ┌────▼───┐ ┌────▼─────┐ ┌──▼──────┐
+   │Schema  │ │ Delta   │ │Hearout │ │Retriever │ │  対話   │
+   │Manager │ │Detector │ │ Agent  │ │(対話開始 │ │  UI     │
+   │(admin) │ │ (live)  │ │(5W1H)  │ │ corpus Q)│ │(chat)   │
+   └────────┘ └─────────┘ └────────┘ └──────────┘ └─────────┘
+        │          │           │          ▲
+        └──────────┼───────────┘          │
+                   ▼                       │
+       ┌──────────────────────────┐        │
+       │  Formalization + HITL    │        │
+       │  (重み付け + 正誤判定)    │        │
+       └──────────────────────────┘        │
+                   │                       │
+                   ▼                       │
+       ┌──────────────────────────┐        │
+       │ Knowledge corpus index   │────────┘
+       │ (AI Search + Cosmos)     │
+       └──────────────────────────┘</pre>
+
+<h3>実装部位</h3>
+<table>
+<thead><tr><th>Agent</th><th>実装場所</th><th>主要処理</th><th>使う Azure / ライブラリ</th></tr></thead>
+<tbody>
+<tr><td><strong>Orchestrator</strong></td><td><code>app/orchestrator/</code></td><td>request 振り分け / agent workflow / state</td><td><strong>Foundry Workflow agent (preview) + MAF 1.0</strong>、Container Apps</td></tr>
+<tr><td><strong>Schema Manager</strong></td><td><code>app/agents/schema.py</code></td><td>「欲しいデータ項目」CRUD</td><td>Cosmos DB</td></tr>
+<tr><td><strong>Delta Detector</strong></td><td><code>app/agents/delta.py</code></td><td>入出力 stream を監視、スキーマ照合、差分スコア計算</td><td>AOAI gpt-4o-mini（embedding 比較 + LLM 判定）</td></tr>
+<tr><td><strong>Hearout Agent</strong></td><td><code>app/agents/hearout.py</code></td><td>5W1H 質問生成 → 回答収集 → record 候補化</td><td>AOAI gpt-4o</td></tr>
+<tr><td><strong>Retriever</strong></td><td><code>app/agents/retriever.py</code></td><td>対話開始時に corpus を query → 関連 record を AI 応答に augment</td><td>AI Search, AOAI gpt-4o-mini</td></tr>
+<tr><td><strong>Formalization + HITL</strong></td><td><code>app/agents/formalize.py</code> + <code>web/hitl/</code></td><td>重み付け / 正誤判定 / 承認</td><td>AOAI gpt-4o-mini, Cosmos, AI Search upsert</td></tr>
+<tr><td><strong>対話 UI</strong></td><td><code>web/chat/</code></td><td>チャット + 差分 modal</td><td>Container Apps SPA</td></tr>
+</tbody>
+</table>
+
+<h3>「agent である必要」の論証</h3>
+<ul>
+<li><strong>(a) multi-step</strong>: 検索 → 監視 → 検知 → ヒアリング → 形式化 → 承認の 6 step</li>
+<li><strong>(b) function calling</strong>: <code>lookup_schema</code>, <code>score_delta</code>, <code>generate_5w1h</code>, <code>weight_record</code>, <code>corpus.query</code> 等を tool 化</li>
+<li><strong>(c) stateful</strong>: ヒアリングセッション状態 + スキーマ + corpus</li>
+<li><strong>(d) MCP 相当</strong>: AOAI / AI Search / Cosmos を統一 wrapper</li>
+</ul>
+
+<h2 id="s4">4. Azure サービス（具体 SKU + AWS 比較）</h2>
+<table>
+<thead><tr><th>レイヤ</th><th>Azure サービス</th><th>SKU</th><th>月額（概算）</th><th>AWS 等価</th><th>Azure 採用根拠</th></tr></thead>
+<tbody>
+<tr><td>LLM</td><td>Azure OpenAI</td><td>GPT-4o + mini</td><td>~$40</td><td>Bedrock</td><td>gpt-4o-mini は provisioned 済、gpt-4o は採否判断中</td></tr>
+<tr><td>Agent orchestration</td><td><strong>Foundry Agent Service (本体無料) + MAF 1.0</strong></td><td>$0（token / tool 課金は AOAI に内包）</td><td>—</td><td>Bedrock Agents</td><td>Foundry Workflow agent (preview) + MAF 1.0 + BYO Cosmos のハイブリッド。Week 1 flag day で実機検証後に Foundry / Container Apps 直載せの最終判断</td></tr>
+<tr><td>検索</td><td>Azure AI Search</td><td>Basic</td><td>~$75</td><td>Bedrock Knowledge Bases</td><td>corpus index 1 本に縮減（profile index 削除）</td></tr>
+<tr><td>状態</td><td>Cosmos DB</td><td>Serverless</td><td>~$8</td><td>DynamoDB</td><td>スキーマ / ヒアリングセッション / 重み</td></tr>
+<tr><td>文書解析</td><td>（MVP では不要、後段で AI Document Intelligence）</td><td>—</td><td>$0</td><td>Textract</td><td>対話入力中心のため、初期は文書 OCR 不要</td></tr>
+<tr><td>観測</td><td>App Insights</td><td>Basic</td><td>~$5</td><td>CloudWatch</td><td>scaffold 済</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>included</td><td>$0</td><td>Cognito</td><td>scaffold 済</td></tr>
+<tr><td>スケジューリング</td><td>不要（push 出口削除のため）</td><td>—</td><td>$0</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+
+<p><strong>6週合計見込み: 〜$128 / $200</strong>（バッファ $72）。Foundry 本体無料 + Document Intelligence / Logic Apps / push 関連 index 不採用でコスト圧縮。</p>
+
+<p><strong>Foundry / MAF 採用ポイント</strong>:</p>
+<ul>
+<li>Foundry Agent Service Runtime / Prompt agents = <strong>GA</strong>、Workflow / Hosted agents / Multi-Agent Workflows = preview</li>
+<li>MAF 1.0 GA (2026-04-03) で SK + AutoGen 統合、<strong>HITL は標準機能</strong>（RequestInfoEvent / ToolApprovalRequestContent）</li>
+<li>BYO Cosmos for conversation state が公式パターン、既存リソース全部活用可</li>
+<li>AWS Bedrock との機能パリティはほぼ取れている、Memory tool のみ preview 制約あり（BYO Cosmos でカバー）</li>
+</ul>
+
+<h2 id="s5">5. Tool / MCP インベントリ（コアのみ）</h2>
+<table>
+<thead><tr><th>Tool</th><th>用途</th><th>利用 agent</th></tr></thead>
+<tbody>
+<tr><td><code>schema.get</code> / <code>schema.upsert</code></td><td>スキーマ CRUD</td><td>Schema Manager</td></tr>
+<tr><td><code>dialogue.stream_intercept</code></td><td>対話 stream の入出力捕捉</td><td>Delta Detector</td></tr>
+<tr><td><code>aoai.score_delta</code></td><td>スキーマと入出力の embedding 距離 + LLM 判定</td><td>Delta Detector</td></tr>
+<tr><td><code>aoai.generate_5w1h</code></td><td>スキーマに沿った 5W1H 質問生成</td><td>Hearout Agent</td></tr>
+<tr><td><code>aoai.formalize_record</code></td><td>ヒアリング結果を構造化 record に</td><td>Formalization</td></tr>
+<tr><td><code>weight.compute</code></td><td>重み付け（信頼度スコア）</td><td>Formalization</td></tr>
+<tr><td><code>truth.verify_public</code></td><td>公開情報との論理整合（<strong>要否は open</strong>）</td><td>Formalization</td></tr>
+<tr><td><code>corpus.upsert</code></td><td>AI Search に登録</td><td>Formalization</td></tr>
+<tr><td><code>corpus.query</code></td><td>対話開始時の関連 record 検索（<code>{sector}#{unit}</code> パーティション内）</td><td>Retriever</td></tr>
+<tr><td><code>aoai.augment_with_records</code></td><td>検索された record を AI 応答プロンプトに注入</td><td>Retriever</td></tr>
+<tr><td><code>cosmos.hitl_log</code></td><td>承認履歴</td><td>HITL UI</td></tr>
+</tbody>
+</table>
+
+<h2 id="s5b" class="special">5b. スコープ削減ラダー（優先順位 TBD、チーム合意後に確定）</h2>
+<table>
+<thead><tr><th style="width:8%">Tier</th><th style="width:42%">候補</th><th style="width:50%">切った場合の影響</th></tr></thead>
+<tbody>
+<tr><td><strong>A</strong></td><td>公開情報照合 (<code>truth.verify_public</code>) を削除</td><td>正誤判定が「フラグ + 多数決」のみ、論理整合性低下</td></tr>
+<tr><td><strong>B</strong></td><td>重み付けを binary（信頼 / 不信）に粗化</td><td>多数決の解像度低下</td></tr>
+<tr><td><strong>C</strong></td><td>5W1H を 3W に絞る (Why / Who / How)</td><td>ヒアリング粒度低下、形式化品質低下</td></tr>
+<tr><td><strong>D</strong></td><td>HITL を句単位 → record 単位に粗化</td><td>形式化解像度低下</td></tr>
+<tr><td><strong>E</strong></td><td>検索 SPA (nice-to-have) を実装しない</td><td>「次回対話で参照」のみで demo 成立</td></tr>
+<tr><td><strong>F</strong></td><td>スキーマ事前定義 UI を JSON 手書きに</td><td>admin UX 低下、デモ尺は短縮</td></tr>
+</tbody>
+</table>
+<p><strong>「絶対切らない 2 つ」候補</strong>: Delta Detector / Hearout Agent（コアループの 2 軸）</p>
+
+<h2 id="s6">6. 擬似コーポレートシステム</h2>
+<table>
+<thead><tr><th>実環境</th><th>擬似実装</th><th>lift</th></tr></thead>
+<tbody>
+<tr><td>業務チャット</td><td>チャット SPA</td><td>中</td></tr>
+<tr><td>スキーマ管理画面</td><td>admin UI（簡易表）</td><td>小</td></tr>
+<tr><td>過去案件知識（参照用）</td><td>AI Search index 50-80 record（合成）</td><td>中</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>小</td></tr>
+<tr><td>HITL レビュー</td><td>レビュー UI</td><td>中</td></tr>
+</tbody>
+</table>
+<p><strong>統合 UI shell</strong> で「チャット / admin / HITL」3 画面を 1 React app で実装。</p>
+
+<h2 id="s7">7. Corpus</h2>
+<table>
+<thead><tr><th>種類</th><th>量</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>スキーマ定義（合成）</td><td>5-10 件</td><td>1 セクター×ユニット分</td></tr>
+<tr><td>過去 record（合成、seed corpus）</td><td>50-80 件</td><td>検知時の比較ベース + nice-to-have 検索結果</td></tr>
+<tr><td>対話 sample（合成、デモ用）</td><td>10-20 セッション</td><td>デモ動画の素材</td></tr>
+</tbody>
+</table>
+
+<h3>AI Search index（1 本に削減）</h3>
+<table>
+<thead><tr><th>index</th><th>内容</th><th>主要 metadata</th></tr></thead>
+<tbody>
+<tr><td><code>tacit_records</code></td><td>形式化済暗黙知 record（chunk 単位）</td><td><code>sector</code>, <code>unit</code>, <code>schema_field</code>, <code>weight</code>, <code>source_user</code>, <code>verified_flag</code></td></tr>
+</tbody>
+</table>
+
+<blockquote class="teal">
+  <p><strong>パーティション設計</strong>: Cosmos DB 側の partition key は <strong><code>{sector}#{unit}</code></strong> を採用（POC 1-2 マス前提でも、多マス展開時に水平スケール可能）。AI Search 側は <code>sector</code>, <code>unit</code> を filterable facet として保持し、Retriever の <code>corpus.query</code> は同一 <code>{sector}#{unit}</code> スコープで検索する。</p>
+</blockquote>
+
+<h2 id="s8">8. HITL surface</h2>
+<table>
+<thead><tr><th>ステップ</th><th>UI</th><th>人間がやること</th></tr></thead>
+<tbody>
+<tr><td>スキーマ定義</td><td>admin 表</td><td>「欲しいデータ項目」を入力（または既存テンプレ選択）</td></tr>
+<tr><td>差分ヒアリング</td><td>チャット内 modal</td><td>5W1H に自由回答 / スキップ</td></tr>
+<tr><td>形式化レビュー</td><td>レビュー UI（record + 重み slider）</td><td>承認 / 修正 / 拒否 / 重み調整</td></tr>
+<tr><td>多数決 / 矛盾検知</td><td>レビュー UI 一覧</td><td>同一スキーマ field の矛盾 record にフラグ立て</td></tr>
+</tbody>
+</table>
+
+<h2 id="s9">9. Demo storyboard（3 分以内）</h2>
+<table>
+<thead><tr><th style="width:14%">時刻</th><th style="width:30%">シーン</th><th>何を見せる</th></tr></thead>
+<tbody>
+<tr><td>0:00-0:20</td><td>場面: TMT M&amp;A DD 業務</td><td>admin が DD 観点スキーマ（経営者リスク / 業界 deal 構造 / post-merger 統合）を見せる</td></tr>
+<tr><td>0:20-1:00</td><td>PM × 既存システム対話</td><td>田中が target X (SaaS) 買収判断を Copilot に問う → 財務 OK の汎用回答、PM が「創業者が前職で…」と暗黙知発露</td></tr>
+<tr class="row-emphasis"><td>1:00-1:40</td><td><strong>差分検知 + 5W1H ヒアリング起動</strong></td><td>チャット内 modal で Why/When/Who/How を聞く（経営者リスク field）</td></tr>
+<tr><td>1:40-2:10</td><td>HITL レビュー</td><td>record 候補 + 自己批評スコア表示、PM が承認</td></tr>
+<tr class="row-emphasis"><td>2:10-2:40</td><td><strong>2 回目の対話（翌月、別 PM 鈴木）</strong></td><td>別 TMT SaaS 買収 Y で類似質問 → agent が Act 2 record を引用 → 鈴木は最初から経営者リスク観点で DD 深掘り可能</td></tr>
+<tr><td>2:40-3:00</td><td>admin 視点</td><td>corpus 蓄積ビュー（TMT × M&amp;A DD record 数）/ 矛盾検知フラグ</td></tr>
+</tbody>
+</table>
+<p><strong>判定基準</strong>: 観客が「対話の差分が発生した瞬間を捕まえて、次回に活きる」と即理解できるか。</p>
+
+<h2 id="s10">10. 6週ビルドリスク（R/Y/G）+ 工数試算</h2>
+<h3>リスク</h3>
+<table>
+<thead><tr><th>レイヤ</th><th style="width:10%">リスク</th><th>理由 / 緩和</th></tr></thead>
+<tbody>
+<tr><td><strong>対話 stream 監視の実装</strong></td><td><span class="badge badge-yellow">🟡 Y</span></td><td>Semantic Kernel での hook パターン要 PoC、Day 7 までに spike</td></tr>
+<tr class="row-emphasis"><td>Delta Detector の閾値調整</td><td><span class="badge badge-red">🔴 R</span></td><td>偽陽性多すぎ / 少なすぎの両極、Day 14-21 で調整</td></tr>
+<tr><td>5W1H 質問品質</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>prompt 試行錯誤、スキーマに応じた質問生成</td></tr>
+<tr><td>重み付け / 正誤判定</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>多数決と論理整合の組合せ、design 決定</td></tr>
+<tr><td><strong>Azure Foundry Agent Service の GA 状況</strong></td><td><span class="badge badge-yellow">🟡 Y</span></td><td>Workflow agent は preview。Week 1 flag day で swedencentral 実機検証 → 不可なら MAF on Container Apps へ即フォールバック可能（コード変更不要、converged runtime）</td></tr>
+<tr><td>統合 UI shell</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>3 画面 1 app</td></tr>
+<tr><td>予算 ($128 / $200)</td><td><span class="badge badge-green">🟢 G</span></td><td>バッファ $72</td></tr>
+<tr><td>認証 / 観測</td><td><span class="badge badge-green">🟢 G</span></td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+
+<h3>工数試算（AI-driven 前提 = wall-clock + human review 二軸）</h3>
+<blockquote class="teal">
+<p>本プロジェクトは Claude Code / Codex + Discord bot 経由 async 実行で実装する。</p>
+<p>「純実装 h」は AI が回すため<strong>時間制約ではない</strong>。人間ボトルネックは <strong>review + 構想 + async 決定 + 演出</strong>のみ。</p>
+<p>以下は AI-driven 換算（旧 195-250h 純実装 → wall-clock 5-6w + human review 30-50h）。</p>
+</blockquote>
+<table>
+<thead><tr><th>部位</th><th>Wall-clock</th><th>Human review</th><th>構想/演出 主体</th></tr></thead>
+<tbody>
+<tr><td>スキーマ + 合成 corpus 整備</td><td>3-4 day</td><td>3-5h（ドメイン妥当性 + サンプル QC）</td><td>Daichi</td></tr>
+<tr><td>Delta Detector + 対話 hook</td><td>1 week</td><td>5-8h（閾値判断 + 偽陽性 review）</td><td>Sotaro</td></tr>
+<tr><td>Hearout Agent + Formalization</td><td>1 week</td><td>5-8h（5W1H プロンプト品質 + 重み付け review）</td><td>Sotaro</td></tr>
+<tr><td>HITL UI + 統合 shell</td><td>3-4 day</td><td>3-5h（UX flow review）</td><td>UI 担当</td></tr>
+<tr><td>Orchestrator + Container Apps</td><td>2-3 day</td><td>2-4h（IaC / deploy review）</td><td>maumau</td></tr>
+<tr><td>Demo / 動画収録</td><td>1 week 最終</td><td>8-12h（ナラティブ + 演出 + 撮影）</td><td>全員</td></tr>
+<tr class="row-emphasis"><td><strong>合計</strong></td><td><strong>5-6 週 wall-clock</strong></td><td><strong>26-42h human review</strong></td><td>バッファ wall-clock 0-1w / review 8-14h</td></tr>
+</tbody>
+</table>
+<p><strong>真のボトルネック</strong>: ① Azure $200 予算、② wall-clock 6 週（Azure 提供期限）、③ 人間 review 帯域、④ async 決定速度、⑤ Foundry preview の region 提供（flag day）。</p>
+<p>→ <strong>Tier 削減判断</strong>は wall-clock 残量 + Azure コストで行う（人時を理由に追加スコープを却下しない）。</p>
+
+<h2 id="s11">11. Differentiation hook</h2>
+<blockquote class="teal">
+<p><strong>「対話の差分発生瞬間を捕まえる agent」</strong></p>
+<p>他チームは「文書から RAG」「議事録から要約」を出してくる可能性が高い。本案は <strong>対話の最中にスキーマ × 差分で暗黙知を捕捉</strong>し、<strong>5W1H ヒアリングループ</strong>で形式化する。「文書からの事後抽出」ではなく「対話の瞬間捕捉」が本業性を強める。</p>
+</blockquote>
+
+<p><strong>主張可能な独自性</strong>:</p>
+<ol>
+<li><strong>発生時点捕捉</strong>: 文書化を待たない</li>
+<li><strong>事前定義スキーマで暴走防止</strong>: ガードレール = 差別化要素</li>
+<li><strong>5W1H ヒアリング</strong>: 過去案件で実証された質問パターン</li>
+<li><strong>重み付き正誤判定</strong>: 人間入力を 100% 信頼しない設計</li>
+</ol>
+
+<h2 id="s12">12. Open question（要件定義段階で決定）</h2>
+<ol>
+<li><strong>対象セクター×ユニット 1 マス選定</strong> — 暫定: TMT × M&amp;A DD（§1.5 参照）。確定はチーム合意要</li>
+<li><strong>公開情報照合の MVP 含有可否</strong> — Tier A 削減候補との関係</li>
+<li><s><strong>重み付け方式</strong></s> → <span class="check">✅</span> <strong>close</strong>: MVP = A. LLM 自己批評スコア (0-10) のみ。Phase 2 で B. アノテータ信頼度、Phase 3 で C. Provenance 時間減衰。最終重み = A × B × C。閾値: 検知 score&lt;5、形式化採用 合成≥0.7</li>
+<li><s><strong>Azure Foundry Agent Service 採用可否</strong></s> → <span class="check">✅</span> <strong>close</strong>: Foundry Workflow agent (preview) + MAF 1.0 + BYO Cosmos のハイブリッド採用。Week 1 flag day で実機検証 → 不可なら Container Apps 直載せフォールバック</li>
+<li><strong>スキーマ事前定義のテンプレ提供範囲</strong> — 5-10 件のサンプル、ドメイン特化テンプレを何個用意するか</li>
+<li><strong>スキーマ外入力 (out-of-schema) の取扱い</strong> — 事前定義スキーマに該当しない暗黙知シグナル（人間が「揉めてた」と発言したが該当 schema_field なし、等）を ① 破棄 / ② 別 bucket に保留 / ③ 動的にスキーマ拡張提案 のいずれにするか。MVP は ① か ② に倒すのが現実的</li>
+</ol>
+
+<hr>
+
+<h2 id="review">レビューチェックリスト（オフライン用）</h2>
+<blockquote class="note">
+  <p><strong>スコープ絞り込み (2026-05-15)</strong>: 本レビューパスは <strong>spec の上流 input</strong> を確定する目的に絞る。Requirements / Design phase に進む際の正本となる「§0 / §1 / §1.5 / §3 ラフ / 全体整合」のみを対象。§2 以降の詳細は <strong>次のレビューパスに deferred</strong>（末尾参照）。</p>
+  <p>各項目で「OK / NG（コメント）」を inline で書き込む用。マークダウン崩さず <code>&lt;!-- review: ... --&gt;</code> で囲っても良い。</p>
+</blockquote>
+
+<h3>§0 サマリー</h3>
+<ul>
+<li><input type="checkbox" disabled> 「業務価値は domain-specific な暗黙知に宿る」前提が外部 reviewer に通る言葉になっているか</li>
+<li><input type="checkbox" disabled> 「発生時点捕捉」のフックが 30 秒以内に伝わるか</li>
+<li><input type="checkbox" disabled> 4 段構造（問題 / 提案 / 核 / インパクト）の分量バランス</li>
+</ul>
+
+<h3>§1 As-Is → To-Be</h3>
+<ul>
+<li><input type="checkbox" disabled> As-Is の暫定 callout は今レビューでは保留扱いで OK か（対象組織実態確認後に書き換え前提）</li>
+<li><input type="checkbox" disabled> 「既存システム（Copilot 等）」例示の粒度（M365 Copilot だけで足りるか）</li>
+<li><input type="checkbox" disabled> To-Be 表「PM 視点 × ループ各段階」軸統一は機能しているか</li>
+<li><input type="checkbox" disabled> 「ギャップを埋める主たるメカニズム」4 要素の優先順位（主因=corpus / タイミング / ガードレール / 信頼担保）</li>
+</ul>
+
+<h3>§1.5 Personas & User Story</h3>
+<ul>
+<li><input type="checkbox" disabled> スコープ業界・ドメイン = TMT × M&amp;A DD の選択が hackathon demo 強度 + 対象組織想定（FA / advisory）と整合しているか</li>
+<li><input type="checkbox" disabled> Primary persona = M&amp;A PM 田中の解像度（deal lead 5 年目 / TMT セクター / Copilot 日常利用）は requirements の Stakeholders 導出に足りるか</li>
+<li><input type="checkbox" disabled> Secondary persona = admin 役の責任範囲（DD 観点スキーマ定義 / 矛盾裁定 / 重み運用）が MVP と Phase 2 で混ざっていないか</li>
+<li><input type="checkbox" disabled> User Story (JTBD) の <strong>so I can</strong> 節（判断時間短縮 + 後続 PM deal 立ち上がり加速 + 案件横断リスク捕捉）が組織レベルの価値主張として成立しているか</li>
+<li><input type="checkbox" disabled> Scenario 3-act の M&amp;A DD context（SaaS 買収 / 創業者 post-merger 行動パターン）が §9 Demo storyboard と二重 source になっていないか</li>
+</ul>
+
+<h3>§3 ラフ・アーキテクチャ（粒度: 大枠のみ）</h3>
+<ul>
+<li><input type="checkbox" disabled> 5 agent (Schema / Delta / Hearout / Retriever / Formalization) で <strong>暗黙知ループの閉じ</strong>が成立するか過不足の判断</li>
+<li><input type="checkbox" disabled> Retriever を独立 agent にする vs Orchestrator 内ロジックに埋め込む — 独立にする方が user story の「Act 1 で AI が corpus 引用」フローが説明しやすい、で OK か</li>
+<li><input type="checkbox" disabled> 「agent である必要」4 軸 (multi-step / function calling / stateful / MCP 相当) が hackathon 審査向けに十分か</li>
+</ul>
+
+<h3>全体整合</h3>
+<ul>
+<li><input type="checkbox" disabled> §0 problem → §1 To-Be → §1.5 user story → §3 architecture のナラティブが一本道で繋がっているか</li>
+<li><input type="checkbox" disabled> 差別化 (§11) の主張「既存システム = 汎用 / 本 agent = 組織特化暗黙知 layer」が persona + user story から自然に導出できるか</li>
+</ul>
+
+<h3>Deferred — 次のレビューパス（要件定義着手後 or 別セッション）</h3>
+<blockquote>
+  <p>以下は本レビューパスのスコープ外。spec input が確定してから順次。</p>
+</blockquote>
+<ul>
+<li>§2 I/O（Mode 5 つの粒度 / Retrieval 実装現実性 / 画面イメージ / 出口削減妥当性）</li>
+<li>§4 Azure サービス（$128/$200 内訳 / AWS 等価列 / Foundry/MAF 採用ポイント / 文書解析 MVP 不要判断）</li>
+<li>§5 / §5b（Tool 11 個粒度 / Tier 優先順 / 死守 2 候補）</li>
+<li>§6-§9（擬似実装 / Corpus / HITL / Demo storyboard）</li>
+<li>§10 リスク + 工数（R/Y/G キャリブレーション / 工数試算 / ボトルネック順）</li>
+<li>§11 Differentiation hook（他チーム想定 / Copilot overlap / 独自性 4 点配分）</li>
+<li>§12 Open question（残 4 件の期限主体 / #6 out-of-schema MVP 結論 / #2 公開情報照合方針）</li>
+</ul>
+
+<hr>
+
+<blockquote>
+  <p><strong>オフライン review 完了後の合流</strong>: コメントを inline で書き込んだまま push or screenshot で共有 → 編集再開時に上から順に潰す。</p>
+</blockquote>
+
+</div>
+</body>
+</html>
