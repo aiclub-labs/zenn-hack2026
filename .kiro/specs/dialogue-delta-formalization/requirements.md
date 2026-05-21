@@ -1,7 +1,6 @@
 # Requirements Document
 
 > 本ドキュメントは [`personas-stories.md`](./personas-stories.md) の Persona × User Story を**起点**として導出された要件定義書である。各 Requirement は `Source Story:` フィールドで導出元を明示する。
-> v1 (pre-personas、2026-05-12 生成、persona 議論前) は [`requirements.v1-pre-personas.md`](./requirements.v1-pre-personas.md) に退避済。
 
 ## Project Description (Input)
 
@@ -393,19 +392,4 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 
 ---
 
-## v1 (pre-personas) との主な変更点
-
-[`requirements.v1-pre-personas.md`](./requirements.v1-pre-personas.md) (2026-05-12 生成、persona 議論前) からの構造変更:
-
-| 変更点 | 旧 | 新 |
-|---|---|---|
-| 章構成 | フラットな 12 Requirement | Persona A/B/C → 支援システム → 横断/NFR の 5 章 18 Requirement |
-| Persona traceability | 部分的（Objective 文中の As a 〜） | `Source Story:` フィールドで明示 |
-| 暗黙知の定義 | 未定義 | Introduction で定義（2026-05-20 meeting 決定） |
-| 活用時矛盾検知 (B5) | Req 8.4 の 1 行 | **Req 8 として独立**（R-03(b) として明示） |
-| 入力時矛盾検知の人間判断 (C4) | Req 7 (Truth Judgment) に内包 | **Req 10 として独立**（C4 stoy 起点） |
-| レビュー action C1/C2/C3 | Req 6.3/6.4/6.5 として連続条項 | **「いずれか 1 つを選択するバリエーション」**として Req 9 で統合 |
-| リスク台帳 | なし | [`risks.md`](../../../docs/risks.md) R-01〜R-07 への対応付け |
-| 業務フロー絞り込み | requirements 内で「戦略 × 製造業」想定 | **design 段階で再判断**として明示（R-07） |
-
-design.md は v1 requirements から導出されているため、本 v2 requirements に合わせて再生成または差分更新が必要。
+design.md は v1 requirements から導出されているため、本 requirements に合わせて再生成または差分更新が必要。
