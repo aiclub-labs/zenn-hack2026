@@ -117,6 +117,17 @@ A1 (schema 初期定義)
 
 ---
 
+## 5.5 産業事例 (proof point / UX 設計の参考)
+
+**参照ファイル**: [`../../docs/research/tacit-knowledge-ai-prior-art.md`](../../docs/research/tacit-knowledge-ai-prior-art.md) §5.5 NTTデータ × 川崎重工業
+
+要点 (requirements で考慮すべき含意):
+
+- **2 エージェント構成 (Interview + Tutor)** が既に経産省 GENIAC-PRIZE を受賞 = 本 spec のマルチエージェント分割は市場検証済 (R-01 緩和材料)
+- **段階的深化 + 初期 turn での用語認識合わせ**: B2 (5W1H modal) で「初期 turn は用語確認、深い問いは後段」を要件化する根拠
+- **想定回答 hint の事前提示**: modal に「典型回答例 / 回答スケルトン」を併記 → skip 率低減 (R-06 緩和)
+- 成果 KPI が「レビュー回数削減 + 若手生産性向上」= Persona A / B の二面に対応。要件の検証可能性指標として参照
+
 ## 6. 出力に含めない / 触らない範囲
 
 - 確からしさ検証の具体手法 (お水指し / OMUSUBI 等) は **別フェーズ**。requirements では「複数ソース重み付き集約」程度に留める

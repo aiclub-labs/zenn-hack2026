@@ -61,6 +61,21 @@
 - **古典理論レビュー**: SECI の externalization は「dialogue, metaphor, conceptualization」で tacit → explicit を実現する ([Frontiers in Psychology 2019](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02730/full))。**本 spec の「5W1H ヒアリング」は externalization フェーズの dialogue 形式に該当**、と位置付けられる。
 - ServiceNow blog ([servicenow.com/community/.../the-knowledge-creation-series-episode-1](https://www.servicenow.com/community/knowledge-management-blog/the-knowledge-creation-series-episode-1-the-seci-model-four/ba-p/3349445)): SECI を KM 製品で扱う際の整理。要確認 (理論寄り)。
 
+## 5.5 産業事例: NTTデータ × 川崎重工業 (2026-05-20)
+
+- **出典**: NTTデータ DATA INSIGHT 「生成 AI で熟練者の暗黙知を伝承する」 ([nttdata.com/jp/ja/trends/data-insight/2026/0520/](https://www.nttdata.com/jp/ja/trends/data-insight/2026/0520/))、著者: 林宗汰・松下嘉伸・佐藤新・鍋山大志
+- **受賞**: 経済産業省「GENIAC-PRIZE」ユーザー変革賞。受賞理由に「レビュー回数の大幅削減」「若手の生産性向上」が明記
+- **システム名**: 暗黙知伝承システム (LITRON® ブランド)
+- **構成**: 2 エージェント = **インタビューエージェント** + **チューターエージェント**
+- **インタビューエージェントの工夫**:
+  - (1) **基本業務 → 段階的に深い問い** へ展開。初期段階で用語・業務理解の認識合わせ。目的は「不適切な前提に基づく質問生成の防止」
+  - (2) **各質問に「想定回答」を提示** し回答の粒度・観点を明確化 (= 回答支援)
+- **本 spec への含意**:
+  - 2 エージェント構成 (Interview = Hearout、Tutor ≈ 形式化 corpus の利用側) は本 spec のマルチエージェント分割の **市場検証された前例**。R-01 (供給側インセンティブ) の議論で「先行事例で価値が立証されている」と整理可能
+  - **段階的深化 + 用語認識合わせ** は Kunumi の rapport ステップと整合。Persona B の B2 (5W1H modal) で「いきなり深い質問に入らず、初期 turn で用語確認」を要件化する根拠
+  - **想定回答 hint の事前提示** は新規 UX パターン。modal の「ヒント例」「典型回答スケルトン」として B2 の skip 率低減 → R-06 (需要側インセンティブ) の直接緩和策に転用可能
+  - 成果指標が「レビュー回数削減 + 若手生産性向上」= 本 spec の Persona A (knowledge manager) と Persona B (新規担当者) の二面に対応。デモナラティブで同じ KPI を立てると説得力が増す
+
 ## 6. エンタープライズ製品の知識管理
 
 - **Glean** ([glean.com/solutions/knowledge-management](https://www.glean.com/solutions/knowledge-management))
