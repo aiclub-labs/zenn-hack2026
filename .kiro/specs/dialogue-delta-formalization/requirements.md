@@ -98,6 +98,16 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 
 [`../../../docs/risks.md`](../../../docs/risks.md) を参照。各 Requirement は緩和対象リスクを `関連リスク:` で明示する。
 
+### 用語表（同名異義の symbol 分離）
+
+| Symbol | 意味 | 参照 |
+|---|---|---|
+| `response_self_critic_score` | AI 応答に対する自己批評スコア (0-10) | Req 4 AC2, Req 12 AC2-5 |
+| `record_self_critic_score` | Hearout 出力 record に対する自己批評スコア (0-10, = 重み層 A) | Req 13 AC1 |
+| `embedding_distance_threshold` | user input embedding cosine 距離の閾値 (= 0.4) | Req 12 AC5, AC10 |
+| `claim_consistency_threshold` | Truth Judgment の atomic claim 整合性スコア閾値 (= 0.4) | Req 14 AC4 |
+| `response_self_critic_low / mid` | Delta Detector 2段判定の閾値 (3 / 5) | Req 12 AC4-5, AC10 |
+
 ---
 
 ## Requirements
@@ -186,9 +196,9 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 
 #### Acceptance Criteria
 
-1. When 業務ユーザーが新規 turn を送信する, the AI shall 該当 sector×unit の corpus から関連 record を AI Search で retrieval し、回答コンテキストに注入する
+1. When 業務ユーザーが新規 turn を送信する, the AI shall 該当 sector×unit の corpus から関連 record を AI Search で retrieval し、回答コンテキストに注入する。**retrieval スコープは「同一 sector×unit 内」に限定し、マス横断検索は MVP では行わない**（Phase 2 で検討 / 確認ポイント #1 結論）
 2. The AI 応答 shall retrieval された record の **引用 ID を明示**する（「前回△△と話したように」形式）
-3. Where ユーザー権限が record の `shareability` ラベルを満たさない, the system shall 該当 record を retrieval 対象から除外する
+3. Where ユーザー権限が record の `shareability` ラベル（`private`: 本人のみ / `unit`: 同マス内全ユーザー / `public`: 同マス内全ユーザー、Phase 2 でマス横断候補）を満たさない, the system shall 該当 record を retrieval 対象から除外する
 4. The system shall 各 retrieval イベントで `record_referenced_count` を corpus メタデータに加算する（**供給側への評価フィードバック = R-01 緩和**）
 5. The system shall 引用 ID をクリックで dialogue turn 出典が確認できる UI を提供する
 
@@ -231,12 +241,16 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 #### Acceptance Criteria
 
 1. When レビューキューに新規 record が入る, the system shall MAF `RequestInfoEvent` で workflow を pause しレビュー UI に通知する
-2. The レビュー UI shall record の **{5W1H 要素 / 重み breakdown (A × B × C) / 関連 dialogue turns / 矛盾フラグ}** を 1 画面で表示する
-3. When レビュアーが「**承認**」(C1) を選ぶ, the system shall record を `approved` にして Req 14 の Truth Judgment を起動し、整合性スコア ≥ 0.4 なら corpus.upsert を発火する
-4. When レビュアーが「**編集**」(C2) を選び content を修正する, the system shall `{reviewer_id, edited_at, edit_diff}` を監査ログに記録し、編集後 record を Truth Judgment に流す
-5. When レビュアーが「**拒否**」(C3) を選ぶ, the system shall record を `rejected` にし、該当 schema field を **同一ユーザーに対し 7 日 cooldown**（再ヒアリング防止）
+2. The レビュー UI shall record の **{5W1H 要素 / 重み breakdown (A × B × C) / 関連 dialogue turns / Truth Judgment 結果バッジ (`supported`=緑 / `novel`=黄 / `conflict`=赤)}** を 1 画面で表示する
+3. When レビュアーが「**承認**」(C1) を選ぶ, the system shall record を `approved` にして corpus.upsert を発火する（Truth Judgment は Req 14 で**前段実行済**）。`conflict` バッジ付き record は本 AC ではなく Req 10 の専用フローに従う
+4. When レビュアーが「**編集**」(C2) を選び content を修正する, the system shall `{reviewer_id, edited_at, edit_diff}` を監査ログに記録し、編集後 record を Req 14 Truth Judgment に**再投入**して新バッジを得てから本 Req 9 のループに戻す
+5. When レビュアーが「**拒否**」(C3) を選ぶ, the system shall record を `rejected` にし、該当 **schema field × user ペア**に対し **7 日 cooldown** を設定する（再ヒアリング防止）
 6. The レビュー UI shall 各 record の処理時間を計測し、**中央値 ≤ 2 分** を運用ターゲットとして表示する
 7. The 重み breakdown UI shall 各層 (A/B/C) の数値と意味を tooltip 表示する（**重み不可解で全件承認するリスク緩和**）
+8. The system shall `allow_self_approval` フラグを sector×unit 単位で持つ。MVP/デモ環境は **`false`**（自己生成 record の自己承認禁止、別 reviewer pool へ自動 routing）、運用環境は **`true`** だが `self-critic ≥ 8` かつ Truth Judgment バッジが `supported` の場合のみ自己承認を許す
+9. The system shall **「自己承認率」を週次 dashboard に表示し、> 30% で warning** を出す（案D / 確認ポイント #2 結論）
+10. When レビュアーが record をレビュー UI で開く, the system shall record に **`locked_by, lock_expires_at (= 取得時刻 + 5 分)`** を設定する。他レビュアーには grey out 表示。TTL 経過で自動解放、解放後の取得は先勝ち
+11. If レビュー処理時間の週次中央値が **3 分** を超える, then the system shall reviewer UI を「優先 3 件のみ表示」モードに自動切替し、admin に warning を出す
 
 ### Requirement 10: 矛盾検知時の人間判断（C4 独立要件）
 
@@ -252,7 +266,8 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 4. When レビュアーが「既存を維持」を選ぶ, the system shall 新 record を `rejected_due_to_conflict` にする
 5. When レビュアーが「両方残す」を選ぶ, the system shall 両 record を `coexisting_views` 関係で紐付けて corpus 投入し、Req 8 (B5) の活用時通知の対象にする
 6. The system shall 各 conflict resolution を `truth_judgment_logs` に `pattern: "input-time"` で記録する
-7. The system shall conflict resolution 率 **≥ 80%** を運用ターゲットとし、未解決の `conflict_detected` 件数を Admin UI に表示する
+7. The system shall conflict resolution 率 **≥ 80%（直近 30 日窓）** を運用ターゲットとし、未解決の `conflict_detected` 件数を Admin UI に表示する
+8. When AC3 (`superseded_by`) または AC4 (`rejected_due_to_conflict`) で record 状態が変わる, the system shall `citation_audit_log` に新旧 record の対応を記録する。Req 6 AC5 で過去 AI 応答の引用 ID をクリックされたとき、superseded された record は **「この見解は更新されています → 最新 record にリンク」バナー** で誘導する
 
 ### Requirement 11: SLA 期限切れ運用
 
@@ -263,10 +278,11 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 #### Acceptance Criteria
 
 1. The system shall レビュー queue 内の各 record に **24h SLA タイマー** を表示する
-2. If record がレビュー queue で 24h 経過する, then the system shall 状態を `expired` にする
+2. If record がレビュー queue で 24h 経過する, then the system shall 状態を `expired` にする。`expired` は以下を意味する: **(a) reviewer の通常 queue から除外 (b) corpus.upsert しない (c) 該当 schema field × user ペアに 7 日 cooldown を設定する** (Req 9 AC5 と整合)
 3. When record が `expired` になる, the system shall レビュアーと該当業務ユーザーに **Discord 通知** を送る
 4. The 業務ユーザー向け通知 shall 「再ヒアリングが必要」または「諦める」の選択肢を提示する
 5. The system shall expired 率 **≤ 10%** を運用ターゲットとして週次レポートに含める
+6. The system shall `expired` record を admin が手動で `pending_review` に再投入可能とする。Discord 通知で業務ユーザーが「再ヒアリングが必要」を選んだ場合は、当該 turn を新規対象として **Req 5 の 5W1H ヒアリングループを再起動**する
 
 ---
 
@@ -281,11 +297,15 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 #### Acceptance Criteria
 
 1. When 新規 turn が記録される, the Delta Detector shall 該当 sector×unit の active schema fields すべてに対し差分スコアを計算する
-2. The Delta Detector shall AI 応答の **self-critic score (0-10)** と user input の **意味的距離（embedding cosine similarity）** を組み合わせて差分スコアを算出する
-3. When self-critic score < 5 かつ意味的距離が閾値（初期 0.4）を超える, the system shall 該当 schema field を「暗黙知ギャップ候補」としてマークし Hearout Agent にイベント emit する
-4. If 同一 session 内で同一 schema field が連続 3 turn 以上ギャップ判定される, then the system shall 重複検知を抑制し最初のギャップのみヒアリング対象にする
-5. The Delta Detector shall 検知判定根拠（self-critic / distance / matched schema field id）を `delta_events` collection に保存する
-6. Where redact = true の turn, the Delta Detector shall 当該 turn を照合対象から自動的に除外する（Req 7 連動）
+2. The system shall AI 応答の self-critic score (0-10) を **応答生成と同一 LLM 呼び出し内で構造化出力として併出**させる（例: function calling で `{response, self_critic_score, self_critic_reason}`）。MVP では critic agent を分離しない（Req 4 AC2 連動）
+3. The Delta Detector shall AI 応答の **self-critic score (0-10)** と user input の **意味的距離（embedding cosine similarity）** を組み合わせて差分スコアを算出する
+4. When **self-critic score < 3**（低信頼確定）, the Delta Detector shall 距離スコアに関わらず該当 schema field を「暗黙知ギャップ候補」としてマークし Hearout Agent にイベント emit する
+5. When self-critic score が **3 以上 5 未満** かつ意味的距離が閾値（初期 0.4）を超える, the Delta Detector shall 同様にマークしイベント emit する
+6. If **同一 session かつ直近 30 分以内** に同一 schema field が連続 3 turn 以上ギャップ判定される, then the system shall 重複検知を抑制し最初のギャップのみヒアリング対象にする。session 終了（idle 30 分 or 明示 close）で抑制カウンタをリセットする
+7. The Delta Detector shall 検知判定根拠（self-critic / distance / matched schema field id）を `delta_events` collection に保存する
+8. Where redact = true の turn, the Delta Detector shall 当該 turn を照合対象から自動的に除外する（Req 7 連動）
+9. Where turn が active schema fields のいずれにもマッチしない（out-of-schema）, the Delta Detector shall 当該 turn を `schema_candidate_log` collection に蓄積し、Admin UI に **「schema 追加候補」レポート**として提示する（Req 2 連動 / B-2 結論 = 案R 採用）
+10. The system shall 閾値 `response_self_critic_low (= 3)` / `response_self_critic_mid (= 5)` / `embedding_distance_threshold (= 0.4)` を **環境変数化**し、週次 dashboard で各閾値の hit 率を表示、admin が config 更新で再キャリブレーション可能とする
 
 ### Requirement 13: 重み付き形式化（Formalization Agent）
 
@@ -295,12 +315,12 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 
 #### Acceptance Criteria
 
-1. When Hearout Agent が record 候補を出力する, the Formalization Agent shall **LLM 自己批評スコア A (0-10)** を必ず計算する
+1. When Hearout Agent が record 候補を出力する, the Formalization Agent shall **record 自己批評スコア `record_self_critic_score` (= 重み層 A, 0-10)** を必ず計算する（Req 12 の `response_self_critic_score` とは別物 / 用語表参照）
 2. Where Phase 2 以降, the system shall **アノテータ信頼度 B**（EffiARA 系、ユーザー × topic の過去 agreement から sigmoid 化）を計算する
 3. Where Phase 3 以降, the system shall **Provenance 時間減衰 C**（β(t) = β₀ e^(-γt)、γ は環境変数）を計算する
 4. The system shall 最終重み = A × B × C の積で算出する（MVP は B = C = 1.0）
-5. If 最終重み < **0.7**, then the system shall record を `pending_review` で保留し、追加情報リクエストとしてマークする
-6. When 最終重み ≥ **0.7**, the system shall record を §C のレビュー queue（Req 9）に投入する
+5. If 最終重み < **0.5**（MVP）/ < **0.7**（Phase 2 以降、B 層投入後）, then the system shall record を `pending_review` で保留し、**当該業務ユーザー本人に Discord 通知** + Admin UI の「保留中 record」一覧に表示する（reviewer queue には入れない）
+6. When 最終重み ≥ **0.5**（MVP）/ ≥ **0.7**（Phase 2 以降）, the system shall record を §C のレビュー queue（Req 9）に投入する
 7. The system shall 各層スコアと最終重みを record メタデータに保存し、Req 9 の UI で breakdown 表示可能にする
 
 ### Requirement 14: 入力時の正誤判定（Truth Judgment）
@@ -311,11 +331,13 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 
 #### Acceptance Criteria
 
-1. When record が Req 9 で `approved` / `edited` を経て corpus 投入直前にある, the system shall record 内容を **atomic claim に分解**する（GraphCheck 型）
-2. The system shall 各 atomic claim に対し既存 corpus 内の類似 record を AI Search で検索し evidence path score を算出する
-3. If atomic claim 整合性スコア < **0.4**, then the system shall record を `conflict_detected` フラグ付きで Req 10 の専用 review queue に提示する
-4. Where corpus が薄い冷起動期（record 件数 < 30）, the system shall **FactCheck 型の 3 LLM アンサンブル投票** (gpt-4o / gpt-4o-mini / gpt-4o 別 prompt) で補助判定を行う
-5. The system shall 判定根拠（参照した既存 record id 群、各 LLM の判定）を `truth_judgment_logs` に `pattern: "input-time"` で保存する
+1. When Formalization Agent (Req 13) が record を queue に投入する直前, the system shall **Req 9 のレビューより前段で** Truth Judgment を起動し、record 内容を **atomic claim に分解**する（GraphCheck 型）
+2. The system shall 各 atomic claim に対し既存 corpus 内の類似 record を AI Search で検索し evidence path score を算出し、record を **3値分類**（`supported` / `novel` / `conflict`）する
+3. Where 該当 sector×unit の corpus 内 active record 件数 < **30**（冷起動期）, the system shall AC1-2 の GraphCheck path をスキップし、**AC5 の FactCheck 3 LLM アンサンブル投票のみで分類する**。アンサンブル多数決が「conflict なし」を返した場合は `novel` として Req 9 の通常 queue に投入する
+4. When 分類が `conflict`（atomic claim 整合性スコア < `claim_consistency_threshold` (= **0.4**, 環境変数化、Req 12 の `embedding_distance_threshold` とは別 symbol / 用語表参照）, the system shall record を `conflict_detected` フラグ付きで **Req 10 の専用 review queue** に提示する。それ以外（`supported` / `novel`）は **Req 9 の通常 review queue** にバッジ付きで投入する
+5. Where 冷起動期、または `conflict` 判定の確証強化が必要な場合, the system shall **FactCheck 型の 3 LLM アンサンブル投票** (gpt-4o / gpt-4o-mini / gpt-4o 別 prompt) で補助判定を行う
+6. When Req 9 の「編集」(AC4) で record content が修正された, the system shall 編集後 record に対し本 Truth Judgment を**再実行**し新バッジを返す
+7. The system shall 判定根拠（参照した既存 record id 群、3値分類、各 LLM の判定）を `truth_judgment_logs` に `pattern: "input-time"` で保存する
 
 ---
 
@@ -333,6 +355,7 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 2. The system shall MAF agent 起動時に `target_sectors`, `target_units` を環境変数 / config で指定可能にする
 3. Where ハッカソン MVP は 1-2 マスのみ稼働, the system shall 単一 Foundry workflow 定義で全マスを処理できる（マスごとの workflow 分岐は不要）
 4. The system shall マスを跨いで record / corpus / dialogue turn が混在しないことを partition key と AI Search filter で保証する
+5. The system shall Cosmos の `prompt_templates` collection を持ち、sector×unit ごとに **agent prompt の用語辞書 / 業界用語例 / 想定対話シナリオ** を格納する。MAF agent 起動時に partition key で読み込み system prompt に inject する（マスごとの prompt 分岐を実現しつつ workflow 定義は単一を維持）
 
 ### Requirement 16: 観測性とテレメトリ
 
@@ -342,10 +365,11 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 #### Acceptance Criteria
 
 1. The system shall MAF / Foundry の agent tracing を App Insights に自動 export する
-2. The system shall 1 日 1 回 AOAI token 消費を集計し、累積 **$120**（M8 burn-rate gate）と **$150**（warning）でアラートする
+2. The system shall 1 日 1 回 AOAI token 消費を集計し、累積 **$120** / **$150** で `cost.alert.fired` イベントを emit する（**emit 責務のみ。Tier 削減等の action 責務は Req 18 AC2/3 が subscribe して担う**）
 3. While 各 agent が実行中, the system shall agent 名 / 経過時間 / トークン消費を App Insights `customMetrics` に emit する
-4. If エラーが発生する, then the system shall stack trace + 直前の dialogue turn を Cosmos の `error_logs` に保存する
-5. The system shall Req 5 (ヒアリング介入頻度), Req 9 (レビュー処理時間), Req 10 (conflict resolution 率), Req 11 (expired 率) の各運用ターゲットを週次 dashboard で可視化する
+4. If エラーが発生する, then the system shall stack trace + 直前の dialogue turn を Cosmos の `error_logs` に保存する。**当該 turn の `redact` が true の場合は content を除外し、`{turn_id, role, timestamp, redact: true}` のメタデータのみ保存する**（Req 7 連動）
+5. The system shall Req 5 (ヒアリング介入頻度), Req 9 (レビュー処理時間 / 自己承認率), Req 10 (conflict resolution 率), Req 11 (expired 率) の各運用ターゲットを週次 dashboard で可視化する
+6. The system shall App Insights / `customMetrics` に emit するすべての payload から PII 候補（顧客名 / 案件コード / メールアドレス）を **正規表現 + LLM scrubbing** で除去する
 
 ### Requirement 17: セキュリティと認証
 
@@ -354,12 +378,12 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 #### Acceptance Criteria
 
 1. The system shall すべての agent と Container Apps の認証を **Entra ID + Managed Identity** で行う（API キー直接利用禁止）
-2. The system shall AOAI / Cosmos / AI Search への接続文字列を **Key Vault `kv-hack2026-tyu3o4`** で管理する
+2. The system shall AOAI / Cosmos / AI Search への接続文字列、および **Discord webhook URL**（Req 11 AC3 / Req 13 AC5 連動）を **Key Vault `kv-hack2026-tyu3o4`** で管理する
 3. The system shall **Foundry Agent Service の per-agent Microsoft Entra identity** で各 agent に最小権限スコープを割当てる
 4. Where ユーザーが redact = true フラグを立てる, the system shall Req 7 に従い content を保存しない
 5. If 認証エラーが発生する, then the system shall ユーザーに具体エラー詳細を返さず、汎用 5xx と内部ログのみ詳細化する
-
-### Requirement 18: 予算管理と段階的スコープ縮退
+6. When ユーザーが record の削除を申請する（退職 / 撤回希望）, the system shall **論理削除（案T）** を行う: record の `is_active = false` を設定し、retrieval (Req 6) / Truth Judgment (Req 14) の参照対象から除外する。**物理削除はしない**（監査ログ要件と引用先連鎖の安全のため）。Req 7 AC4 の retroactive redact と同じ手法で content を物理削除する場合のみ例外
+7. The system shall reviewer に **`reviewer_scope: [sector×unit list]`** を Entra ID group claim で持たせ、scope 外の record はレビュー queue に表示しない。Foundry per-agent identity（AC3）で強制する
 
 **Objective:** As an operator, I want 予算 $200 を超えないよう段階的にスコープ縮退できる, so that M13 teardown ゲートまで稼働を維持できる
 **関連リスク:** R-04（高精度モデル可否）
@@ -370,17 +394,56 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 2. When 累積 **$120** を超える, the system shall Tier A（公開情報照合カット）を operator に推奨する
 3. When 累積 **$150** を超える, the system shall Tier C（5W1H を 3W に縮退）+ Hearout Agent モデルを gpt-4o → gpt-4o-mini に切替提案する
 4. The system shall Foundry Hosted agent の **scale-to-zero** 状態を idle 5 分で発動するよう設定する
-5. The system shall モデル選択（クラウド高精度 / ローカル）を **設定で切替可能**にする（R-04 緩和）
+5. The system shall モデル選択（クラウド高精度 / ローカル）を **設定で切替可能**にする（R-04 緩和）。**ただし切替対象は生成系 LLM (gpt-4o ↔ gpt-4o-mini ↔ ローカル LLM) に限定し、embedding モデル (`text-embedding-3-small`) は MVP 期間中固定とする**
+6. The system shall embedding モデル変更は AI Search index 全再構築コスト（record 数 × 再 embed 料金）を伴うため、**Phase 2 以降の運用判断**とし MVP では実施しない
+7. The system shall Hearout Agent の **cold start latency ≤ 3 秒** を SLO とする。実現のため Foundry の `min_replicas = 1` を **業務時間帯（平日 9-19 JST）のみ維持**、夜間/休日のみ scale-to-zero を有効化する（Req 5 ヒアリング介入 UX 阻害を防ぐ / AC4 と整合）
 
 ---
 
 ## 確認ポイント（design 前に潰す）
 
-1. **次回対話参照のスコープ** (Req 6): 同一ユーザーのみ / 同一マス内全ユーザー / マス横断のどれを採るか、プライバシー・NDA cascade と関係。design 前に決定
-2. **B = C 兼任の MVP 許容** (Req 9): 自己生成 record の自己承認を許容するか。[`personas-stories.md`](./personas-stories.md) §1 末「Persona 重複論点」参照
+1. ✅ **次回対話参照のスコープ** (Req 6) — **決定 (2026-05-22): 同一 sector×unit 内に限定、shareability ラベル ({private/unit/public}) で粒度制御。マス横断は Phase 2**
+2. ✅ **B = C 兼任の MVP 許容** (Req 9) — **決定 (2026-05-22): 案D 採用。`allow_self_approval` フラグで環境別制御 (MVP/デモは禁止、運用は条件付き許可)、自己承認率 KPI を週次 dashboard 化**
 3. **業務フロー絞り込みのタイミング** (R-07): 本 requirements は汎用設計、design 前に critical path 用の絞り込みを team 合意
 4. **Phase 2/3 (重み層 B/C / Provenance 時間減衰) を MVP 外明示** (Req 13): tasks 段階で誤って実装されないよう scope を明文化
 5. **`conflict_detected` 専用 review queue を独立 UI で実装するか** (Req 10): UI 数の増加と HITL 設計の複雑度のトレードオフ
+
+### 2026-05-22 review session 反映 (🔴 11件 close)
+
+| # | Req | 変更点 |
+|---|-----|--------|
+| 1 | Req 9 AC3 | TJ 前段移動に伴い「< 0.4 で Req 10 へ」を AC3/AC4 で明示 |
+| 2 | Req 9 AC8/9 | 案D (環境別 + 自己承認率 KPI > 30% warning) を新規追加 |
+| 3 | Req 14, Req 9 | 案C 採用: Truth Judgment を Req 9 前段に移動、3値分類 (supported/novel/conflict) で全件 HITL 維持 |
+| 4 | Req 11 AC2/AC6 | `expired` 意味論明文化 + admin による再投入経路追加 |
+| 5 | Req 12 AC4/5 | AND 条件を 2段判定 (self-critic < 3 で即発火 / 3-5 + 距離超で複合発火) に変更 |
+| 6 | Req 12 AC2 | self-critic は応答生成と同一 LLM 呼び出しで併出 (critic agent 分離せず) を明示 |
+| 7 | Req 13 AC5/6 | MVP 閾値を 0.7 → **0.5** に緩和、Phase 2 で 0.7 に戻す |
+| 8 | Req 14 AC3 | 冷起動期 (corpus < 30) は GraphCheck スキップ、FactCheck アンサンブルのみで分類 |
+| 9 | Req 6 AC1/3 | 案Y 採用: 同一 sector×unit スコープを明示、shareability セマンティクス確定 |
+| 10 | Req 16 AC4/AC6 | redact=true 連動、PII scrubbing AC を新規追加 |
+| 11 | Req 18 AC5/AC6 | embedding モデルは MVP 固定 (LLM のみ切替可)、index 全再構築を Phase 2 へ |
+
+### 2026-05-22 review session 反映 (🟡 15 件 close)
+
+| # | Req | 変更点 |
+|---|-----|--------|
+| a | Req 9 AC10 | 並行レビュー lock TTL = 5 分 |
+| b | Req 9 AC11 | レビュー中央値 > 3 分で「優先 3 件表示」モード自動切替 |
+| c | Req 10 AC8 | superseded record の引用先整合 (`citation_audit_log` + 更新バナー) |
+| d | Req 10 AC7 | conflict resolution 率の窓 = 直近 30 日 |
+| e | Req 17 AC2 | Discord webhook URL も Key Vault 管理対象 |
+| f | Req 12 AC9 | out-of-schema → 案R 採用 (`schema_candidate_log` + admin レポート) |
+| g | Req 12 AC10 | 閾値環境変数化 (`response_self_critic_low/mid`, `embedding_distance_threshold`) |
+| h | Req 12 AC6 | 連続抑制境界 = 同一 session かつ直近 30 分以内、idle 30 分でリセット |
+| i | Req 13 AC5 | `pending_review` 宛先 = ユーザー本人 Discord + Admin UI 保留一覧 |
+| j | Req 13 AC1 / 用語表 | self-critic 命名分離 (`response_*` / `record_*`) |
+| k | Req 14 AC4 / 用語表 | 0.4 symbol 分離 (`embedding_distance_threshold` / `claim_consistency_threshold`) |
+| l | Req 15 AC5 | `prompt_templates` collection (sector×unit ごとに用語辞書 inject) |
+| m | Req 16 AC2 | コスト alert: emit 責務に限定、action は Req 18 が subscribe |
+| n | Req 17 AC6 | record retention = 案T 採用 (論理削除 `is_active=false`、物理削除しない) |
+| o | Req 17 AC7 | reviewer RBAC (`reviewer_scope` Entra group claim、scope 外非表示) |
+| p | Req 18 AC7 | cold start SLO ≤ 3 秒、`min_replicas=1` を業務時間帯のみ維持 |
 
 ## リサーチ TODO（design フェーズ前に完了させる）
 
