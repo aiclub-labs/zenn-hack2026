@@ -176,6 +176,17 @@ module cosmosRoles 'modules/cosmos-roles.bicep' = {
   }
 }
 
+// ---------- dialogue-delta-formalization: AI Search data-plane RBAC ----------
+module aisearchRoles 'modules/aisearch-roles.bicep' = {
+  name: 'aisearchRoles'
+  scope: resourceGroup('rg-${project}-${env}')
+  dependsOn: [ aisearch, containerapps ]
+  params: {
+    searchServiceName: aisearch.outputs.serviceName
+    principalIds: concat(containerapps.outputs.appPrincipalIds, [ containerapps.outputs.slaCronJobPrincipalId ])
+  }
+}
+
 // ---------- dialogue-delta-formalization: KV secret placeholders + role grants ----------
 module kvSecrets 'modules/keyvault-secrets.bicep' = {
   name: 'kvSecrets'
