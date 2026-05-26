@@ -10,12 +10,14 @@ import {
 import { WeightBreakdown } from "../components/WeightBreakdown";
 import { LockBadge } from "../components/LockBadge";
 import { PriorityModeBanner } from "../components/PriorityModeBanner";
+import { useTenantCtx } from "../../shell/TenantContext";
 
 function ageMin(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
 }
 
 export function NormalQueue() {
+  const { tenant } = useTenantCtx();
   const [tickets, setTickets] = useState<FormalizationTicket[]>([]);
   const [selected, setSelected] = useState<FormalizationTicket | null>(null);
   const [priorityOnly, setPriorityOnly] = useState(false);
@@ -24,7 +26,7 @@ export function NormalQueue() {
   const [pmThreshold, setPmThreshold] = useState(180);
 
   async function load() {
-    setTickets(await listReviews(priorityOnly));
+    setTickets(await listReviews(priorityOnly, tenant.sector, tenant.unit));
     const pm = await getPriorityMode();
     setPmActive(pm.active);
     setPmMedian(pm.median_sec);
@@ -33,7 +35,7 @@ export function NormalQueue() {
 
   useEffect(() => {
     load();
-  }, [priorityOnly]);
+  }, [priorityOnly, tenant.sector, tenant.unit]);
 
   async function onLock(t: FormalizationTicket) {
     await lockReview(t.id);
