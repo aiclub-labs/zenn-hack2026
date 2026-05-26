@@ -74,7 +74,7 @@ async def _aoai_complete(
     Score/reason are derived from a follow-up self-evaluation call kept
     intentionally lightweight (single JSON return).
     """
-    from app.util.aoai_chat import chat_client, deployment_small
+    from app.util.aoai_chat import chat_client, deployment_large, deployment_small
 
     citations_lines = "\n".join(
         f"- {c.get('citation_id', '?')}: {c.get('snippet', '')[:180]}"
@@ -94,13 +94,13 @@ async def _aoai_complete(
     try:
         client = chat_client()
         resp = await client.chat.completions.create(
-            model=deployment_small(),
+            model=deployment_large(),
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.4,
-            max_tokens=400,
+            max_completion_tokens=400,
         )
         text = (resp.choices[0].message.content or "").strip() or "(空応答)"
     except Exception as exc:  # pragma: no cover
@@ -126,7 +126,7 @@ async def _aoai_complete(
                 },
             ],
             temperature=0.0,
-            max_tokens=120,
+            max_completion_tokens=120,
             response_format={"type": "json_object"},
         )
         import json as _json
