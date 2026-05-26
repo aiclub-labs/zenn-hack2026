@@ -1,3 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import {
+  Badge,
+  Button,
+  MessageBar,
+  MessageBarActions,
+  MessageBarBody,
+  MessageBarTitle,
+  makeStyles,
+  shorthands,
+  tokens,
+} from "@fluentui/react-components";
+import { History20Regular } from "@fluentui/react-icons";
 import { SchemaUpdateBanner } from "../types";
 import { ackBanner } from "../api/turn";
 
@@ -10,6 +23,22 @@ interface Props {
   onAck: () => void;
 }
 
+const useStyles = makeStyles({
+  wrapper: {
+    ...shorthands.margin(
+      tokens.spacingVerticalS,
+      tokens.spacingHorizontalXL,
+      0,
+      tokens.spacingHorizontalXL,
+    ),
+  },
+  summary: {
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground2,
+    marginTop: tokens.spacingVerticalXS,
+  },
+});
+
 export function SchemaUpdateBannerView({
   banner,
   turnId,
@@ -18,36 +47,40 @@ export function SchemaUpdateBannerView({
   userId,
   onAck,
 }: Props) {
+  const styles = useStyles();
+  const navigate = useNavigate();
+  const count = banner.unseen_revision_ids.length;
+
+  async function handleAck() {
+    await ackBanner(turnId, sector, unit, userId);
+    onAck();
+  }
+
   return (
-    <div
-      role="status"
-      style={{
-        background: "#fff7e6",
-        border: "1px solid #f0b73b",
-        padding: "0.75rem 1rem",
-        borderRadius: 6,
-        margin: "0.5rem 0",
-      }}
-    >
-      <strong>
-        schema 更新が {banner.unseen_revision_ids.length} 件あります
-      </strong>
-      <div style={{ fontSize: 13, margin: "0.25rem 0" }}>
-        {banner.changed_fields_summary}
-      </div>
-      <a href={banner.history_url} target="_blank" rel="noreferrer">
-        履歴を見る
-      </a>
-      <button
-        type="button"
-        style={{ marginLeft: "1rem" }}
-        onClick={async () => {
-          await ackBanner(turnId, sector, unit, userId);
-          onAck();
-        }}
-      >
-        確認
-      </button>
+    <div className={styles.wrapper}>
+      <MessageBar intent="warning" politeness="polite">
+        <MessageBarBody>
+          <MessageBarTitle>
+            schema 更新があります{" "}
+            <Badge appearance="tint" color="warning">
+              {count} 件
+            </Badge>
+          </MessageBarTitle>
+          <div className={styles.summary}>{banner.changed_fields_summary}</div>
+        </MessageBarBody>
+        <MessageBarActions>
+          <Button
+            appearance="subtle"
+            icon={<History20Regular />}
+            onClick={() => navigate("/admin/history")}
+          >
+            履歴を見る
+          </Button>
+          <Button appearance="primary" onClick={handleAck}>
+            確認しました
+          </Button>
+        </MessageBarActions>
+      </MessageBar>
     </div>
   );
 }
