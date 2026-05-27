@@ -16,6 +16,15 @@
 - **IaC**: Bicep
 - **CI**: GitHub Actions
 
+## Sustainability / Responsible AI
+
+- **Scale-to-zero**: Azure Container Apps を min-replicas=0 で運用。アイドル時の compute フットプリントゼロ。
+- **Serverless data plane**: Cosmos DB serverless + AI Search free tier。常時稼働 capacity を持たず、リクエスト単位で課金 = 環境負荷も従量。
+- **トークン効率**: デフォルトは `gpt-5.4-mini` に routing、必要時のみ `gpt-5.4` にエスカレート。`max_completion_tokens` は Hearout=400 / 自己批評=120 と厳格に制限（`app/api/turn.py`）。
+- **観測可能性**: `aoai.token.total` を customMetric として日次集計（`app/util/cost.py:19` `aggregate_aoai_tokens_daily`）。Tier A/C 縮退条件 ($200 上限) は `infra/modules/budget.bicep:17-42` で alert 連動。Fairness proxy (reviewer × sector × decision) + Continuous iteration workbook 用 KQL 一式は `docs/observability-kql.md` 参照。
+- **Responsible AI 自己評価**: MS RAI Standard v2 / KPMG Trusted AI / NIST AI RMF を統合した Impact Assessment は `docs/impact-assessment.md` 参照。12 harm × mitigation × file:line 出典、5 残存リスクを開示。
+- **フレームワーク準拠レビュー**: Azure WAF AI / AWS GenAI Lens / KPMG / MS RAI / NIST AI RMF の 5 framework 横断 gap 分析を `.kiro/specs/dialogue-delta-formalization/framework-review.md` に記録。
+
 ## ディレクトリ構成
 
 ```

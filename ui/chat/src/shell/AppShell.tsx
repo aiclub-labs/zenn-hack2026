@@ -101,6 +101,15 @@ const useStyles = makeStyles({
     flex: 1,
     minWidth: 0,
   },
+  disclosure: {
+    ...shorthands.padding(tokens.spacingVerticalXS, tokens.spacingHorizontalXL),
+    backgroundColor: tokens.colorNeutralBackground3,
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
+    color: tokens.colorNeutralForeground3,
+    fontSize: tokens.fontSizeBase200,
+    lineHeight: tokens.lineHeightBase200,
+    textAlign: "center",
+  },
 });
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -162,6 +171,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className={styles.content}>{children}</main>
+        <footer className={styles.disclosure}>
+          この応答は AI が生成し、自己批評スコアで品質評価しています。機密情報は
+          redact フラグでマスクしてください。 / 言語: 日本語 (ja-JP)
+          固定、accessibility は Phase 2。
+        </footer>
       </div>
     </div>
   );
