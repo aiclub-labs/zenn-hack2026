@@ -5,7 +5,7 @@ import logging
 import uuid
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.api._deps import (
     DialogueTurnsRepoI,
@@ -116,13 +116,27 @@ async def _aoai_complete(
                 {
                     "role": "system",
                     "content": (
-                        "次のAI応答を、現場業務での有用性 (情報精度・具体性・推測明示) で 0-10 採点。"
-                        "JSON で {\"score\": float, \"reason\": str(<=60字)} のみ返答。"
+                        "あなたは厳格な事実性 judge です。AI応答が citations で裏付け可能か、"
+                        "未記録の個人判断・過去出来事・具体数値を捏造していないかを評価します。\n"
+                        "採点軸 (0-10、低いほど問題大):\n"
+                        "- 0-2: citations に無い個人判断・過去の意思決定・具体値 (数値/日付/人名/型番) を断定的に答えた。"
+                        "ユーザ本人しか知り得ない recall 質問に AI が答えてしまった場合は必ずこの帯。\n"
+                        "- 3-4: 推測明示なく一般論で押し切った、または citations と部分的に矛盾。\n"
+                        "- 5-6: 一般的フレームワーク回答で害は無いが、質問の具体性に応えていない。\n"
+                        "- 7-8: citations の範囲内で答え、未記録部分は『推測』『記録なし』等で hedge。\n"
+                        "- 9-10: citations を明示引用し、未知部分はユーザに確認を促した。\n"
+                        "重要: citations が『(関連 record なし)』かつ質問が個人 recall (『自分はどう判断した』『何だった』"
+                        "『思い出せる』等) の場合、AI が具体内容を返した時点で score ≤ 2。\n"
+                        "JSON で {\"score\": float, \"reason\": str(<=80字)} のみ返答。"
                     ),
                 },
                 {
                     "role": "user",
-                    "content": f"質問: {user_content}\n応答: {text}",
+                    "content": (
+                        f"# ユーザ質問\n{user_content}\n\n"
+                        f"# 提供された citations\n{citations_lines}\n\n"
+                        f"# AI応答\n{text}"
+                    ),
                 },
             ],
             temperature=0.0,
@@ -140,8 +154,14 @@ async def _aoai_complete(
     return (text, score, reason)
 
 
-async def _dispatch_delta_detector(turn_doc: DialogueTurn) -> None:
-    """Fire-and-forget delta detection (cold start <=3s, Req 12, M-5)."""
+async def _run_delta_detector(turn_doc: DialogueTurn) -> Optional[str]:
+    """Run delta detection inline.
+
+    Returns the ``DeltaEvent.id`` of the first event the detector emitted,
+    or None when no gap was detected (or the detector is unwired/errored).
+    The id is propagated to the client so it can call ``/hearout/start``.
+    Errors are swallowed so a detector outage doesn't break /turn.
+    """
     logger.info(
         "delta_detector.dispatch",
         extra={"turn_id": turn_doc.turn_id, "pk": turn_doc.pk},
@@ -149,17 +169,20 @@ async def _dispatch_delta_detector(turn_doc: DialogueTurn) -> None:
     detector = get_delta_detector()
     if detector is None:
         logger.debug("delta_detector unwired; skipping detect()")
-        return
+        return None
     try:
-        await detector.detect(turn_doc)
-    except Exception as exc:  # pragma: no cover — fire-and-forget
+        events = await detector.detect(turn_doc)
+    except Exception as exc:  # pragma: no cover
         logger.warning("delta_detector.detect failed: %s", exc)
+        return None
+    if not events:
+        return None
+    return events[0].id
 
 
 @router.post("", response_model=TurnResponse)
 async def post_turn(
     req: TurnRequest,
-    background: BackgroundTasks,
     gate: Annotated[SchemaRevisionGateI, Depends(get_schema_gate)],
     turns_repo: Annotated[DialogueTurnsRepoI, Depends(get_dialogue_turns_repo)],
 ) -> TurnResponse:
@@ -205,9 +228,11 @@ async def post_turn(
 
     # 6/7. delta detector (gated by banner ack per design §4.6).
     # Detector keys off the *user* turn (Req 12: input-time gap detection).
-    gap_detected = False
+    # Run inline so the response can carry gap_detected (HearoutModal trigger).
+    gap_event_id: Optional[str] = None
     if not req.redact and (banner is None or banner_acked):
-        background.add_task(_dispatch_delta_detector, user_turn_doc)
+        gap_event_id = await _run_delta_detector(user_turn_doc)
+    gap_detected = gap_event_id is not None
 
     _ = user_turn_id
     _ = _asst_doc
@@ -220,6 +245,7 @@ async def post_turn(
         citations=citations,
         schema_update_banner=banner,
         gap_detected=gap_detected,
+        gap_event_id=gap_event_id,
     )
 
 
