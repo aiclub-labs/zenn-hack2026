@@ -59,6 +59,47 @@ async def test_retrieve_for_turn_builds_citations_and_prompt_ctx(monkeypatch) ->
 
 @pytest.mark.unit
 @pytest.mark.asyncio
+async def test_retrieve_for_turn_increments_referenced_count(monkeypatch) -> None:
+    """Issue #29 / Req 6 AC4: each unique citation triggers +1 in corpus index."""
+    import asyncio
+
+    monkeypatch.setattr(r, "_embed", AsyncMock(return_value=[0.1] * 1536))
+    monkeypatch.setattr(
+        r,
+        "_aisearch_query",
+        AsyncMock(
+            return_value=[
+                {"record_id": "rec_a", "schema_field_id": "sf1", "weight": 0.5,
+                 "superseded_by": None, "content": "a"},
+                {"record_id": "rec_b", "schema_field_id": "sf2", "weight": 0.5,
+                 "superseded_by": None, "content": "b"},
+                # duplicate record_id — must only count once
+                {"record_id": "rec_a", "schema_field_id": "sf1", "weight": 0.4,
+                 "superseded_by": None, "content": "a2"},
+            ]
+        ),
+    )
+
+    seen: list[tuple[str, str]] = []
+
+    async def _fake_increment(tenant, ids):
+        for rid in ids:
+            seen.append((rid, tenant.pk))
+
+    monkeypatch.setattr(r, "_increment_referenced_counts", _fake_increment)
+
+    tenant = Tenant(sector="s", unit="u")
+    await r.retrieve_for_turn(tenant=tenant, query="q", user_id="u1")
+    # Allow the fire-and-forget task to run
+    await asyncio.sleep(0)
+    await asyncio.sleep(0)
+
+    assert sorted(rid for rid, _ in seen) == ["rec_a", "rec_b"]
+    assert all(pk == "s#u" for _, pk in seen)
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
 async def test_retrieve_for_turn_no_hits_returns_empty(monkeypatch) -> None:
     monkeypatch.setattr(r, "_embed", AsyncMock(return_value=[0.0] * 1536))
     monkeypatch.setattr(r, "_aisearch_query", AsyncMock(return_value=[]))

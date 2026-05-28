@@ -1,6 +1,7 @@
 """GET /retrieve + retrieve_for_turn helper (Req 6, 8)."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from collections import defaultdict
 from typing import Any
@@ -40,6 +41,17 @@ async def _aisearch_query(
             }
         )
     return out
+
+
+async def _increment_referenced_counts(
+    tenant: Tenant, record_ids: list[str]
+) -> None:
+    """Best-effort +1 per unique citation hit (Req 6 AC4 / Issue #29)."""
+    from app.util.aisearch import CorpusIndex
+
+    index = CorpusIndex()
+    for rid in record_ids:
+        await index.increment_referenced_count(rid, tenant.pk)
 
 
 async def _log_truth_judgment_activation(
@@ -94,6 +106,13 @@ async def retrieve_for_turn(
         if len(distinct) >= 2:
             conflicts.append({"schema_field_id": sfid, "alt_count": len(distinct)})
             await _log_truth_judgment_activation(tenant, sfid, sorted(distinct))
+
+    # Req 6 AC4 / Issue #29: bump record_referenced_count for each unique hit.
+    # Fire-and-forget so retrieval latency stays unaffected; failures swallowed
+    # inside the CorpusIndex helper.
+    unique_record_ids = sorted({c.record_id for c in citations})
+    if unique_record_ids:
+        asyncio.create_task(_increment_referenced_counts(tenant, unique_record_ids))
 
     _ = user_id  # reserved for personalization / audit
     return citations, conflicts, prompt_ctx

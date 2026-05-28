@@ -46,6 +46,29 @@ class CorpusIndex:
         # Azure SDK uses merge_or_upload via `upload_documents` w/ key replacement
         await self._client.merge_or_upload_documents(documents=[record])
 
+    async def increment_referenced_count(self, record_id: str, pk: str) -> None:
+        """Best-effort +1 to `record_referenced_count` (Req 6 AC4 / Issue #29).
+
+        AI Search has no atomic increment, so this is read-then-merge.
+        Concurrent retrievals can race and lose a count — acceptable for the
+        supply-side feedback signal (it's a coarse indicator, not billing).
+        Swallows errors: a missed bump must never break a /turn response.
+        """
+        try:
+            doc = await self._client.get_document(key=record_id)
+            current = int(doc.get("record_referenced_count") or 0)
+            await self._client.merge_or_upload_documents(
+                documents=[
+                    {
+                        "id": record_id,
+                        "pk": pk,
+                        "record_referenced_count": current + 1,
+                    }
+                ]
+            )
+        except Exception:  # noqa: BLE001 — best-effort, never block retrieval
+            pass
+
     async def query(
         self,
         tenant: Tenant,
