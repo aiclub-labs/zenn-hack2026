@@ -15,21 +15,31 @@ logger = logging.getLogger(__name__)
 
 
 async def _embed(text: str) -> list[float]:
-    """TODO(wt-d-import): replace with ``app.util.embedding.embed``."""
-    return [0.0] * 8
+    from app.util.embedding import embed as _real_embed
+
+    return await _real_embed(text)
 
 
 async def _aisearch_query(
     tenant: Tenant, vector: list[float], top_k: int = 8
 ) -> list[dict[str, Any]]:
-    """TODO(wt-d-import): replace with ``app.util.aisearch.CorpusIndex.query``.
+    from app.util.aisearch import CorpusIndex
 
-    Real impl filters by partition (pk = sector#unit), shareability
-    (private/unit/public), is_active=true, superseded_by is null.
-    Returns hits with ``{record_id, schema_field_id, weight,
-    superseded_by, content}``.
-    """
-    return []
+    raw = await CorpusIndex().query(
+        tenant=tenant, query_vec=vector, top_k=top_k, shareability_min="private"
+    )
+    out: list[dict[str, Any]] = []
+    for h in raw:
+        out.append(
+            {
+                "record_id": h.get("id", ""),
+                "schema_field_id": h.get("schema_field_id", "") or "",
+                "weight": float(h.get("weight_final", 0.0) or 0.0),
+                "superseded_by": h.get("superseded_by") or None,
+                "content": h.get("content", "") or "",
+            }
+        )
+    return out
 
 
 async def _log_truth_judgment_activation(
@@ -49,26 +59,33 @@ async def _log_truth_judgment_activation(
 
 async def retrieve_for_turn(
     *, tenant: Tenant, query: str, user_id: str
-) -> tuple[list[CitationRef], list[dict[str, Any]]]:
+) -> tuple[list[CitationRef], list[dict[str, Any]], list[dict[str, Any]]]:
     """Top-k retrieval + activation-time conflict detection.
 
     Conflict: >=2 distinct record viewpoints under one schema_field_id.
+    Returns (citations, conflicts, prompt_ctx) where prompt_ctx is the
+    [{citation_id, snippet}] list consumed by the AOAI system prompt.
     """
     vec = await _embed(query)
     hits = await _aisearch_query(tenant, vec)
 
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     citations: list[CitationRef] = []
+    prompt_ctx: list[dict[str, Any]] = []
     for h in hits:
         sfid = str(h["schema_field_id"])
+        rid = str(h["record_id"])
         grouped[sfid].append(h)
         citations.append(
             CitationRef(
-                record_id=str(h["record_id"]),
+                record_id=rid,
                 schema_field_id=sfid,
                 weight=float(h.get("weight", 0.0)),
                 superseded_by=h.get("superseded_by"),
             )
+        )
+        prompt_ctx.append(
+            {"citation_id": rid, "snippet": str(h.get("content", ""))[:300]}
         )
 
     conflicts: list[dict[str, Any]] = []
@@ -79,7 +96,7 @@ async def retrieve_for_turn(
             await _log_truth_judgment_activation(tenant, sfid, sorted(distinct))
 
     _ = user_id  # reserved for personalization / audit
-    return citations, conflicts
+    return citations, conflicts, prompt_ctx
 
 
 @router.get("/retrieve", response_model=RetrieveResponse)
@@ -90,7 +107,7 @@ async def get_retrieve(
     user_id: str = "anonymous",
 ) -> RetrieveResponse:
     tenant = Tenant(sector=sector, unit=unit)
-    records, conflicts = await retrieve_for_turn(
+    records, conflicts, _ = await retrieve_for_turn(
         tenant=tenant, query=q, user_id=user_id
     )
     return RetrieveResponse(records=records, conflicts=conflicts)

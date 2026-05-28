@@ -204,15 +204,12 @@ async def post_turn(
     banner_acked = await gate.is_acked(req.user_id, tenant, req.session_id)
 
     # 3. retrieval (+ conflict detection, Req 8)
-    citations, conflicts = await retrieve_for_turn(
+    citations, conflicts, prompt_ctx = await retrieve_for_turn(
         tenant=tenant, query=req.user_content, user_id=req.user_id
     )
 
     # 4. AOAI structured response
-    ai_text, score, reason = await _aoai_complete(
-        req.user_content,
-        [c.model_dump() for c in citations],
-    )
+    ai_text, score, reason = await _aoai_complete(req.user_content, prompt_ctx)
 
     # 5. assistant turn
     asst_turn_id, _asst_doc = await _append_turn(
