@@ -31,6 +31,24 @@
         "project": "hack2026",
         "managedBy": "bicep"
       }
+    },
+    "env": {
+      "value": "dev"
+    },
+    "kvName": {
+      "value": "kv-hack2026-tyu3o4"
+    },
+    "projectTag": {
+      "value": "hack2026"
+    },
+    "containerRegistryServer": {
+      "value": "acrhack2026dev1d8165.azurecr.io"
+    },
+    "azureOpenAIEndpoint": {
+      "value": "https://aoai-hack2026.openai.azure.com/"
+    },
+    "azureOpenAIApiKeySecretUri": {
+      "value": "https://kv-hack2026-tyu3o4.vault.azure.net/secrets/AZURE-OPENAI-API-KEY"
     }
   }
 }

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>idea-e — 暗黙知の形式化 × 検索+生成 両どりエージェント | Architecture Card</title>
+<style>
+  :root{--bg:#fafafa;--surface:#fff;--border:#e1e4e8;--text:#24292e;--muted:#6a737d;--accent:#0366d6;--accent-soft:#f1f8ff;--highlight:#fff8c5;--red:#d73a49;--yellow:#d4a017;--green:#28a745;--red-bg:#ffeef0;--yellow-bg:#fff8e6;--green-bg:#e6ffed;--code-bg:#f6f8fa;--teal:#0a7c66;--teal-soft:#e7f6f2;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0;font-size:14px;}
+  .container{max-width:1100px;margin:0 auto;padding:32px 40px 80px;}
+  header.title-block{border-bottom:3px solid var(--accent);padding-bottom:20px;margin-bottom:32px;}
+  h1{font-size:26px;margin:0 0 8px;font-weight:700;}
+  h1 .subtle{color:var(--muted);font-weight:400;font-size:18px;}
+  h2{font-size:20px;margin:40px 0 16px;padding:8px 12px;background:var(--accent-soft);border-left:4px solid var(--accent);}
+  h2.special{background:var(--teal-soft);border-left-color:var(--teal);}
+  h3{font-size:16px;margin:24px 0 10px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+  h4{font-size:14px;margin:16px 0 6px;color:var(--muted);}
+  blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 4px 4px 0;}
+  blockquote p{margin:6px 0;}
+  blockquote.note{background:var(--highlight);border-left-color:var(--yellow);}
+  blockquote.teal{background:var(--teal-soft);border-left-color:var(--teal);}
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;background:var(--surface);font-size:13px;}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top;}
+  th{background:#f6f8fa;font-weight:600;}
+  tr:nth-child(even) td{background:#fafbfc;}
+  code{font-family:"SF Mono",Consolas,Monaco,monospace;background:var(--code-bg);padding:1px 6px;border-radius:3px;font-size:12px;}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:14px 18px;overflow-x:auto;line-height:1.5;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+  ul,ol{padding-left:24px;}
+  li{margin:4px 0;}
+  .meta{color:var(--muted);font-size:13px;margin:8px 0 0;}
+  .meta strong{color:var(--text);}
+  .related{font-size:13px;color:var(--muted);margin-top:6px;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px;}
+  .badge-red{background:var(--red-bg);color:var(--red);}
+  .badge-yellow{background:var(--yellow-bg);color:var(--yellow);}
+  .badge-green{background:var(--green-bg);color:var(--green);}
+  .badge-pull{background:#e7f3ff;color:#0366d6;}
+  .badge-push{background:#fff0f6;color:#bf3989;}
+  .badge-ingest{background:var(--teal-soft);color:var(--teal);}
+  .row-emphasis{background:#fff8e6 !important;}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 22px;margin:16px 0 28px;font-size:13px;}
+  .toc strong{display:block;margin-bottom:8px;}
+  .toc ol{margin:0;padding-left:22px;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .section-summary{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 22px;margin:12px 0;}
+  .section-summary p{margin:4px 0;}
+  .key{color:var(--teal);font-weight:600;}
+  .three-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+  .pillar{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:14px;border-radius:4px;font-size:13px;}
+  .pillar.teal{border-top-color:var(--teal);}
+  .pillar-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+  hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  .check{color:var(--green);font-weight:700;}
+  .warn{color:var(--yellow);font-weight:700;}
+  .pin{color:var(--accent);font-weight:700;}
+  .callout-tbd{background:#fffbea;border:1px dashed var(--yellow);border-radius:4px;padding:12px 18px;margin:12px 0;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="title-block">
+  <h1>idea-e — 暗黙知の形式化 × 検索+生成 両どりエージェント<br><span class="subtle">Architecture Card（CD 再フレーミング・「形式化」を中心命題に）</span></h1>
+  <p class="meta"><strong>作成日</strong>: 2026-05-11 / <strong>ステータス</strong>: チーム review 用 draft（5/11 決定で本構成 / CD 原案 / 単独 C のいずれかを採択）</p>
+  <p class="related"><strong>関連</strong>: <a href="../../problem-statement.md">problem-statement.md</a> · <a href="./idea-e-tacit-knowledge.md">.md 版</a> · 兄弟カード: <a href="./idea-c-knowledge-archive.html">C</a> / <a href="./idea-d-domain-learning.html">D</a> / <a href="./idea-a-personnel-matching.html">A</a> / <a href="./idea-cd-integrated.html">CD</a></p>
+</header>
+
+<div class="toc">
+  <strong>目次</strong>
+  <ol>
+    <li><a href="#s0">30 秒サマリー</a></li>
+    <li><a href="#s1">As-Is → To-Be</a></li>
+    <li><a href="#s2">入出力インターフェース（I/O）</a> <span class="badge badge-ingest">本カード強化章</span></li>
+    <li><a href="#s3">Agent topology + 実装部位</a> <span class="badge badge-ingest">本カード強化章</span></li>
+    <li><a href="#s4">Azure サービス（具体 SKU）</a></li>
+    <li><a href="#s5">Tool / MCP</a></li>
+    <li><a href="#s6">擬似コーポレートシステム</a></li>
+    <li><a href="#s5b">スコープ削減ラダー（TBD）</a> <span class="badge badge-ingest">本カード強化章</span></li>
+    <li><a href="#s7">Corpus</a></li>
+    <li><a href="#s8">HITL surface</a></li>
+    <li><a href="#s9">Demo storyboard</a></li>
+    <li><a href="#s10">ビルドリスク + 工数試算</a></li>
+    <li><a href="#s11">Differentiation hook</a></li>
+    <li><a href="#s12">Open question / テンプレ review</a></li>
+  </ol>
+</div>
+
+<h2 id="s0">0. 30 秒サマリー</h2>
+<div class="section-summary">
+  <p>散在する案件知見・契約書・transcript・chat を <strong>「暗黙知が形式化された corpus」</strong> に集約し、<strong>同一 corpus から 2 出口</strong> で社員に届ける:</p>
+  <ul>
+    <li><span class="badge badge-pull">Pull 検索</span> 営業/PM が「過去にこの種の案件あった?」と自然文で聞ける。共有可と判断された範囲のみ surfaces</li>
+    <li><span class="badge badge-push">Push 朝刊</span> ジュニア層に毎朝、同じ corpus から個人化された朝刊カード（要約 / クイズ）を配信</li>
+  </ul>
+  <p><strong>核</strong>: <span class="key">「暗黙知の形式化」を agent + HITL の本業</span> とし、形式化された corpus を pull/push の両出口で再利用。Sotaro テーゼ（domain-specialty prevalence）の直接実装。</p>
+</div>
+
+<h2 id="s1">1. As-Is → To-Be</h2>
+<h3>As-Is</h3>
+<table>
+<thead><tr><th style="width:25%">段階</th><th style="width:45%">何が起きているか</th><th style="width:30%">痛み</th></tr></thead>
+<tbody>
+<tr><td>案件完了</td><td>成果物は SPO に積まれるだけ / 暗黙知は PM の頭の中</td><td>暗黙知が個人 silo に滞留</td></tr>
+<tr><td>新規提案</td><td>ex-PM への ad-hoc ping、属人探索</td><td>形式知化されていないので検索不能</td></tr>
+<tr><td>個人のドメイン学習</td><td>過去素材があるのに死蔵 / 業務外で動機続かない</td><td>暗黙知が次世代に伝わらない</td></tr>
+<tr class="row-emphasis"><td colspan="3"><strong>共通の根</strong>: 案件知見は「人に紐づいた暗黙知」のまま、組織で形式化されていない</td></tr>
+</tbody>
+</table>
+<h3>To-Be</h3>
+<table>
+<thead><tr><th style="width:25%">段階</th><th style="width:45%">何が起きるか</th><th style="width:30%">解決される痛み</th></tr></thead>
+<tbody>
+<tr><td>案件完了</td><td>PM が agent と一緒に <strong>句単位で「形式化 + 共有可否」判断</strong> → corpus 登録</td><td>暗黙知が形式知化される</td></tr>
+<tr><td>新規提案</td><td>営業/PM が自然文で検索 → 形式化された corpus から共有可範囲のみ surfaces</td><td>属人探索 解消</td></tr>
+<tr><td>個人の朝</td><td>形式化済 corpus を素材に、個人化された brief が毎朝届く</td><td>業務内で暗黙知が次世代に伝わる</td></tr>
+</tbody>
+</table>
+<h3>埋まるギャップ（3 点）</h3>
+<div class="three-pillars">
+  <div class="pillar teal"><div class="pillar-title">① 暗黙知の形式化</div>agent の本業（kill switch ではなく句単位判定）</div>
+  <div class="pillar teal"><div class="pillar-title">② 1 corpus × 2 出口</div>pull 検索 / push 朝刊</div>
+  <div class="pillar teal"><div class="pillar-title">③ NDA-safe by design</div>HITL の共有可否判定が両出口に cascade</div>
+</div>
+
+<h2 id="s2" class="special">2. 入出力インターフェース（I/O）— 本カードの独立章</h2>
+
+<h3>モード一覧</h3>
+<table>
+<thead><tr><th>モード</th><th>起点</th><th>入力</th><th>出力</th><th>受け取り画面</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-ingest">Ingest</span></td><td>PM が案件完了時に投入</td><td>文書 (pdf/docx/transcript/chat)</td><td>clause table + 共有可否ラベル</td><td>HITL レビュー UI</td></tr>
+<tr><td><span class="badge badge-pull">Pull (検索)</span></td><td>営業/PM の任意タイミング</td><td>自然文クエリ「XX のような案件あった?」</td><td>案件カード×N + 引用元 + 共有可フラグ</td><td>検索 SPA</td></tr>
+<tr><td><span class="badge badge-push">Push (朝刊)</span></td><td>Logic Apps 毎朝 06:30 trigger</td><td>(なし、profile 自動参照)</td><td>個人化 brief カード（要約 / クイズ）</td><td>Web UI 「本日の朝刊」タブ</td></tr>
+</tbody>
+</table>
+
+<h3>画面イメージ（ASCIIモック）</h3>
+<h4>Pull — 検索 SPA</h4>
+<pre>┌─────────────────────────────────────────────────────────┐
+│ 🔍 過去案件検索                              [maumau ▼] │
+├─────────────────────────────────────────────────────────┤
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ 製造業の SAP 導入後の運用保守、何かあった?           │ │
+│ └─────────────────────────────────────────────────────┘ │
+│                                                         │
+│ ▼ 過去案件 3 件（共有可範囲のみ）                       │
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ [製造業] 大手化学メーカー SAP S/4 運用 (2024)        │ │
+│ │ 課題: 月次決算遅延 → AI ベース監視で改善             │ │
+│ │ 形式化済 clause: 12件 / 共有可: 9件                  │ │
+│ │ 出典: clause #04, #07, #11  [詳細→]                  │ │
+│ └─────────────────────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ [製造業] 自動車部品 ERP 移行 (2025) …                │ │
+│ └─────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘</pre>
+
+<h4>Push — 朝刊カード</h4>
+<pre>┌──────────────────────────────────────────┐
+│ 🌅 本日の朝刊  2026-06-01 (月)            │
+├──────────────────────────────────────────┤
+│ あなたの関心: 製造業 SAP / 業務監査       │
+│                                          │
+│ 📚 今日の 1 case (3 分)                  │
+│   "大手化学メーカー 月次決算遅延 案件"    │
+│   → 要点: ❶ 原因の切り分け ❷ AI監視導入  │
+│   出典: clause #04, #07 (形式化済)        │
+│                                          │
+│ 🎯 今日のクイズ                          │
+│   Q. SAP 月次決算が 3 日遅延する典型原因? │
+│     a) マスタ重複  b) インフラ          │
+│     c) 業務プロセス  d) 全部             │
+│   [回答する]                             │
+└──────────────────────────────────────────┘</pre>
+
+<h4>Ingest — HITL clause table</h4>
+<pre>┌─────────────────────────────────────────────────────────────┐
+│ 案件: 大手化学メーカー SAP S/4 運用 (PJ-2024-0042)           │
+│ Status: AI 判定済 / 承認待ち                                  │
+├──────┬─────────────────────────┬───────────┬──────────────┤
+│ #   │ Clause 抜粋              │ AI 判定   │ Action        │
+├──────┼─────────────────────────┼───────────┼──────────────┤
+│ 01  │ "本契約はXX社…"          │ ❌ 共有不可 │ [承認][修正] │
+│ 04  │ "月次決算プロセスは…"    │ ✅ 共有可  │ [承認][修正] │
+│ 07  │ "原因分析の手法…"        │ ✅ 共有可  │ [承認][修正] │
+│ 11  │ "推奨アーキは AI 監視…"  │ ⚠️ 要redact│ [編集][承認] │
+└──────┴─────────────────────────┴───────────┴──────────────┘</pre>
+
+<h3>各画面の最小機能（MVP 範囲）</h3>
+<table>
+<thead><tr><th>画面</th><th>MVP 必達</th><th>nice-to-have</th></tr></thead>
+<tbody>
+<tr><td>検索 SPA</td><td>自然文入力 + 結果カード + 引用</td><td>絞り込み filter / facet</td></tr>
+<tr><td>朝刊 Web UI</td><td>当日カード表示 + クイズ + 解答記録</td><td>連続日数 streak / 履歴閲覧</td></tr>
+<tr><td>HITL レビュー</td><td>clause table + 個別承認/修正</td><td>bulk 承認 / 差分比較</td></tr>
+</tbody>
+</table>
+
+<h2 id="s3" class="special">3. Agent topology + 実装部位</h2>
+<pre>                ┌────────────────────────┐
+                │   Orchestrator agent    │  ← Container Apps / FastAPI
+                │   (Semantic Kernel)     │
+                └────────────────────────┘
+                  │           │           │
+        Ingest path    Pull path     Push path
+                  │           │           │
+                  ▼           ▼           ▼
+        ┌──────────────┐ ┌─────────┐ ┌──────────┐
+        │ Ingest Agent │ │Pull     │ │Push      │
+        │ + Contract   │ │Agent    │ │Agent     │
+        │ Analyzer     │ │(検索    │ │(朝刊     │
+        │ (HITL)       │ │ +生成)  │ │ 生成)    │
+        └──────────────┘ └─────────┘ └──────────┘
+              │              │             │
+              ▼              ▼             ▼
+        ┌────────────────────────────────────┐
+        │ Shared AI Search index             │
+        │  knowledge  (chunk + shareability) │
+        │  profile    (user, domain_weights) │
+        └────────────────────────────────────┘</pre>
+
+<h3>実装部位（agent ごとに「どこに何を作るか」）</h3>
+<table>
+<thead><tr><th>Agent</th><th>実装場所</th><th>主要処理</th><th>使う Azure / ライブラリ</th></tr></thead>
+<tbody>
+<tr><td><strong>Orchestrator</strong></td><td><code>app/orchestrator/</code> (FastAPI ルート群)</td><td>request 振り分け / 状態管理</td><td>Semantic Kernel <code>Kernel</code>, Container Apps</td></tr>
+<tr><td><strong>Ingest + Contract Analyzer</strong></td><td><code>app/agents/ingest.py</code></td><td>DI で OCR → clause 分割 → GPT-4.1 で「形式化 + 共有可否」判定 → HITL 経て index 登録</td><td>Document Intelligence S0, AOAI GPT-4.1, Cosmos (HITL 状態)</td></tr>
+<tr><td><strong>Pull (検索+生成)</strong></td><td><code>app/agents/pull.py</code></td><td>semantic search (shareable_only filter) → 上位 N chunk を context に GPT-4.1 で回答合成 → 引用 link</td><td>AI Search Basic, AOAI GPT-4.1</td></tr>
+<tr><td><strong>Push (朝刊生成)</strong></td><td><code>app/agents/push.py</code></td><td>profile から興味 domain 取得 → 直近 corpus 差分検索 → mini で要約 + クイズ生成</td><td>AOAI GPT-4.1 mini, Logic Apps trigger</td></tr>
+<tr><td><strong>HITL UI</strong></td><td><code>web/hitl/</code> (React or 静的 + fetch)</td><td>clause table 表示 / 承認 fetch POST</td><td>Container Apps 上の SPA</td></tr>
+<tr><td><strong>検索 SPA</strong></td><td><code>web/search/</code></td><td>自然文入力 → <code>/api/pull</code> POST → 結果描画</td><td>同上</td></tr>
+<tr><td><strong>朝刊 Web UI</strong></td><td><code>web/morning/</code></td><td><code>/api/push/today</code> GET → カード描画 / クイズ回答 POST</td><td>同上</td></tr>
+</tbody>
+</table>
+
+<h3>「agent である必要」の論証</h3>
+<ul>
+<li><strong>(a) multi-step</strong>: ingest = OCR → 分割 → 判定 → HITL → 登録 の 5 step</li>
+<li><strong>(b) function calling</strong>: pull は <code>search_knowledge</code>, <code>cite_sources</code> 等を function として呼ぶ</li>
+<li><strong>(c) stateful</strong>: HITL の承認状態 / 個人の learning profile を Cosmos に保持</li>
+<li><strong>(d) MCP 相当の tool 群</strong>: Document Intelligence / AI Search / AOAI を統一 wrapper で</li>
+</ul>
+
+<h2 id="s4">4. Azure サービス（具体 SKU）</h2>
+<table>
+<thead><tr><th>レイヤ</th><th>サービス</th><th>SKU</th><th>月額（概算）</th><th>採用根拠</th></tr></thead>
+<tbody>
+<tr><td>文書解析</td><td>Azure AI Document Intelligence</td><td>Standard S0</td><td>〜$15</td><td>ingest 用 OCR + layout</td></tr>
+<tr><td>LLM</td><td>Azure OpenAI</td><td>GPT-4.1 + mini</td><td>〜$40</td><td>pull / ingest = 4.1, push = mini</td></tr>
+<tr class="row-emphasis"><td>検索</td><td>Azure AI Search</td><td>Basic</td><td>〜$75</td><td>1 service で 2 index</td></tr>
+<tr><td>ホスト</td><td>Azure Container Apps</td><td>Consumption</td><td>〜$15</td><td>agent + 3 SPA</td></tr>
+<tr><td>ストレージ</td><td>Blob</td><td>Hot LRS</td><td>〜$5</td><td>corpus 原本</td></tr>
+<tr><td>状態</td><td>Cosmos DB</td><td>Serverless</td><td>〜$8</td><td>HITL / profile</td></tr>
+<tr><td>スケジューリング</td><td>Logic Apps</td><td>Consumption</td><td>〜$3</td><td>毎朝 push trigger</td></tr>
+<tr><td>観測</td><td>App Insights</td><td>Basic</td><td>〜$5</td><td>scaffold 済</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>included</td><td>$0</td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+<p><strong>6週合計見込み: 〜$166 / $200</strong>（バッファ $34）。CD 統合より $7 安いのは learning_profile を knowledge index に統合し index 数を 3→2 に削減できるため。</p>
+
+<h2 id="s5">5. Tool / MCP インベントリ（コアのみ）</h2>
+<table>
+<thead><tr><th>Tool</th><th>用途</th><th>利用 agent</th></tr></thead>
+<tbody>
+<tr><td><code>document_intelligence.analyze</code></td><td>OCR + layout</td><td>Ingest</td></tr>
+<tr><td><code>aoai.classify_clause</code></td><td>句単位の形式化 + 共有可否</td><td>Ingest</td></tr>
+<tr><td><code>ai_search.upsert</code></td><td>corpus index 更新</td><td>Ingest</td></tr>
+<tr><td><code>ai_search.query_with_share_filter</code></td><td>shareable_only=true 必須</td><td>Pull, Push</td></tr>
+<tr><td><code>aoai.synthesize_answer</code></td><td>検索結果 → 自然文回答</td><td>Pull</td></tr>
+<tr><td><code>aoai.generate_brief</code></td><td>個人化朝刊生成</td><td>Push</td></tr>
+<tr><td><code>cosmos.hitl_log</code></td><td>承認履歴</td><td>Ingest, Push (反応)</td></tr>
+<tr><td><code>logicapps.daily_trigger</code></td><td>毎朝 06:30</td><td>Push</td></tr>
+</tbody>
+</table>
+
+<h2 id="s6">6. 擬似コーポレートシステム</h2>
+<table>
+<thead><tr><th>実環境</th><th>擬似実装</th><th>lift</th></tr></thead>
+<tbody>
+<tr><td>SharePoint</td><td>Blob + Web UI mock</td><td>中</td></tr>
+<tr><td>契約書 repo</td><td>Blob + 同 UI 内タブ</td><td>小</td></tr>
+<tr><td>transcript / chat</td><td>Blob + Cosmos</td><td>小</td></tr>
+<tr><td>営業/PM 検索画面</td><td>検索 SPA</td><td>中</td></tr>
+<tr><td>朝刊配信</td><td>Web UI タブ + Logic Apps</td><td>小</td></tr>
+<tr><td>HITL レビュー UI</td><td>SPA</td><td>中</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>小</td></tr>
+</tbody>
+</table>
+<p><strong>統合 UI shell</strong> で 3 画面（検索 / 朝刊 / HITL）を 1 つの React app として実装し lift を抑える。</p>
+
+<h2 id="s5b" class="special">5b. スコープ削減ラダー — <span style="color:var(--yellow)">優先順位 TBD（5/11 議論項目）</span></h2>
+<div class="callout-tbd">
+  <strong>⚠️ 本セクションは候補列挙のみ。優先順位は決めない</strong> — 5/11 のチーム議論に投げ、Day 21 gate で予実差を見て切る順を確定する。事前に <strong>「絶対切らない 2 つ」と「最後に残す 2 つ」</strong> を合意することがゴール。
+</div>
+<table>
+<thead><tr><th style="width:8%">Tier</th><th style="width:42%">候補</th><th style="width:50%">切った場合の影響</th></tr></thead>
+<tbody>
+<tr><td><strong>A</strong></td><td>push 個人化ループ → 静的 profile</td><td>朝刊は配信されるが個人化は demo 演出のみ</td></tr>
+<tr><td><strong>B</strong></td><td>push 自体を週次 batch</td><td>毎朝感を失う / pitch hook 弱体化</td></tr>
+<tr><td><strong>C</strong></td><td>HITL を句単位 → 文書単位に粗化</td><td>「暗黙知の形式化」の解像度低下、差別化弱体化</td></tr>
+<tr><td><strong>D</strong></td><td>ingest 自動化を半手動キュレーション</td><td>デモ前に corpus を手作業で投入 / agent 1 つ削減</td></tr>
+<tr><td><strong>E</strong></td><td>pull の引用提示を簡略化</td><td>「形式化された knowledge」の信頼感低下</td></tr>
+<tr><td><strong>F</strong></td><td>クイズを削除し朝刊は要約のみ</td><td>push の interactivity 消失</td></tr>
+</tbody>
+</table>
+
+<h2 id="s7">7. Corpus</h2>
+<table>
+<thead><tr><th>種類</th><th>量</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>SPO doc（合成）</td><td>50-80 件</td><td>ingest 対象 / pull 検索 / push 素材</td></tr>
+<tr><td>契約書（合成）</td><td>15-20 件</td><td>共有可否判定の検証</td></tr>
+<tr><td>会議 transcript（合成）</td><td>20-30 件</td><td>ingest 対象 / 暗黙知抽出</td></tr>
+<tr><td>Teams/Slack chat（合成）</td><td>100+ messages</td><td>ingest 対象</td></tr>
+</tbody>
+</table>
+<h3>AI Search index（2 本に削減）</h3>
+<table>
+<thead><tr><th>index</th><th>内容</th><th>主要 metadata</th></tr></thead>
+<tbody>
+<tr><td><code>knowledge</code></td><td>doc/契約書/transcript/chat chunk</td><td><code>domain</code>, <code>case_type</code>, <code>shareability</code>, <code>contract_id</code></td></tr>
+<tr><td><code>profile</code></td><td>user state</td><td><code>user_id</code>, <code>domain_weights</code>, <code>last_seen</code></td></tr>
+</tbody>
+</table>
+<p><code>shareability</code> が 1 つの metadata になり、pull/push 両出口で同じ filter 式が使える。</p>
+
+<h2 id="s8">8. HITL surface</h2>
+<table>
+<thead><tr><th>ステップ</th><th>UI</th><th>人間がやること</th></tr></thead>
+<tbody>
+<tr><td>契約書 clause 判定</td><td>clause-by-clause table</td><td>承認 / 修正 / 拒否</td></tr>
+<tr><td>知見エントリ pre-publish</td><td>summary + tags</td><td>承認</td></tr>
+<tr><td>朝刊クイズ回答</td><td>4 択 + 自己評価</td><td>解答（profile 更新の signal）</td></tr>
+</tbody>
+</table>
+<p><strong>MVP は ingest 側 HITL を主軸</strong>。push 側の profile 反映は demo 演出（実線は引かない）。</p>
+
+<h2 id="s9">9. Demo storyboard（3 分以内）</h2>
+<table>
+<thead><tr><th style="width:14%">時刻</th><th style="width:30%">シーン</th><th>何を見せる</th></tr></thead>
+<tbody>
+<tr><td>0:00-0:30</td><td>PM 視点: 案件完了</td><td>Ingest agent 起動 → clause 自動判定</td></tr>
+<tr><td>0:30-1:00</td><td>HITL レビュー</td><td>clause table で 1 件 修正 → 承認 → corpus 登録</td></tr>
+<tr class="row-emphasis"><td>1:00-1:30</td><td><strong>場面転換 1</strong>: 6 ヶ月後の別営業の検索</td><td>自然文 → 結果カード surfaces</td></tr>
+<tr class="row-emphasis"><td>1:30-2:00</td><td><strong>場面転換 2</strong>: ジュニアの朝刊 Web UI</td><td>同じ案件から朝刊 + クイズ</td></tr>
+<tr><td>2:00-2:30</td><td>ジュニアが解答 → 解説に「clause #07 で形式化済」が出る</td><td><strong>形式化の本業性を明示</strong></td></tr>
+<tr><td>2:30-3:00</td><td>admin 視点: lifecycle ビュー</td><td>暗黙知 → 形式化 → 2 出口 を 1 枚で訴求</td></tr>
+</tbody>
+</table>
+<blockquote class="note"><strong>判定基準</strong>: 観客が「暗黙知の形式化が本業で、検索/朝刊は出口」と即理解できるか。</blockquote>
+
+<h2 id="s10">10. 6週ビルドリスク（R/Y/G）+ 工数試算</h2>
+<h3>リスク</h3>
+<table>
+<thead><tr><th>レイヤ</th><th style="width:10%">リスク</th><th>理由 / 緩和</th></tr></thead>
+<tbody>
+<tr class="row-emphasis"><td><strong>合成 corpus 量（4 種類）</strong></td><td><span class="badge badge-red">🔴 R</span></td><td>Day 7 までに 50% 整備 / daichi リード</td></tr>
+<tr><td>Ingest 句単位判定の精度</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>判定 prompt の試行錯誤、Day 14 まで反復</td></tr>
+<tr><td>Pull の回答品質</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>引用 link 必須 / Day 21 試走</td></tr>
+<tr><td>Push 個人化（simplified）</td><td><span class="badge badge-green">🟢 G</span></td><td>静的 profile 前提なら容易</td></tr>
+<tr><td>統合 UI shell</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>3 画面 1 app、Day 14 までに骨格</td></tr>
+<tr><td>予算 ($166 / $200)</td><td><span class="badge badge-green">🟢 G</span></td><td>バッファ $34、現実的</td></tr>
+<tr><td>Logic Apps daily trigger</td><td><span class="badge badge-green">🟢 G</span></td><td>managed</td></tr>
+<tr><td>認証 / 観測</td><td><span class="badge badge-green">🟢 G</span></td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+
+<h3>工数試算（リサーチ基準: 5名 × 12h/週 × 6週 = 360h、純実装 200-220h）</h3>
+<table>
+<thead><tr><th>部位</th><th>概算 h</th><th>担当目安</th></tr></thead>
+<tbody>
+<tr><td>合成 corpus 整備</td><td>40-50h</td><td>daichi リード + 1 名</td></tr>
+<tr><td>Ingest + Contract Analyzer</td><td>50-60h</td><td>1 名 専任</td></tr>
+<tr><td>Pull agent + 検索 SPA</td><td>40-50h</td><td>1 名</td></tr>
+<tr><td>Push agent + 朝刊 UI</td><td>25-35h</td><td>1 名（simplified）</td></tr>
+<tr><td>HITL UI + 統合 shell</td><td>25-35h</td><td>UI 担当</td></tr>
+<tr><td>Demo / 動画収録</td><td>20-30h</td><td>全員、最終週</td></tr>
+<tr class="row-emphasis"><td><strong>合計</strong></td><td><strong>200-260h</strong></td><td>バッファ 微小</td></tr>
+</tbody>
+</table>
+<p>→ <strong>Tier A 削減</strong>（push 個人化ループ簡略化）を <strong>既に織り込み</strong> で 200-220h 圏。さらに切るなら Tier C/D。</p>
+
+<h2 id="s11">11. Differentiation hook</h2>
+<blockquote class="teal">
+<p><strong>「暗黙知の形式化を本業にした agent」</strong></p>
+<p>他チームは「検索 bot」「Q&A bot」を出してくる可能性が高い。本案は <strong>agent の本業を "暗黙知 → 形式知の変換"</strong> に置く（kill switch 判定ではなく句単位判断 + HITL）。形式化済 corpus が pull/push の両出口に流れるのは結果。</p>
+<p>Sotaro テーゼ（domain-specialty prevalence）に対し、<strong>「ドメイン暗黙知を形式化する agent こそが差別化資産」</strong> という構造的応答。</p>
+</blockquote>
+<h3>主張可能な独自性</h3>
+<ol>
+<li><strong>形式化が本業</strong>: 検索/生成は出口、形式化が agent 価値</li>
+<li><strong>NDA-safe by design</strong>: 句単位判定が両出口に cascade</li>
+<li><strong>1 corpus × 2 出口</strong>: lifecycle 訴求</li>
+</ol>
+
+<h2 id="s12">12. Open question / テンプレ review</h2>
+<h3>Open question</h3>
+<ol>
+<li>6週 + $200 で 3 出口（ingest / pull / push）を回し切れるか → Day 7/14/21/28 gate</li>
+<li>push 簡略化（静的 profile）で「個人化」を 30 秒で説得力ある形で見せられるか</li>
+<li>「暗黙知の形式化」を <strong>30 秒で観客に届ける言語化</strong> が必要（コピー検討）</li>
+<li>CD 原案との pitch 強度比較 — 「lifecycle 訴求 vs 形式化訴求」どちらが審査員に刺さるか</li>
+</ol>
+<h3>テンプレ review への所見</h3>
+<ul>
+<li><span class="check">✅</span> <strong>§2 I/O 独立章は機能した</strong>: 実装視点が明示できる、他カードにも逆輸入可</li>
+<li><span class="check">✅</span> <strong>§3 実装部位の表</strong>: 「どのファイル/サービスで作るか」が one-shot で把握可、強く推奨</li>
+<li><span class="pin">📌</span> <strong>§5b スコープ削減ラダー</strong>: 優先 TBD のまま記載でも価値あり、5/11 議論の足場になる</li>
+<li><span class="pin">📌</span> <strong>§9 工数試算 内訳</strong>: 合計だけでなく h ベース内訳があると判断材料として強い</li>
+<li><span class="warn">⚠️</span> A/C/D/CD カードへの retro-fit: 最小は §3 に「実装部位」列を追加すれば差分は埋まる</li>
+</ul>
+
+</div>
+</body>
+</html>

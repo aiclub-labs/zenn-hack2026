@@ -22,6 +22,7 @@ export const TurnResponse = z.object({
   citations: z.array(CitationRef),
   schema_update_banner: SchemaUpdateBanner.nullable().optional(),
   gap_detected: z.boolean(),
+  gap_event_id: z.string().nullable().optional(),
 });
 export type TurnResponse = z.infer<typeof TurnResponse>;
 

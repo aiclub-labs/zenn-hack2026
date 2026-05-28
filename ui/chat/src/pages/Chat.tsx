@@ -16,6 +16,7 @@ import { RedactToggle } from "../components/RedactToggle";
 import { ChatMessage, SchemaUpdateBanner, TenantCtx } from "../types";
 import { postTurn } from "../api/turn";
 import { retrieve } from "../api/retrieval";
+import { startHearout } from "../api/hearout";
 import { useTenantCtx } from "../shell/TenantContext";
 
 const useStyles = makeStyles({
@@ -72,6 +73,10 @@ export function ChatPage() {
     { schema_field_id: string; alt_count: number }[]
   >([]);
   const [hearoutOpen, setHearoutOpen] = useState(false);
+  const [hearoutSessionId, setHearoutSessionId] = useState<string | null>(null);
+  const [hearoutInitialQuestion, setHearoutInitialQuestion] = useState<string>(
+    "この事象について 5W1H で教えてください。まず who: 誰が関わりましたか?",
+  );
   const [busy, setBusy] = useState(false);
 
   const send = useCallback(async () => {
@@ -97,7 +102,21 @@ export function ChatPage() {
           selfCriticScore: res.self_critic_score,
         },
       ]);
-      if (res.gap_detected) setHearoutOpen(true);
+      if (res.gap_detected && res.gap_event_id) {
+        try {
+          const ho = await startHearout({
+            gap_event_id: res.gap_event_id,
+            user_id: ctx.user_id,
+            sector: ctx.sector,
+            unit: ctx.unit,
+          });
+          setHearoutSessionId(ho.session_id);
+          if (ho.next_question) setHearoutInitialQuestion(ho.next_question);
+          setHearoutOpen(true);
+        } catch (err) {
+          console.error("hearout start failed", err);
+        }
+      }
       setInput("");
     } finally {
       setBusy(false);
@@ -143,11 +162,14 @@ export function ChatPage() {
         </div>
       </div>
       <SchemaHistorySidebar sector={ctx.sector} unit={ctx.unit} />
-      {hearoutOpen && (
+      {hearoutOpen && hearoutSessionId && (
         <HearoutModal
-          sessionId={ctx.session_id}
-          initialQuestion="この事象について 5W1H で教えてください。まず who: 誰が関わりましたか?"
-          onClose={() => setHearoutOpen(false)}
+          sessionId={hearoutSessionId}
+          initialQuestion={hearoutInitialQuestion}
+          onClose={() => {
+            setHearoutOpen(false);
+            setHearoutSessionId(null);
+          }}
         />
       )}
     </div>

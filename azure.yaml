@@ -17,3 +17,27 @@ services:
     host: containerapp
     docker:
       path: Dockerfile
+  web-chat:
+    project: ./ui/chat
+    language: ts
+    host: containerapp
+    docker:
+      path: Dockerfile
+  web-admin:
+    project: ./ui/admin
+    language: ts
+    host: containerapp
+    docker:
+      path: Dockerfile
+  web-review:
+    project: ./ui/review
+    language: ts
+    host: containerapp
+    docker:
+      path: Dockerfile
+  agent-runner:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile

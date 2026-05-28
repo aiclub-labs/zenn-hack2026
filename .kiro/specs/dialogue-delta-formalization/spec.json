@@ -1,24 +1,32 @@
 {
   "feature_name": "dialogue-delta-formalization",
   "created_at": "2026-05-12T00:00:00+09:00",
-  "updated_at": "2026-05-22T14:30:00+09:00",
   "language": "ja",
-  "phase": "requirements-generated",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": false
+      "approved": true,
+      "approved_by": ["Sotaro_Suzuki (2026-05-25 11:01 hack-pm)", "ダイチナカムラ (2026-05-25 11:37 hack-pm)"],
+      "approved_at": "2026-05-25T11:37:00+09:00",
+      "review_notes": "Sotaro: want/must 混在は spec-driven 改修サイクルで吸収。Daichi: schema 更新通知 3項目を R2 に AC#5-#7 として追記済 (5/24 指摘反映)"
     },
     "design": {
       "generated": true,
-      "approved": false,
-      "stale": true,
-      "stale_reason": "requirements を persona-driven v2 に再生成したため、design.md は v2 要件 (B5/C4 独立、Persona A の JTBD、R-06 介入 UX 等) との整合性確認が必要"
+      "approved": true,
+      "approved_by": ["Mao (2026-05-25 auto-fast-track -y)"],
+      "approved_at": "2026-05-25T13:20:00+09:00",
+      "stale": false,
+      "review_notes": "v2 requirements (Sotaro/Daichi 承認版) に対する design 再生成。MVP 境界表 (§1) で Sotaro want/must caveat を吸収、Notification Dispatcher + Schema Revision Gate で Daichi R2 AC#5-#7 を実装。-y fast-track 承認"
     },
     "tasks": {
-      "generated": false,
-      "approved": false
+      "generated": true,
+      "approved": true,
+      "approved_by": ["Mao (2026-05-25 auto-fast-track -y)"],
+      "approved_at": "2026-05-25T13:25:00+09:00",
+      "review_notes": "M2-M8 = MVP, M9-M12 = Follow-up backlog (design §1 表)。Notification Dispatcher (M4) は Daichi review R2 AC#5-#7 中核。-y fast-track 承認"
     }
   },
-  "ready_for_implementation": false
+  "phase": "tasks-generated",
+  "updated_at": "2026-05-25T13:25:00+09:00",
+  "ready_for_implementation": true
 }

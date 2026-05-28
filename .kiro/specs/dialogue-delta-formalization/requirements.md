@@ -140,6 +140,9 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 2. If admin が `is_active = false` に設定する, then the system shall 次 turn から Delta Detector の照合対象から自動的に除外し、reject 率指標を停止状態として更新する
 3. The system shall 各 schema field の reject 率 / 検知回数を Admin UI に表示し、過剰検知の判定材料を提供する
 4. When admin が is_active 状態を再度切替える, the system shall 切替時刻と理由（任意入力）を `schema_audit_log` に記録する
+5. When schema field が追加 / 編集 / 無効化される, the system shall 該当マスの業務担当者（Persona B）に対し通知（Discord/Teams webhook 等）を**配信し、認識ズレによるヒアリング過剰の発生を抑制**する（Daichi review 5/24: 「スキーマ更新が業務側に通知されず認識ズレ → ヒアリング過剰 → 業務離脱」リスク対応）
+6. The Admin UI shall **schema 変更履歴**（revision_id, 変更種別, 差分, 変更者, 時刻, 理由）を**業務ユーザー向けにも可視化**する read-only view を提供する（業務側 self-serve で「いま何が変わったか」を確認可能にする）
+7. When Delta Detector がヒアリング起動を判定する直前, the system shall 当該対話セッションが保持する `schema_revision_seen_at` と最新 `schema_revision_id` を照合し、**未確認の schema 変更が存在する場合は通知 banner を提示**してから検出ループに入る（最新スキーマ確認済みフラグ）
 
 ### Requirement 3: 横展開（新マス追加）
 

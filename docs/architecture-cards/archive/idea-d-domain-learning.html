@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新案D — 毎朝のドメイン学習エージェント | Architecture Card</title>
+<style>
+  :root{--bg:#fafafa;--surface:#fff;--border:#e1e4e8;--text:#24292e;--muted:#6a737d;--accent:#0366d6;--accent-soft:#f1f8ff;--highlight:#fff8c5;--red:#d73a49;--yellow:#d4a017;--green:#28a745;--red-bg:#ffeef0;--yellow-bg:#fff8e6;--green-bg:#e6ffed;--code-bg:#f6f8fa;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0;font-size:14px;}
+  .container{max-width:1100px;margin:0 auto;padding:32px 40px 80px;}
+  header.title-block{border-bottom:3px solid var(--accent);padding-bottom:20px;margin-bottom:32px;}
+  h1{font-size:26px;margin:0 0 8px;font-weight:700;}
+  h1 .subtle{color:var(--muted);font-weight:400;font-size:18px;}
+  h2{font-size:20px;margin:40px 0 16px;padding:8px 12px;background:var(--accent-soft);border-left:4px solid var(--accent);}
+  h3{font-size:16px;margin:24px 0 10px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+  blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 4px 4px 0;}
+  blockquote p{margin:6px 0;}
+  blockquote.note{background:var(--highlight);border-left-color:var(--yellow);}
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;background:var(--surface);font-size:13px;}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top;}
+  th{background:#f6f8fa;font-weight:600;}
+  tr:nth-child(even) td{background:#fafbfc;}
+  code{font-family:"SF Mono",Consolas,Monaco,monospace;background:var(--code-bg);padding:1px 6px;border-radius:3px;font-size:12px;}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:14px 18px;overflow-x:auto;line-height:1.5;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+  ul,ol{padding-left:24px;}
+  li{margin:4px 0;}
+  .meta{color:var(--muted);font-size:13px;margin:8px 0 0;}
+  .meta strong{color:var(--text);}
+  .related{font-size:13px;color:var(--muted);margin-top:6px;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px;}
+  .badge-red{background:var(--red-bg);color:var(--red);}
+  .badge-yellow{background:var(--yellow-bg);color:var(--yellow);}
+  .badge-green{background:var(--green-bg);color:var(--green);}
+  .row-emphasis{background:#fff8e6 !important;}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 22px;margin:16px 0 28px;font-size:13px;}
+  .toc strong{display:block;margin-bottom:8px;}
+  .toc ol{margin:0;padding-left:22px;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .section-summary{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 22px;margin:12px 0;}
+  .section-summary p{margin:4px 0;}
+  .key{color:var(--accent);font-weight:600;}
+  .three-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+  .pillar{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:14px;border-radius:4px;font-size:13px;}
+  .pillar-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+  hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  .check{color:var(--green);font-weight:700;}
+  .warn{color:var(--yellow);font-weight:700;}
+  .pin{color:var(--accent);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="title-block">
+  <h1>新案D — 毎朝のドメイン学習エージェント<br><span class="subtle">Architecture Card（Sotaro 提案・横串前提の最直接 instantiation・drop 不可）</span></h1>
+  <p class="meta"><strong>作成日</strong>: 2026-05-11 / <strong>ステータス</strong>: チーム review 用 draft</p>
+  <p class="related"><strong>関連</strong>: <a href="../../problem-statement.md">problem-statement.md</a> · <a href="./idea-d-domain-learning.md">.md 版</a> · 兄弟カード: <a href="./idea-c-knowledge-archive.html">C</a> / <a href="./idea-a-personnel-matching.html">A</a> / <a href="./idea-cd-integrated.html">C+D</a></p>
+</header>
+
+<div class="toc">
+  <strong>目次</strong>
+  <ol>
+    <li><a href="#s0">30 秒サマリー</a></li>
+    <li><a href="#s1">As-Is → To-Be</a></li>
+    <li><a href="#s2">Azure サービス（具体 SKU）</a></li>
+    <li><a href="#s3">Agent topology</a></li>
+    <li><a href="#s4">Tool / MCP インベントリ</a></li>
+    <li><a href="#s5">擬似コーポレートシステム</a></li>
+    <li><a href="#s6">Corpus</a></li>
+    <li><a href="#s7">HITL surface</a></li>
+    <li><a href="#s8">Demo storyboard（3 分以内）</a></li>
+    <li><a href="#s9">6週ビルドリスク（R/Y/G）</a></li>
+    <li><a href="#s10">Differentiation hook</a></li>
+    <li><a href="#s11">Open question</a></li>
+    <li><a href="#s12">テンプレ妥当性 review への問い</a></li>
+  </ol>
+</div>
+
+<h2 id="s0">0. 30 秒サマリー</h2>
+<div class="section-summary">
+  <p>agent が過去 <span class="key">SharePoint / 会議 transcript / chat</span> を漁り、ドメイン × クライアント軸で <strong>毎朝 push 配信</strong>（問題出題 or 要約）。ユーザーの解答 / 反応をログし、苦手・関心領域を個人プロファイルに更新 → 翌朝の配信に反映する <strong>個人化ループ</strong>。</p>
+  <p><strong>核</strong>: <span class="key">KPMG 固有 corpus × 個人化学習プロファイル × 毎朝 push</span> の 3 点セット。push 型 + 個人化は他社（McKinsey Lilli 等の pull 型 RAG）との差別化軸。</p>
+</div>
+
+<h2 id="s1">1. As-Is → To-Be</h2>
+<h3>As-Is</h3>
+<table>
+<thead><tr><th style="width:20%">段階</th><th style="width:50%">何が起きているか</th><th style="width:30%">痛み</th></tr></thead>
+<tbody>
+<tr><td>ドメイン学習意識</td><td>「ドメイン理解を継続せよ」というメッセージは社内に存在</td><td>動機はあるが習慣化されない</td></tr>
+<tr><td>学習素材アクセス</td><td>過去 SPO / transcript / chat は分散・死蔵</td><td>隙間時間に開く動機がない / 検索コスト高</td></tr>
+<tr><td>学習継続</td><td>場当たり的 / 単発</td><td>蓄積されない / 個人 fit に欠ける</td></tr>
+<tr><td>結果</td><td>コンサルのドメイン特化が個人差激しく organic 任せ</td><td>提案精度 / クライアント信頼に直結</td></tr>
+</tbody>
+</table>
+<h3>To-Be</h3>
+<table>
+<thead><tr><th style="width:20%">段階</th><th style="width:50%">何が起きるか</th><th style="width:30%">解決される痛み</th></tr></thead>
+<tbody>
+<tr><td>ドメイン学習意識</td><td>毎朝 5-10 分の push で agent が "本日の教材" を届ける</td><td>habit loop 形成</td></tr>
+<tr><td>学習素材アクセス</td><td>agent が curate 済の問題 / 要約を配信</td><td>検索コスト ゼロ</td></tr>
+<tr><td>学習継続</td><td>反応ログ → プロファイル更新 → 翌朝個人化</td><td>個人 fit + 蓄積効果</td></tr>
+<tr><td>結果</td><td>組織全体のドメイン理解水準が底上げ + 個人差可視化</td><td>提案精度向上 / 自己 awareness 形成</td></tr>
+</tbody>
+</table>
+<h3>埋まるギャップ（3 点）</h3>
+<div class="three-pillars">
+  <div class="pillar"><div class="pillar-title">① 発見コスト</div>死蔵 → 毎朝 push</div>
+  <div class="pillar"><div class="pillar-title">② 学習動機</div>「いつかやろう」→ 個人化 quiz</div>
+  <div class="pillar"><div class="pillar-title">③ 継続性</div>場当たり → habit loop</div>
+</div>
+
+<h2 id="s2">2. Azure サービス（具体 SKU）</h2>
+<table>
+<thead><tr><th>レイヤ</th><th>サービス</th><th>SKU</th><th>月額</th><th>採用根拠</th></tr></thead>
+<tbody>
+<tr><td>文書解析</td><td>Azure AI Document Intelligence</td><td>Standard S0</td><td>〜$10</td><td>SPO doc / transcript 構造化</td></tr>
+<tr><td>LLM</td><td>Azure OpenAI</td><td>mini（出題・要約）+ 4.1（個人化判断）</td><td>〜$30</td><td>bulk 配信 → mini 主、profile 更新で 4.1</td></tr>
+<tr class="row-emphasis"><td>検索</td><td>Azure AI Search</td><td>Basic</td><td>〜$75</td><td>docs / responses index</td></tr>
+<tr><td>ホスト</td><td>Container Apps</td><td>Consumption</td><td>〜$10</td><td>UI + agent backend</td></tr>
+<tr><td>ストレージ</td><td>Blob</td><td>Hot LRS</td><td>〜$5</td><td>corpus 原本</td></tr>
+<tr><td>状態</td><td>Cosmos DB</td><td>Serverless</td><td>〜$5</td><td>学習プロファイル + 反応履歴</td></tr>
+<tr class="row-emphasis"><td><strong>スケジューリング</strong></td><td><strong>Logic Apps</strong></td><td>Consumption</td><td>〜$5</td><td>毎朝の push トリガー</td></tr>
+<tr><td>観測</td><td>App Insights</td><td>Basic</td><td>〜$5</td><td>scaffold 済</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>included</td><td>$0</td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+<blockquote class="note"><p><strong>6週合計見込み: 〜$145 / $200</strong>（バッファ $55、C と同等）。</p></blockquote>
+
+<h2 id="s3">3. Agent topology</h2>
+<pre>
+[ 朝の Push: Teams DM or Web UI "朝刊" タブ ]
+            ▲
+            │ (Logic Apps schedule)
+            │
+   ┌─────────────────────┐
+   │  Orchestrator agent │
+   └─────────────────────┘
+       │            │
+   push flow    feedback flow
+       │            │
+       ▼            ▼
+┌──────────────┐  ┌──────────────┐
+│ Generator    │  │ Feedback     │
+│ agent        │  │ agent        │
+│ (quiz +      │  │ (profile     │
+│  summary)    │  │  update)     │
+└──────────────┘  └──────────────┘
+       │            │
+       ▼            ▼
+   AI Search   Cosmos profile
+   (docs)      (interest/weakness)
+       ▲            │
+       │            │
+       └────────────┘
+       Profile が次回 Generator 入力に反映
+            ▲
+            │
+   ┌──────────────┐
+   │ Ingest agent │  (SPO / transcript / chat → AI Search)
+   └──────────────┘
+</pre>
+<p><strong>MVP 構成</strong>: Ingest（バッチ前処理）+ Generator + 簡素 Feedback の 3 agent。Profile は MVP では「明示変更のみ」（自動学習は Day 28 で）。</p>
+<blockquote>
+  <p><strong>「agent である必要」の論証</strong>:
+    <br>(a) ingest → retrieval → generation の <strong>multi-step</strong>
+    <br>(b) Feedback ログから <strong>state（プロファイル）を更新</strong>
+    <br>(c) 翌朝の配信が <strong>過去反応に依存</strong> = stateful な振る舞い。LLM 1-shot では不可能。</p>
+</blockquote>
+
+<h2 id="s4">4. Tool / MCP インベントリ</h2>
+<table>
+<thead><tr><th>Tool</th><th>種別</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><code>mock_spo.list_docs</code> / <code>read_doc</code></td><td>mock API</td><td>擬似 SPO アクセス</td></tr>
+<tr><td><code>mock_transcript.list</code> / <code>get</code></td><td>mock API</td><td>擬似会議 transcript</td></tr>
+<tr><td><code>mock_chat.search</code></td><td>mock API</td><td>擬似 Teams / Slack chat</td></tr>
+<tr><td><code>document_intelligence.extract</code></td><td>Azure AI wrapper</td><td>doc → 構造テキスト</td></tr>
+<tr><td><code>ai_search.query_docs</code></td><td>AI Search</td><td>個人化 retrieval</td></tr>
+<tr><td><code>ai_search.upsert</code></td><td>AI Search</td><td>ingest 結果登録</td></tr>
+<tr><td><code>llm.generate_quiz</code></td><td>structured output</td><td>4 択 + 解説 + 出典</td></tr>
+<tr><td><code>llm.generate_summary</code></td><td>structured output</td><td>"本日の要約"</td></tr>
+<tr><td><code>llm.update_profile</code></td><td>structured output</td><td>反応 → weakness/interest 更新</td></tr>
+<tr><td><code>logic_apps.schedule_daily_push</code></td><td>Azure SDK</td><td>毎朝トリガー</td></tr>
+<tr><td><code>cosmos.log_response</code></td><td>Cosmos SDK</td><td>解答 / 反応ログ</td></tr>
+</tbody>
+</table>
+
+<h2 id="s5">5. 擬似コーポレートシステム</h2>
+<table>
+<thead><tr><th>実環境</th><th>擬似実装</th><th>構築コスト（lift）</th></tr></thead>
+<tbody>
+<tr><td>SharePoint（過去 doc）</td><td>Blob + Web UI（doc list / preview）</td><td>小（3 日）</td></tr>
+<tr><td>会議 transcript</td><td>Blob + Web UI</td><td>小（2 日）</td></tr>
+<tr><td>Teams / Slack chat</td><td>Cosmos + Web UI thread view</td><td>小（2 日）</td></tr>
+<tr><td>配信先</td><td><strong>MVP: Web UI "朝刊" タブ</strong> / Stretch: Teams webhook</td><td>小（Web UI）/ 中（Teams Graph）</td></tr>
+<tr><td>認証</td><td>Entra ID + roles</td><td>小（managed）</td></tr>
+</tbody>
+</table>
+<blockquote class="note"><p><strong>lift 評価</strong>: D は <strong>mock 環境が最少</strong>（外部 system 連携なし、KC Bridge / 契約書のような複雑物なし）。<strong>6週で最も build-friendly</strong>。</p></blockquote>
+
+<h2 id="s6">6. Corpus（D は corpus 設計が中心）</h2>
+<h3>過去 SharePoint 文書</h3>
+<ul>
+<li><strong>50-80 docs = 5-7 domain × 3-5 client × 案件タイプ 3-5</strong></li>
+<li>業界知識 / 案件レポート / 内部 KB / トレーニング資料を mix</li>
+<li>生成: AOAI structured output → human sanity check</li>
+</ul>
+<h3>会議 transcript</h3>
+<ul><li><strong>20-30 件 × 各 30-60 分換算</strong>、会議 type: kickoff / status / brainstorm / wrap-up、AOAI 対話形式生成</li></ul>
+<h3>Teams / Slack chat</h3>
+<ul><li><strong>100+ messages × 10-15 thread</strong>、業界話題 / 質問応答 / 共有リンク</li></ul>
+<h3>学習プロファイル schema</h3>
+<pre>{
+  "user_id": "...",
+  "domain_weights": {"retail": 0.8, "finance": 0.3, ...},
+  "weakness_topics": ["retail KPI design", ...],
+  "recent_responses": [...]
+}</pre>
+<h3>AI Search index 設計</h3>
+<table>
+<thead><tr><th>index</th><th>内容</th><th>metadata</th><th>vector</th></tr></thead>
+<tbody>
+<tr><td><code>docs</code></td><td>doc / transcript / chat の chunk（800 token）</td><td><code>domain</code>, <code>client_type</code>, <code>case_type</code>, <code>source_type</code></td><td>chunk embedding</td></tr>
+<tr><td><code>responses</code></td><td>ユーザー反応履歴</td><td><code>user_id</code>, <code>topic</code>, <code>correctness</code></td><td>n/a</td></tr>
+</tbody>
+</table>
+
+<h2 id="s7">7. HITL surface（user feedback loop）</h2>
+<table>
+<thead><tr><th>ステップ</th><th>UI</th><th>人間がやること</th><th>feedback 保存先</th></tr></thead>
+<tbody>
+<tr><td>出題への解答</td><td>4 択 + 自由記述</td><td>解答 + 自己評価（"yes I knew" / "kind of" / "no"）</td><td>Cosmos: profile 更新入力</td></tr>
+<tr><td>要約への反応</td><td>thumbs up/down + "more like this"</td><td>関心 / 不関心の binary feedback</td><td>Cosmos</td></tr>
+<tr><td>プロファイル editing</td><td>興味分野リスト</td><td>「retail よりも tech に関心」を明示変更</td><td>Cosmos</td></tr>
+</tbody>
+</table>
+<blockquote><p><strong>A の「interface critical」要件への回答</strong>: 単純 thumbs ではなく <strong>自己評価 3 段階 + 明示プロファイル編集</strong> が UX の核。これがあると「個人化が見える」demo になる。</p></blockquote>
+
+<h2 id="s8">8. Demo storyboard（3 分以内）</h2>
+<table>
+<thead><tr><th style="width:12%">時刻</th><th style="width:25%">シーン</th><th>何を見せる</th></tr></thead>
+<tbody>
+<tr><td>0:00-0:30</td><td>ユーザーが朝、Web UI で「本日の朝刊」を開く</td><td>"本日のクイズ + 要約" を確認</td></tr>
+<tr><td>0:30-1:30</td><td>配信内容</td><td>(a) クイズ「retail 業界の典型 KPI は？」 4 択 + 出典 "過去 project XX の transcript より" / (b) 要約「先週 chat で議論された tech trend」</td></tr>
+<tr><td>1:30-2:00</td><td>解答</td><td>ユーザーが選択 → "正解 + 解説 + さらに詳しくは過去 doc YY"</td></tr>
+<tr class="row-emphasis"><td>2:00-2:30</td><td><strong>場面転換: 翌朝</strong></td><td>配信が「あなたは tech に関心が高く retail KPI が弱い → tech 案件における retail KPI 設計事例」と個人化</td></tr>
+<tr><td>2:30-3:00</td><td>admin 視点（副次）</td><td>プロファイル全体ビュー、組織で誰がどの domain に強い / 弱いの heatmap</td></tr>
+</tbody>
+</table>
+<blockquote class="note"><p><strong>判定基準</strong>: 「個人化が demo 内で見える」か（→ 翌朝の場面転換が肝）/ 「KPMG 固有 corpus が effective」と即理解できるか。</p></blockquote>
+
+<h2 id="s9">9. 6週ビルドリスク（R/Y/G）</h2>
+<table>
+<thead><tr><th>レイヤ</th><th>リスク</th><th>理由 / 緩和</th></tr></thead>
+<tbody>
+<tr><td>Ingest pipeline</td><td><span class="badge badge-green">G</span></td><td>managed</td></tr>
+<tr><td><strong>合成 corpus（doc + transcript + chat）</strong></td><td><span class="badge badge-yellow">Y</span></td><td>量が要る（80 doc + 25 transcript + 100 chat）、内的整合性は A/C より緩い</td></tr>
+<tr><td>出題 LLM（4 択 + 解説 + 出典）</td><td><span class="badge badge-yellow">Y</span></td><td>品質と難易度調整 1 週間</td></tr>
+<tr><td>要約 LLM</td><td><span class="badge badge-green">G</span></td><td>bulk 処理、mini で十分</td></tr>
+<tr><td>個人化ループ（profile update）</td><td><span class="badge badge-yellow">Y</span></td><td>state 管理は MVP 簡素化（自動学習は Day 28）</td></tr>
+<tr><td>Logic Apps スケジューリング</td><td><span class="badge badge-green">G</span></td><td>managed</td></tr>
+<tr><td>Web UI "朝刊" タブ</td><td><span class="badge badge-green">G</span></td><td>Stretch: Teams webhook は Y</td></tr>
+<tr><td>Feedback UI</td><td><span class="badge badge-green">G</span></td><td>単純</td></tr>
+<tr><td>Orchestrator</td><td><span class="badge badge-green">G</span></td><td>flow 単純</td></tr>
+<tr><td>認証 / 観測</td><td><span class="badge badge-green">G</span></td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+<blockquote class="note">
+  <p><strong>ボトルネック</strong>: 合成 corpus 量（Y）と出題品質（Y）。<strong>Day 10 までに minimum viable corpus</strong>（30 doc + 10 transcript + 50 chat）。</p>
+  <p><strong>特徴</strong>: <strong>D は全体的に最も build-friendly</strong>（R 項目なし、Y 項目も C / A より少ない）。</p>
+</blockquote>
+
+<h2 id="s10">10. Differentiation hook</h2>
+<blockquote>
+  <p><strong>「KPMG 固有 corpus × 個人化学習プロファイル × 毎朝 push」</strong></p>
+  <p>他社製品（McKinsey Lilli / 各社内 LLM RAG）は <strong>pull 型 RAG</strong>（聞かれたら答える）が中心。本案は <strong>push 型 + 個人化ループ</strong> で habit loop を形成する。Sotaro テーゼ（domain-specialty prevalence）の最も直接的な instantiation。</p>
+</blockquote>
+<h3>主張可能な独自性</h3>
+<div class="three-pillars">
+  <div class="pillar"><div class="pillar-title">① Push 型 + 個人化</div>pull 型 RAG との構造差別化</div>
+  <div class="pillar"><div class="pillar-title">② 3 source 横断</div>SPO + transcript + chat → 単一文書 RAG との粒度差別化</div>
+  <div class="pillar"><div class="pillar-title">③ 副次 admin heatmap</div>個人 → 組織への visibility 拡張</div>
+</div>
+<p><strong>他チームと被るリスク</strong>: 学習エージェント自体は中レベルの被り → 上記 3 点 + 「<strong>翌朝の場面転換で個人化が見える</strong>」demo 構成で差別化。</p>
+
+<h2 id="s11">11. このカードからの Open question</h2>
+<ol>
+<li><strong>Teams webhook 連携を MVP に含めるか or Web UI で代替</strong> → Graph API 学習コストと pitch 価値の trade-off</li>
+<li><strong>出題の難易度を「ユーザー毎」に変えるか、demo では固定で見せて差別化感を出すか</strong> → 1 日 demo では time-evolution 見せにくい</li>
+<li><strong>「学習効果」の demo 演出</strong> → 翌朝の場面転換は事前録画でも OK か（リアルタイム不要）</li>
+<li><strong>C との統合カードに合流させるか維持か</strong> → 「単独 D」と「C+D 統合」を別カードで比較可能に</li>
+<li><strong>個人プロファイルの自動学習を Day 28 で実装するか</strong> → MVP は明示編集のみで十分か</li>
+</ol>
+
+<h2 id="s12">12. テンプレ妥当性 review への問い</h2>
+<ul>
+<li><span class="check">✅</span> <strong>12 セクション機能</strong>: D は「外部 system 連携なし」候補だが §5 が薄くなる以外問題なし</li>
+<li><span class="warn">⚠️</span> <strong>§5 が薄い候補への対応</strong>: D のように mock 環境が少ない候補は §5 表が 4 行で済む → 「§5 lift 評価」+「§5 N/A 項目の明示」で見やすくすべき</li>
+<li><span class="warn">⚠️</span> <strong>§8 "time-evolution" の難しさ</strong>: D は「翌朝の場面転換」が demo の核 → storyboard format は時刻軸で OK だが、`場面転換` の演出を強調する欄が欲しい</li>
+<li><span class="pin">📌</span> <strong>§3 topology で "stateful behavior" を独立項目化</strong>: D の profile update / C の HITL feedback ループは agent 性論証の柱 → 各カード共通で抽出すべき</li>
+</ul>
+<blockquote class="note">
+  <p><strong>review 後の next action</strong>:</p>
+  <ul>
+    <li>C / A / D で format 共通化検証完了 → C+D 統合カード作成（最後）</li>
+    <li>修正あれば 3 カードに反映 → 再 review → 統合カード</li>
+  </ul>
+</blockquote>
+
+</div>
+</body>
+</html>
