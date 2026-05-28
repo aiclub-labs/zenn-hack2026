@@ -72,7 +72,7 @@ export function SchemaUpdateBannerView({
           <Button
             appearance="subtle"
             icon={<History20Regular />}
-            onClick={() => navigate("/admin/history")}
+            onClick={() => navigate("/changelog")}
           >
             履歴を見る
           </Button>

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./shell/AppShell";
 import { useTenantCtx } from "./shell/TenantContext";
 import { ChatPage } from "./pages/Chat";
+import SchemaChangelog from "./pages/SchemaChangelog";
 import SchemaList from "./admin/pages/SchemaList";
 import SchemaHistory from "./admin/pages/SchemaHistory";
 import SchemaImport from "./admin/pages/SchemaImport";
@@ -53,6 +54,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/chat" replace />} />
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/changelog" element={<SchemaChangelog />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/review/*" element={<ReviewRoutes />} />
         <Route path="*" element={<Navigate to="/chat" replace />} />

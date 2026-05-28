@@ -75,3 +75,12 @@ export async function getHistory(q: HistoryQuery): Promise<SchemaAuditEntry[]> {
   const r = await api.get("/schemas/history", { params: q });
   return z.array(SchemaAuditEntrySchema).parse(r.data);
 }
+
+// Issue #31: business-user-facing read-only changelog. No admin role
+// required; `changed_by` is masked to "reviewer" server-side.
+export async function getHistoryPublic(
+  q: HistoryQuery,
+): Promise<SchemaAuditEntry[]> {
+  const r = await api.get("/schemas/history/public", { params: q });
+  return z.array(SchemaAuditEntrySchema).parse(r.data);
+}

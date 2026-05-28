@@ -159,6 +159,26 @@ async def get_history(
     return await agent.get_history(tenant=tenant, limit=limit, since=since)
 
 
+@router.get("/history/public", response_model=list[SchemaAuditEntry])
+async def get_history_public(
+    sector: str = Query(...),
+    unit: str = Query(...),
+    limit: int = Query(50, ge=1, le=500),
+    since: Optional[datetime] = Query(default=None),
+    agent: SchemaManagerAgent = Depends(get_agent),
+) -> list[SchemaAuditEntry]:
+    """Req 2 AC6 / Issue #31: business-user-facing read-only changelog.
+
+    Same data as ``/history`` but no admin role gate. ``changed_by`` is masked
+    to a generic ``"reviewer"`` token so reviewer identity is not leaked to
+    業務ユーザー (Persona B/C).
+    """
+    tenant = Tenant(sector=sector, unit=unit)
+    _ = make_pk(sector, unit)
+    entries = await agent.get_history(tenant=tenant, limit=limit, since=since)
+    return [e.model_copy(update={"changed_by": "reviewer"}) for e in entries]
+
+
 @router.get("", response_model=list[SchemaFieldDoc])
 async def list_schemas(
     sector: str = Query(...),
