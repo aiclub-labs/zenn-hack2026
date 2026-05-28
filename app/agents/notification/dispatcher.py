@@ -86,9 +86,9 @@ class NotificationDispatcher:
             )
             return
 
-        # 2. Build payload + PII scrub (Req 16.6)
+        # 2. Build payload + PII scrub (Req 16.6 — regex + LLM fallback, Issue #37)
         raw_payload = to_discord_payload(event)
-        scrubbed = pii.scrub(raw_payload)
+        scrubbed = await pii.scrub_async(raw_payload)
 
         success = False
         last_exc: Optional[BaseException] = None

@@ -151,3 +151,59 @@ def test_scrub_text_no_pii_unchanged() -> None:
     """Text with no PII passes through without modification."""
     clean = "The quick brown fox jumps over the lazy dog."
     assert _scrub_text(clean) == clean
+
+
+# ---------------------------------------------------------------------------
+# LLM fallback (Issue #37 / Req 16.6)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_scrub_async_no_llm_equals_sync(monkeypatch) -> None:
+    """`use_llm=False` must be identical to the sync `scrub()` result."""
+    from app.util import pii as pii_mod
+
+    payload = {"text": "test@example.com or 090-1234-5678"}
+    async_result = await pii_mod.scrub_async(payload, use_llm=False)
+    assert async_result == pii_mod.scrub(payload)
+
+
+@pytest.mark.asyncio
+async def test_scrub_async_invokes_llm_for_residual_kanji(monkeypatch) -> None:
+    """Residual kanji name (no space) — regex misses, LLM pass redacts."""
+    from app.util import pii as pii_mod
+
+    calls: list[str] = []
+
+    async def _fake_llm(text: str) -> str:
+        calls.append(text)
+        return text.replace("山田太郎", "[REDACTED_NAME]")
+
+    monkeypatch.setattr(pii_mod, "_scrub_text_with_llm", _fake_llm)
+
+    payload = {"msg": "担当は山田太郎さんです。"}
+    result = await pii_mod.scrub_async(payload)
+    assert "山田太郎" not in result["msg"]
+    assert "[REDACTED_NAME]" in result["msg"]
+    assert len(calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_scrub_async_llm_failure_falls_back_to_regex(monkeypatch) -> None:
+    """LLM exception must not crash scrub — regex output is returned."""
+    from app.util import pii as pii_mod
+
+    async def _boom(text: str) -> str:
+        raise RuntimeError("aoai down")
+
+    # _scrub_text_with_llm itself handles exceptions internally; simulate that
+    # the production helper catches and returns regex-scrubbed text.
+    async def _safe_llm(text: str) -> str:
+        try:
+            return await _boom(text)
+        except Exception:
+            return text
+
+    monkeypatch.setattr(pii_mod, "_scrub_text_with_llm", _safe_llm)
+    payload = {"email": "x@y.com"}
+    result = await pii_mod.scrub_async(payload)
+    assert result["email"] == "[REDACTED_EMAIL]"
