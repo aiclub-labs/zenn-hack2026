@@ -37,6 +37,9 @@ logger = logging.getLogger(__name__)
 _DEV_ENVS = frozenset({"dev", "local", "development"})
 _HDR_NAME = "X-MS-CLIENT-PRINCIPAL-NAME"
 _HDR_PRINCIPAL = "X-MS-CLIENT-PRINCIPAL"
+# Issue #35: dev-only override so reviewers can be switched from the UI to
+# exercise the fairness pivot. Honored ONLY when settings.environment is dev/local.
+_HDR_REVIEWER_OVERRIDE = "X-Reviewer-Id"
 
 
 def _parse_pk(pk: str) -> Optional[Tenant]:
@@ -98,9 +101,17 @@ def parse_easy_auth_headers(request: Request) -> tuple[str, list[Tenant]]:
     """
     name = request.headers.get(_HDR_NAME)
     principal_b64 = request.headers.get(_HDR_PRINCIPAL)
+    env = (settings.environment or "").lower()
+
+    # Dev-only header override (Issue #35). In prod we ignore X-Reviewer-Id
+    # entirely so a downstream attacker cannot spoof a reviewer by adding
+    # the header — Easy Auth is the source of truth.
+    if env in _DEV_ENVS:
+        override = request.headers.get(_HDR_REVIEWER_OVERRIDE)
+        if override:
+            return (override.strip(), [])
 
     if not name and not principal_b64:
-        env = (settings.environment or "").lower()
         if env in _DEV_ENVS:
             return ("local-dev-reviewer", [])
         # In prod the absence of Easy Auth headers is suspicious but not
