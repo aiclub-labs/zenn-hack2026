@@ -112,8 +112,19 @@ class FormalizationAgent:
     ) -> FormalizationTicket:
         a, b, c, final = weights
         sector, unit = record.pk.split("#", 1)
-        ticket_id = f"ft_{uuid.uuid4().hex[:24]}"
+        # Deterministic ticket id keyed by hearout_id: re-submit (e.g. an
+        # /respond arriving after expiry) idempotently upserts the same row
+        # rather than spawning duplicate queue entries (Issue #36).
+        ticket_id = f"ft_{record.id}"
         now = datetime.now(timezone.utc)
+        existing = await self._queue.get(ticket_id, record.pk)
+        if existing is not None and existing.status not in (
+            "pending_review",
+            "conflict_pending",
+        ):
+            # Already moved past intake (approved/rejected/expired) — don't
+            # resurrect it.
+            return existing
 
         # Determine status & whether to run TJ first
         if final < _THRESHOLD:

@@ -33,11 +33,21 @@ def chat_client() -> AsyncAzureOpenAI:
 
 
 def deployment_small() -> str:
-    return settings.azure_openai_deployment_small
+    name = settings.azure_openai_deployment_small
+    if not name:
+        raise RuntimeError(
+            "azure_openai_deployment_small unset — refuse silent fallback (Issue #42)"
+        )
+    return name
 
 
 def deployment_large() -> str:
-    return settings.azure_openai_deployment_large
+    name = settings.azure_openai_deployment_large
+    if not name:
+        raise RuntimeError(
+            "azure_openai_deployment_large unset — refuse silent fallback (Issue #42)"
+        )
+    return name
 
 
 __all__ = ["chat_client", "deployment_small", "deployment_large"]

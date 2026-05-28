@@ -19,14 +19,18 @@ customMetrics
          sector       = tostring(customDimensions["sector"]),
          unit         = tostring(customDimensions["unit"]),
          decision     = tostring(customDimensions["decision"])
-| summarize count() by reviewer_id, sector, unit, decision
-| evaluate pivot(decision, sum(count_))
-| extend total = coalesce(approve, 0) + coalesce(edit, 0) + coalesce(reject, 0)
-| extend approve_rate = todouble(coalesce(approve, 0)) / todouble(total),
-         reject_rate  = todouble(coalesce(reject, 0))  / todouble(total)
+| summarize approve = countif(decision == "approve"),
+            edit    = countif(decision == "edit"),
+            reject  = countif(decision == "reject")
+            by reviewer_id, sector, unit
+| extend total = approve + edit + reject
+| extend approve_rate = todouble(approve) / todouble(total),
+         reject_rate  = todouble(reject)  / todouble(total)
 | project reviewer_id, sector, unit, approve, edit, reject, total, approve_rate, reject_rate
 | order by total desc
 ```
+
+> `countif()` 版に統一 (Issue #34): `evaluate pivot()` は `edit` 等の空 decision を持つテナントで列ごと欠落させるため、空集合 safe な集計に変更。
 
 **運用**: `approve_rate > 0.85` かつ `total >= 10` の reviewer はバイアス候補 (Req 9.9 の self-approval warning 30% は別軸：自分提出→自分承認の self-loop rate)。
 
@@ -38,8 +42,10 @@ customMetrics
 | where timestamp > ago(30d)
 | extend sector = tostring(customDimensions["sector"]),
          decision = tostring(customDimensions["decision"])
-| summarize count() by sector, decision
-| evaluate pivot(decision, sum(count_))
+| summarize approve = countif(decision == "approve"),
+            edit    = countif(decision == "edit"),
+            reject  = countif(decision == "reject")
+            by sector
 ```
 
 **運用**: 同一 schema を持つ複数 sector で reject_rate が 2 倍以上乖離 → schema 偏り or 提供者層偏りの仮説検証へ。
