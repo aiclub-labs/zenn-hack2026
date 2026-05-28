@@ -19,6 +19,7 @@ export const TurnResponse = z.object({
   turn_id: z.string(),
   ai_response: z.string(),
   self_critic_score: z.number(),
+  self_critic_reason: z.string().nullable().optional(),
   citations: z.array(CitationRef),
   schema_update_banner: SchemaUpdateBanner.nullable().optional(),
   gap_detected: z.boolean(),
@@ -58,6 +59,7 @@ export interface ChatMessage {
   turnId?: string;
   citations?: CitationRef[];
   selfCriticScore?: number;
+  selfCriticReason?: string | null;
 }
 
 export interface TenantCtx {

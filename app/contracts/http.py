@@ -34,6 +34,9 @@ class TurnResponse(_HTTPBase):
     turn_id: str
     ai_response: str
     self_critic_score: float
+    # KPMG Explainability / Issue #38: surface judge rationale to Chat UI.
+    # Tooltip shown when score < 5 (low-confidence answers).
+    self_critic_reason: Optional[str] = None
     citations: list[CitationRef]
     schema_update_banner: Optional[SchemaUpdateBanner] = None
     gap_detected: bool

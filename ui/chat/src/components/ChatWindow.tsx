@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import {
   Badge,
+  Tooltip,
   makeStyles,
   mergeClasses,
   shorthands,
@@ -165,13 +166,29 @@ export function ChatWindow({ messages, sector, unit }: Props) {
               </div>
               {typeof m.selfCriticScore === "number" && (
                 <div className={styles.meta}>
-                  <Badge
-                    appearance="tint"
-                    color={scoreColor(m.selfCriticScore)}
-                    size="small"
-                  >
-                    self-critic {m.selfCriticScore.toFixed(1)} / 10
-                  </Badge>
+                  {m.selfCriticScore < 5 && m.selfCriticReason ? (
+                    <Tooltip
+                      content={`判定理由: ${m.selfCriticReason}`}
+                      relationship="description"
+                      withArrow
+                    >
+                      <Badge
+                        appearance="tint"
+                        color={scoreColor(m.selfCriticScore)}
+                        size="small"
+                      >
+                        self-critic {m.selfCriticScore.toFixed(1)} / 10 ⓘ
+                      </Badge>
+                    </Tooltip>
+                  ) : (
+                    <Badge
+                      appearance="tint"
+                      color={scoreColor(m.selfCriticScore)}
+                      size="small"
+                    >
+                      self-critic {m.selfCriticScore.toFixed(1)} / 10
+                    </Badge>
+                  )}
                 </div>
               )}
               {m.citations && m.citations.length > 0 && (

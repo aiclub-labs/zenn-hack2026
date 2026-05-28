@@ -239,6 +239,7 @@ async def post_turn(
         turn_id=asst_turn_id,
         ai_response=ai_text,
         self_critic_score=score,
+        self_critic_reason=reason,
         citations=citations,
         schema_update_banner=banner,
         gap_detected=gap_detected,

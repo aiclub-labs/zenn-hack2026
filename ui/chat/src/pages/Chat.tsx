@@ -100,6 +100,7 @@ export function ChatPage() {
           turnId: res.turn_id,
           citations: res.citations,
           selfCriticScore: res.self_critic_score,
+          selfCriticReason: res.self_critic_reason ?? null,
         },
       ]);
       if (res.gap_detected && res.gap_event_id) {
