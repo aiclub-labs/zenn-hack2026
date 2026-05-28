@@ -1,6 +1,11 @@
 """One-shot UAT seed: insert a substantive surface-treatment record for
 manufacturing-s8b/line-A so Delta Detector has a citable neighbor.
 
+LOCAL DEVELOPMENT BOOTSTRAP ONLY. Production runtime uses Managed Identity
+(see app/util/aisearch.py, Req 17.1 / Issue #40). This script uses admin keys
+purely because it's a one-shot seed run from an operator workstation that
+may not yet have RBAC role assignments propagated.
+
 Reads AOAI key from env AOAI_API_KEY, AISEARCH key from AISEARCH_ADMIN_KEY.
 Reads endpoints from azd env.
 

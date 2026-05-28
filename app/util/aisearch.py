@@ -1,7 +1,7 @@
 """AI Search Basic wrapper around the `corpus-{env}` index.
 
 Hybrid (vector + filter) query with shareability / is_active / supersededBy filters.
-Auth: MI preferred, falls back to admin key.
+Auth: Managed Identity only (Req 17.1 — API キー直接利用禁止 / Issue #40).
 """
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ import os
 from functools import lru_cache
 from typing import Any, Optional
 
-from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
 
@@ -17,14 +16,11 @@ from app.contracts.common import Shareability, Tenant
 
 _INDEX_NAME = os.getenv("AISEARCH_INDEX", f"corpus-{os.getenv('ENV', 'dev')}")
 _ENDPOINT = os.getenv("AISEARCH_ENDPOINT", "")
-_ADMIN_KEY = os.getenv("AISEARCH_ADMIN_KEY", "")
 
 _SHAREABILITY_RANK: dict[str, int] = {"private": 0, "unit": 1, "public": 2}
 
 
 def _credential() -> Any:
-    if _ADMIN_KEY:
-        return AzureKeyCredential(_ADMIN_KEY)
     from azure.identity.aio import DefaultAzureCredential
 
     return DefaultAzureCredential()

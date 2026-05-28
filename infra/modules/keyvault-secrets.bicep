@@ -28,7 +28,7 @@ var secretNames = [
   'DISCORD-WEBHOOK-URL-EXPIRED'
   'DISCORD-WEBHOOK-URL-COST-ALERT'
   'COSMOS-CONNECTION-STRING'
-  'AISEARCH-ADMIN-KEY'
+  // AISEARCH-ADMIN-KEY removed (Req 17.1 / Issue #40 — Managed Identity only).
   'AOAI-API-KEY'
 ]
 
