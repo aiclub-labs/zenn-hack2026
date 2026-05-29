@@ -40,7 +40,10 @@ from app.util.embedding import cosine_distance, embed
 logger = logging.getLogger(__name__)
 
 _DISTANCE_THRESHOLD = 0.4
-_SELF_CRITIC_HARD_GAP = 3.0
+# DEMO-ONLY (chore/demo-threshold-relax-temp): hard-gap raised 3.0 -> 7.5 so
+# even high-critic (honest defer) answers trigger gap → hearout → pending_review
+# → expired for demo video capture. REVERT before judging period: 7.5 -> 3.0.
+_SELF_CRITIC_HARD_GAP = 7.5
 _SELF_CRITIC_SOFT_HIGH = 6.5
 _CONSECUTIVE_SUPPRESS = 3  # Req 12.6
 
