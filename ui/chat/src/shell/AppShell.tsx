@@ -14,11 +14,13 @@ import {
   Chat24Regular,
   Settings24Regular,
   TaskListSquareLtr24Regular,
+  Trophy24Regular,
 } from "@fluentui/react-icons";
 import { useTenantCtx } from "./TenantContext";
 
 const NAV = [
   { to: "/chat", label: "Chat", icon: <Chat24Regular /> },
+  { to: "/popular", label: "Ranking", icon: <Trophy24Regular /> },
   { to: "/admin", label: "Admin", icon: <Settings24Regular /> },
   { to: "/review", label: "Review", icon: <TaskListSquareLtr24Regular /> },
 ];

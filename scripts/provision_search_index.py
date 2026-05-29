@@ -63,6 +63,33 @@ def build_index(name: str) -> SearchIndex:
             filterable=True,
             sortable=True,
         ),
+        # Voting / popularity signals (consultant-tacit pivot, 2026-05-29).
+        # `score = upvotes - downvotes` is materialized at write time so the
+        # ranking endpoint can sort server-side without a custom scoring profile.
+        SimpleField(
+            name="upvotes",
+            type=SearchFieldDataType.Int32,
+            filterable=True,
+            sortable=True,
+        ),
+        SimpleField(
+            name="downvotes",
+            type=SearchFieldDataType.Int32,
+            filterable=True,
+            sortable=True,
+        ),
+        SimpleField(
+            name="score",
+            type=SearchFieldDataType.Int32,
+            filterable=True,
+            sortable=True,
+        ),
+        SimpleField(
+            name="record_referenced_count",
+            type=SearchFieldDataType.Int32,
+            filterable=True,
+            sortable=True,
+        ),
         SearchField(
             name="vector",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),

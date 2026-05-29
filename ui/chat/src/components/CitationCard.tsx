@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   ProgressBar,
@@ -10,10 +11,14 @@ import {
   ChevronDown20Regular,
   ChevronRight20Regular,
   DocumentText20Regular,
+  Open20Regular,
+  ThumbLike20Regular,
+  ThumbDislike20Regular,
   Warning20Filled,
 } from "@fluentui/react-icons";
 import { CitationRef, CitationDetail } from "../types";
 import { getCitation } from "../api/citations";
+import { castVote } from "../api/votes";
 
 interface Props {
   citation: CitationRef;
@@ -38,10 +43,12 @@ const useStyles = makeStyles({
   header: {
     display: "flex",
     alignItems: "center",
+    flexWrap: "wrap",
     ...shorthands.gap(tokens.spacingHorizontalS),
   },
   toggle: {
-    flex: 1,
+    flex: "1 1 auto",
+    minWidth: 0,
     justifyContent: "flex-start",
   },
   fieldLabel: {
@@ -90,9 +97,26 @@ const useStyles = makeStyles({
 
 export function CitationCard({ citation, sector, unit }: Props) {
   const styles = useStyles();
+  const navigate = useNavigate();
   const [detail, setDetail] = useState<CitationDetail | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [voteState, setVoteState] = useState<{
+    score: number | null;
+    voted: "up" | "down" | null;
+    pending: boolean;
+  }>({ score: null, voted: null, pending: false });
+
+  async function vote(direction: "up" | "down") {
+    if (voteState.pending || voteState.voted) return;
+    setVoteState((s) => ({ ...s, pending: true }));
+    try {
+      const r = await castVote(citation.record_id, direction);
+      setVoteState({ score: r.score, voted: direction, pending: false });
+    } catch {
+      setVoteState((s) => ({ ...s, pending: false }));
+    }
+  }
 
   async function toggle() {
     if (!detail && !loading) {
@@ -136,6 +160,17 @@ export function CitationCard({ citation, sector, unit }: Props) {
             thickness="medium"
           />
         </div>
+        <Button
+          appearance="subtle"
+          size="small"
+          icon={<Open20Regular />}
+          onClick={() =>
+            navigate(`/records/${encodeURIComponent(citation.record_id)}`)
+          }
+          aria-label="詳細を開く"
+        >
+          詳細
+        </Button>
       </div>
       {detail?.superseded_banner && (
         <div className={styles.warning}>
@@ -148,6 +183,46 @@ export function CitationCard({ citation, sector, unit }: Props) {
           {loading ? "読み込み中…" : (detail?.content ?? "(本文取得失敗)")}
         </div>
       )}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: tokens.spacingHorizontalS,
+          paddingTop: tokens.spacingVerticalXS,
+        }}
+      >
+        <Button
+          appearance={voteState.voted === "up" ? "primary" : "subtle"}
+          size="small"
+          icon={<ThumbLike20Regular />}
+          disabled={voteState.pending || voteState.voted !== null}
+          onClick={() => vote("up")}
+          aria-label="役に立った"
+        >
+          Good
+        </Button>
+        <Button
+          appearance={voteState.voted === "down" ? "primary" : "subtle"}
+          size="small"
+          icon={<ThumbDislike20Regular />}
+          disabled={voteState.pending || voteState.voted !== null}
+          onClick={() => vote("down")}
+          aria-label="役に立たなかった"
+        >
+          Bad
+        </Button>
+        {voteState.score !== null && (
+          <span
+            style={{
+              fontSize: tokens.fontSizeBase200,
+              color: tokens.colorNeutralForeground3,
+              fontFamily: tokens.fontFamilyMonospace,
+            }}
+          >
+            score={voteState.score}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

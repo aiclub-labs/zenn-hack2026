@@ -3,6 +3,8 @@ import { AppShell } from "./shell/AppShell";
 import { useTenantCtx } from "./shell/TenantContext";
 import { ChatPage } from "./pages/Chat";
 import SchemaChangelog from "./pages/SchemaChangelog";
+import RankingPage from "./pages/Ranking";
+import RecordDetail from "./pages/RecordDetail";
 import SchemaList from "./admin/pages/SchemaList";
 import SchemaHistory from "./admin/pages/SchemaHistory";
 import SchemaImport from "./admin/pages/SchemaImport";
@@ -55,6 +57,8 @@ export default function App() {
         <Route path="/" element={<Navigate to="/chat" replace />} />
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/changelog" element={<SchemaChangelog />} />
+        <Route path="/popular" element={<RankingPage />} />
+        <Route path="/records/:id" element={<RecordDetail />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/review/*" element={<ReviewRoutes />} />
         <Route path="*" element={<Navigate to="/chat" replace />} />

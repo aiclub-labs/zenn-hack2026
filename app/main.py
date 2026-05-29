@@ -12,6 +12,7 @@ from app.api import hearout as hearout_router
 from app.api import retrieval as retrieval_router
 from app.api import reviews as reviews_router
 from app.api import turn as turn_router
+from app.api import votes as votes_router
 from app.config import settings
 
 # WT-C owns app.api.schemas; import lazily so its absence doesn't break boot.
@@ -56,6 +57,7 @@ app.include_router(retrieval_router.router)
 app.include_router(citations_router.router)
 app.include_router(reviews_router.router)
 app.include_router(hearout_router.router)
+app.include_router(votes_router.router)
 if schemas_router is not None:
     app.include_router(schemas_router.router)
 
