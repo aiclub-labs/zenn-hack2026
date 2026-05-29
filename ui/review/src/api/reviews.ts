@@ -9,13 +9,15 @@ export async function listReviews(
   priorityOnly = false,
 ): Promise<FormalizationTicket[]> {
   const { data } = await api.get("/reviews", {
-    params: { priority_only: priorityOnly },
+    params: { priority_only: priorityOnly, sector: "general", unit: "general" },
   });
   return (data as unknown[]).map((x) => FormalizationTicket.parse(x));
 }
 
 export async function listConflictReviews(): Promise<FormalizationTicket[]> {
-  const { data } = await api.get("/reviews/conflict");
+  const { data } = await api.get("/reviews/conflict", {
+    params: { sector: "general", unit: "general" },
+  });
   return (data as unknown[]).map((x) => FormalizationTicket.parse(x));
 }
 
