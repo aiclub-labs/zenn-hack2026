@@ -74,14 +74,16 @@ export function ConflictQueue() {
               background: "#fff",
               padding: "1.5rem",
               borderRadius: 8,
-              minWidth: 720,
+              width: "min(720px, 92vw)",
+              maxHeight: "92vh",
+              overflowY: "auto",
             }}
           >
             <h3>並列比較: {selected.id.slice(0, 8)}</h3>
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
+                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
                 gap: 16,
               }}
             >

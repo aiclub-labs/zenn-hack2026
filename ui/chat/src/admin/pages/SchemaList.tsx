@@ -374,94 +374,100 @@ export default function SchemaList({ tenant }: Props): JSX.Element {
             <span>新規追加ボタンから定義域を 1 件設定してください。</span>
           </div>
         ) : (
-          <Table aria-label="schema list" size="medium">
-            <TableHeader>
-              <TableRow>
-                <TableHeaderCell>field_name</TableHeaderCell>
-                <TableHeaderCell>type</TableHeaderCell>
-                <TableHeaderCell>description</TableHeaderCell>
-                <TableHeaderCell>example</TableHeaderCell>
-                <TableHeaderCell>rev</TableHeaderCell>
-                <TableHeaderCell>status</TableHeaderCell>
-                <TableHeaderCell>updated (JST)</TableHeaderCell>
-                <TableHeaderCell>actions</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtered.map((d) => (
-                <TableRow key={d.id}>
-                  <TableCell className={s.fieldName}>{d.field_name}</TableCell>
-                  <TableCell>
-                    <Badge appearance="tint" color="informative">
-                      {d.expected_value_type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className={s.descCell}>{d.description}</TableCell>
-                  <TableCell className={s.exampleCell}>{d.example}</TableCell>
-                  <TableCell>
-                    <Badge
-                      appearance={d.revision_id > 1 ? "filled" : "outline"}
-                      color={d.revision_id > 1 ? "brand" : "subtle"}
-                    >
-                      r{d.revision_id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {d.is_active ? (
-                      <Badge
-                        appearance="tint"
-                        color="success"
-                        icon={<CheckmarkCircle20Filled />}
-                      >
-                        active
-                      </Badge>
-                    ) : (
-                      <Badge
-                        appearance="tint"
-                        color="danger"
-                        icon={<DismissCircle20Filled />}
-                      >
-                        inactive
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {formatJst(d.updated_at).replace(" JST", "")}
-                  </TableCell>
-                  <TableCell>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      <Tooltip content="編集" relationship="label">
-                        <Button
-                          size="small"
-                          appearance="subtle"
-                          icon={<Edit20Regular />}
-                          onClick={() => setDraft(d)}
-                        />
-                      </Tooltip>
-                      <Tooltip
-                        content={d.is_active ? "無効化" : "再有効化"}
-                        relationship="label"
-                      >
-                        <Button
-                          size="small"
-                          appearance="subtle"
-                          icon={
-                            d.is_active ? (
-                              <PauseCircle20Regular />
-                            ) : (
-                              <PlayCircle20Regular />
-                            )
-                          }
-                          onClick={() => toggleMut.mutate(d)}
-                          disabled={toggleMut.isPending}
-                        />
-                      </Tooltip>
-                    </div>
-                  </TableCell>
+          <div style={{ minWidth: "960px" }}>
+            <Table aria-label="schema list" size="medium">
+              <TableHeader>
+                <TableRow>
+                  <TableHeaderCell>field_name</TableHeaderCell>
+                  <TableHeaderCell>type</TableHeaderCell>
+                  <TableHeaderCell>description</TableHeaderCell>
+                  <TableHeaderCell>example</TableHeaderCell>
+                  <TableHeaderCell>rev</TableHeaderCell>
+                  <TableHeaderCell>status</TableHeaderCell>
+                  <TableHeaderCell>updated (JST)</TableHeaderCell>
+                  <TableHeaderCell>actions</TableHeaderCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((d) => (
+                  <TableRow key={d.id}>
+                    <TableCell className={s.fieldName}>
+                      {d.field_name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge appearance="tint" color="informative">
+                        {d.expected_value_type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className={s.descCell}>
+                      {d.description}
+                    </TableCell>
+                    <TableCell className={s.exampleCell}>{d.example}</TableCell>
+                    <TableCell>
+                      <Badge
+                        appearance={d.revision_id > 1 ? "filled" : "outline"}
+                        color={d.revision_id > 1 ? "brand" : "subtle"}
+                      >
+                        r{d.revision_id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {d.is_active ? (
+                        <Badge
+                          appearance="tint"
+                          color="success"
+                          icon={<CheckmarkCircle20Filled />}
+                        >
+                          active
+                        </Badge>
+                      ) : (
+                        <Badge
+                          appearance="tint"
+                          color="danger"
+                          icon={<DismissCircle20Filled />}
+                        >
+                          inactive
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {formatJst(d.updated_at).replace(" JST", "")}
+                    </TableCell>
+                    <TableCell>
+                      <div style={{ display: "flex", gap: 4 }}>
+                        <Tooltip content="編集" relationship="label">
+                          <Button
+                            size="small"
+                            appearance="subtle"
+                            icon={<Edit20Regular />}
+                            onClick={() => setDraft(d)}
+                          />
+                        </Tooltip>
+                        <Tooltip
+                          content={d.is_active ? "無効化" : "再有効化"}
+                          relationship="label"
+                        >
+                          <Button
+                            size="small"
+                            appearance="subtle"
+                            icon={
+                              d.is_active ? (
+                                <PauseCircle20Regular />
+                              ) : (
+                                <PlayCircle20Regular />
+                              )
+                            }
+                            onClick={() => toggleMut.mutate(d)}
+                            disabled={toggleMut.isPending}
+                          />
+                        </Tooltip>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
 

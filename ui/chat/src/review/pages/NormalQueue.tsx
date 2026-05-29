@@ -302,94 +302,96 @@ export function NormalQueue() {
             </div>
           </div>
         ) : (
-          <Table size="medium">
-            <TableHeader>
-              <TableRow>
-                <TableHeaderCell>ID</TableHeaderCell>
-                <TableHeaderCell>hearout</TableHeaderCell>
-                <TableHeaderCell>weight</TableHeaderCell>
-                <TableHeaderCell>TJ</TableHeaderCell>
-                <TableHeaderCell>lock</TableHeaderCell>
-                <TableHeaderCell>age</TableHeaderCell>
-                <TableHeaderCell>actions</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {visible.map((t) => (
-                <TableRow key={t.id}>
-                  <TableCell className={styles.idCell}>
-                    <Tooltip content={t.id} relationship="label">
-                      <span>{t.id.slice(0, 8)}</span>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell className={styles.idCell}>
-                    {t.hearout_id.slice(0, 8)}
-                  </TableCell>
-                  <TableCell>
-                    <WeightBreakdown
-                      a={t.weight_a}
-                      b={t.weight_b}
-                      c={t.weight_c}
-                      final={t.weight_final}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {t.tj_verdict && (
-                      <Badge
-                        appearance="filled"
-                        color={
-                          t.tj_verdict === "supported"
-                            ? "success"
-                            : t.tj_verdict === "conflict"
-                              ? "danger"
-                              : "warning"
-                        }
-                      >
-                        {t.tj_verdict}
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <LockBadge
-                      lockedBy={t.locked_by}
-                      lockExpiresAt={t.lock_expires_at}
-                    />
-                  </TableCell>
-                  <TableCell>{ageText(ageMin(t.created_at))}</TableCell>
-                  <TableCell>
-                    <Button
-                      appearance="primary"
-                      size="small"
-                      onClick={() => setSelected(t)}
-                    >
-                      開く
-                    </Button>{" "}
-                    {!t.locked_by ? (
-                      <Tooltip content="ロック取得" relationship="label">
-                        <Button
-                          appearance="subtle"
-                          size="small"
-                          icon={<LockClosed20Regular />}
-                          onClick={() => onLock(t)}
-                          aria-label="lock"
-                        />
-                      </Tooltip>
-                    ) : (
-                      <Tooltip content="ロック解除" relationship="label">
-                        <Button
-                          appearance="subtle"
-                          size="small"
-                          icon={<LockOpen20Regular />}
-                          onClick={() => onUnlock(t)}
-                          aria-label="unlock"
-                        />
-                      </Tooltip>
-                    )}
-                  </TableCell>
+          <div style={{ minWidth: "840px" }}>
+            <Table size="medium">
+              <TableHeader>
+                <TableRow>
+                  <TableHeaderCell>ID</TableHeaderCell>
+                  <TableHeaderCell>hearout</TableHeaderCell>
+                  <TableHeaderCell>weight</TableHeaderCell>
+                  <TableHeaderCell>TJ</TableHeaderCell>
+                  <TableHeaderCell>lock</TableHeaderCell>
+                  <TableHeaderCell>age</TableHeaderCell>
+                  <TableHeaderCell>actions</TableHeaderCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {visible.map((t) => (
+                  <TableRow key={t.id}>
+                    <TableCell className={styles.idCell}>
+                      <Tooltip content={t.id} relationship="label">
+                        <span>{t.id.slice(0, 8)}</span>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className={styles.idCell}>
+                      {t.hearout_id.slice(0, 8)}
+                    </TableCell>
+                    <TableCell>
+                      <WeightBreakdown
+                        a={t.weight_a}
+                        b={t.weight_b}
+                        c={t.weight_c}
+                        final={t.weight_final}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {t.tj_verdict && (
+                        <Badge
+                          appearance="filled"
+                          color={
+                            t.tj_verdict === "supported"
+                              ? "success"
+                              : t.tj_verdict === "conflict"
+                                ? "danger"
+                                : "warning"
+                          }
+                        >
+                          {t.tj_verdict}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <LockBadge
+                        lockedBy={t.locked_by}
+                        lockExpiresAt={t.lock_expires_at}
+                      />
+                    </TableCell>
+                    <TableCell>{ageText(ageMin(t.created_at))}</TableCell>
+                    <TableCell>
+                      <Button
+                        appearance="primary"
+                        size="small"
+                        onClick={() => setSelected(t)}
+                      >
+                        開く
+                      </Button>{" "}
+                      {!t.locked_by ? (
+                        <Tooltip content="ロック取得" relationship="label">
+                          <Button
+                            appearance="subtle"
+                            size="small"
+                            icon={<LockClosed20Regular />}
+                            onClick={() => onLock(t)}
+                            aria-label="lock"
+                          />
+                        </Tooltip>
+                      ) : (
+                        <Tooltip content="ロック解除" relationship="label">
+                          <Button
+                            appearance="subtle"
+                            size="small"
+                            icon={<LockOpen20Regular />}
+                            onClick={() => onUnlock(t)}
+                            aria-label="unlock"
+                          />
+                        </Tooltip>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
 

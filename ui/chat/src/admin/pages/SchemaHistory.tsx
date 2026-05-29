@@ -188,51 +188,53 @@ export default function SchemaHistory({ tenant }: Props): JSX.Element {
             <div>このテナントには変更履歴がまだありません。</div>
           </div>
         ) : (
-          <Table size="medium">
-            <TableHeader>
-              <TableRow>
-                <TableHeaderCell>changed_at (JST)</TableHeaderCell>
-                <TableHeaderCell>field_id</TableHeaderCell>
-                <TableHeaderCell>rev</TableHeaderCell>
-                <TableHeaderCell>change_type</TableHeaderCell>
-                <TableHeaderCell>diff</TableHeaderCell>
-                <TableHeaderCell>reason</TableHeaderCell>
-                <TableHeaderCell>changed_by</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell>{formatJst(e.changed_at)}</TableCell>
-                  <TableCell className={styles.fieldCell}>
-                    {e.schema_field_id}
-                  </TableCell>
-                  <TableCell>
-                    <Badge appearance="tint" color="brand">
-                      rev{e.revision_id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      appearance="filled"
-                      color={changeBadgeColor(e.change_type)}
-                    >
-                      {e.change_type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className={styles.diffCell}>
-                    {renderDiff(e.diff)}
-                  </TableCell>
-                  <TableCell className={styles.reasonCell}>
-                    {e.reason ?? ""}
-                  </TableCell>
-                  <TableCell className={styles.fieldCell}>
-                    {e.changed_by}
-                  </TableCell>
+          <div style={{ minWidth: "720px" }}>
+            <Table size="medium">
+              <TableHeader>
+                <TableRow>
+                  <TableHeaderCell>changed_at (JST)</TableHeaderCell>
+                  <TableHeaderCell>field_id</TableHeaderCell>
+                  <TableHeaderCell>rev</TableHeaderCell>
+                  <TableHeaderCell>change_type</TableHeaderCell>
+                  <TableHeaderCell>diff</TableHeaderCell>
+                  <TableHeaderCell>reason</TableHeaderCell>
+                  <TableHeaderCell>changed_by</TableHeaderCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {rows.map((e) => (
+                  <TableRow key={e.id}>
+                    <TableCell>{formatJst(e.changed_at)}</TableCell>
+                    <TableCell className={styles.fieldCell}>
+                      {e.schema_field_id}
+                    </TableCell>
+                    <TableCell>
+                      <Badge appearance="tint" color="brand">
+                        rev{e.revision_id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        appearance="filled"
+                        color={changeBadgeColor(e.change_type)}
+                      >
+                        {e.change_type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className={styles.diffCell}>
+                      {renderDiff(e.diff)}
+                    </TableCell>
+                    <TableCell className={styles.reasonCell}>
+                      {e.reason ?? ""}
+                    </TableCell>
+                    <TableCell className={styles.fieldCell}>
+                      {e.changed_by}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
     </section>
