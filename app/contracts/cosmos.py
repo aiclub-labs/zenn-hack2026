@@ -83,6 +83,11 @@ class DialogueTurn(_DocBase):
     timestamp: datetime
     schema_revision_seen_at: Optional[datetime] = None
     schema_revision_id_seen: Optional[int] = None
+    # P2-C1: retrieval ↔ generation 層分離。assistant turn にのみ載る。
+    # citation_ids: top-k citation_id (生成入力に渡したもの)
+    # top_k_scores: 並列 list (citation_ids と同 index, AI Search score)
+    # query_hash: 質問文の SHA-256 prefix (PII 漏えい回避のためハッシュのみ)
+    retrieval_ctx: Optional[dict] = None
 
 
 class DeltaEvent(_DocBase):
