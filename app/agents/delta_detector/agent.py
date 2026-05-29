@@ -4,7 +4,7 @@ Inputs:  DialogueTurn (user role)
 Outputs: list[DeltaEvent] — one per matched active schema field.
 
 Gap rule (Req 12.3-12.4):
-  gap = (self_critic < 3.0) OR (3.0 <= self_critic <= 5.0 AND distance > 0.4)
+  gap = (self_critic < 3.0) OR (3.0 <= self_critic <= 6.5 AND distance > 0.4)
 
 Cooldown (Req 12.5-12.7):
   7-day cooldown per (schema_field_id, session_id) after a gap fires.
@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 _DISTANCE_THRESHOLD = 0.4
 _SELF_CRITIC_HARD_GAP = 3.0
-_SELF_CRITIC_SOFT_HIGH = 5.0
+_SELF_CRITIC_SOFT_HIGH = 6.5
 _CONSECUTIVE_SUPPRESS = 3  # Req 12.6
 
 
