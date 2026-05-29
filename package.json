@@ -1,0 +1,27 @@
+{
+  "name": "scaffold",
+  "version": "1.0.0",
+  "description": "ハッカソンプロジェクト用のテーマ非依存スキャフォールド。テーマは 2026-05-11 に確定予定で、現時点の候補（新案A 人材マッチング / 新案C 知見アーカイブ / 新案D ドメイン学習）の比較は `../problem-statement.md` 参照。スキャフォールド自体は特定テーマを前提としておらず、候補間の pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aiclub-labs/zenn-hack2026.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aiclub-labs/zenn-hack2026/issues"
+  },
+  "homepage": "https://github.com/aiclub-labs/zenn-hack2026#readme",
+  "devDependencies": {
+    "zenn-cli": "^0.4.8"
+  }
+}

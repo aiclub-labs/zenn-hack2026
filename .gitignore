@@ -25,12 +25,5 @@ artifacts/
 
 # Playwright automation (per-script .gitignore covers most, this catches root-level slips)
 .playwright-profile/
-.playwright-mcp/
 screenshots/
-
-# Node / front-end build artifacts
 node_modules/
-*.tsbuildinfo
-ui/admin/src/**/*.js
-ui/review/src/**/*.js
-ui/chat/src/**/*.js
