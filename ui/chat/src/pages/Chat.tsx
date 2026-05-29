@@ -146,8 +146,18 @@ export function ChatPage() {
           <Textarea
             value={input}
             onChange={(_, data) => setInput(data.value)}
+            onKeyDown={(ev) => {
+              if (
+                ev.key === "Enter" &&
+                !ev.shiftKey &&
+                !ev.nativeEvent.isComposing
+              ) {
+                ev.preventDefault();
+                if (!busy && input.trim()) void send();
+              }
+            }}
             rows={2}
-            placeholder="質問・確認したい内容を書いてください…"
+            placeholder="質問・確認したい内容 (Enter で送信 / Shift+Enter で改行)"
             resize="vertical"
           />
           <div className={styles.composerRow}>

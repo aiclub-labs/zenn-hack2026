@@ -21,16 +21,29 @@ async def _embed(text: str) -> list[float]:
     return await _real_embed(text)
 
 
+_RELEVANCE_MIN = 0.56  # AI Search vector score; tuned from live distribution
+                       # (good hits ~0.58-0.67, off-topic top ~0.54).
+_RELEVANCE_TOP_K = 3   # show only top-3 strong hits
+
+
 async def _aisearch_query(
-    tenant: Tenant, vector: list[float], top_k: int = 8
+    tenant: Tenant, vector: list[float], top_k: int = 10
 ) -> list[dict[str, Any]]:
     from app.util.aisearch import CorpusIndex
 
     raw = await CorpusIndex().query(
         tenant=tenant, query_vec=vector, top_k=top_k, shareability_min="private"
     )
-    out: list[dict[str, Any]] = []
+    # Filter to strong matches only, then cap. If nothing clears the bar we
+    # return [] — chat answers without false-confidence citations.
+    scored: list[tuple[float, dict[str, Any]]] = []
     for h in raw:
+        score = float(h.get("@search.score", 0.0) or 0.0)
+        scored.append((score, h))
+    scored.sort(key=lambda t: t[0], reverse=True)
+    scored = [(s, h) for s, h in scored if s >= _RELEVANCE_MIN]
+    out: list[dict[str, Any]] = []
+    for _score, h in scored[:_RELEVANCE_TOP_K]:
         out.append(
             {
                 "record_id": h.get("id", ""),

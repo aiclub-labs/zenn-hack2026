@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Button,
   ProgressBar,
@@ -97,7 +96,6 @@ const useStyles = makeStyles({
 
 export function CitationCard({ citation, sector, unit }: Props) {
   const styles = useStyles();
-  const navigate = useNavigate();
   const [detail, setDetail] = useState<CitationDetail | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -165,9 +163,13 @@ export function CitationCard({ citation, sector, unit }: Props) {
           size="small"
           icon={<Open20Regular />}
           onClick={() =>
-            navigate(`/records/${encodeURIComponent(citation.record_id)}`)
+            window.open(
+              `/records/${encodeURIComponent(citation.record_id)}`,
+              "_blank",
+              "noopener,noreferrer",
+            )
           }
-          aria-label="詳細を開く"
+          aria-label="詳細を新規タブで開く"
         >
           詳細
         </Button>

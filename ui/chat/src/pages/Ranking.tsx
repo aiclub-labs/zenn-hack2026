@@ -1,7 +1,6 @@
 // Consultant-tacit pivot (2026-05-29): community-vote ranking page.
 // Sorted by `score = upvotes - downvotes` server-side via AI Search.
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import {
   Badge,
   Skeleton,
@@ -100,7 +99,6 @@ const useStyles = makeStyles({
 
 export default function RankingPage(): JSX.Element {
   const styles = useStyles();
-  const navigate = useNavigate();
   const { tenant } = useTenantCtx();
   const q = useQuery({
     queryKey: ["ranking", tenant],
@@ -137,12 +135,20 @@ export default function RankingPage(): JSX.Element {
               role="button"
               tabIndex={0}
               onClick={() =>
-                navigate(`/records/${encodeURIComponent(e.record_id)}`)
+                window.open(
+                  `/records/${encodeURIComponent(e.record_id)}`,
+                  "_blank",
+                  "noopener,noreferrer",
+                )
               }
               onKeyDown={(ev) => {
                 if (ev.key === "Enter" || ev.key === " ") {
                   ev.preventDefault();
-                  navigate(`/records/${encodeURIComponent(e.record_id)}`);
+                  window.open(
+                    `/records/${encodeURIComponent(e.record_id)}`,
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             >
