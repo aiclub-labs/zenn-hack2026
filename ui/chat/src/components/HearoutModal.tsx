@@ -37,6 +37,9 @@ const useStyles = makeStyles({
     flexDirection: "column",
     ...shorthands.gap(tokens.spacingVerticalM),
     minWidth: "420px",
+    "@media (max-width: 768px)": {
+      minWidth: 0,
+    },
   },
   progressRow: {
     display: "flex",
@@ -140,7 +143,14 @@ export function HearoutModal({ sessionId, initialQuestion, onClose }: Props) {
   return (
     <Dialog open modalType="non-modal" onOpenChange={() => undefined}>
       <DialogSurface
-        style={{ position: "fixed", right: 24, bottom: 24, maxWidth: "480px" }}
+        style={{
+          position: "fixed",
+          right: "min(24px, 2vw)",
+          bottom: "min(24px, 2vw)",
+          left: "min(24px, 2vw)",
+          maxWidth: "480px",
+          marginLeft: "auto",
+        }}
       >
         <DialogBody>
           <DialogTitle

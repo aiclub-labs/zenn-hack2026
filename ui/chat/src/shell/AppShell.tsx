@@ -31,6 +31,9 @@ const useStyles = makeStyles({
     gridTemplateColumns: "240px 1fr",
     minHeight: "100vh",
     backgroundColor: tokens.colorNeutralBackground2,
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "1fr",
+    },
   },
   sidebar: {
     backgroundColor: tokens.colorBrandBackground,
@@ -38,6 +41,13 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     ...shorthands.padding(tokens.spacingVerticalL, 0),
+    "@media (max-width: 768px)": {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: tokens.spacingHorizontalS,
+      ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalM),
+      overflowX: "auto",
+    },
   },
   brand: {
     ...shorthands.padding(
@@ -49,17 +59,29 @@ const useStyles = makeStyles({
     fontSize: tokens.fontSizeBase500,
     letterSpacing: "0.02em",
     color: tokens.colorNeutralForegroundOnBrand,
+    "@media (max-width: 768px)": {
+      display: "none",
+    },
   },
   brandSub: {
     fontSize: tokens.fontSizeBase200,
     fontWeight: 400,
     opacity: 0.75,
     marginTop: "2px",
+    "@media (max-width: 768px)": {
+      display: "none",
+    },
   },
   nav: {
     display: "flex",
     flexDirection: "column",
     gap: "2px",
+    "@media (max-width: 768px)": {
+      flexDirection: "row",
+      gap: tokens.spacingHorizontalXS,
+      width: "100%",
+      justifyContent: "space-around",
+    },
   },
   navItem: {
     display: "flex",
@@ -74,6 +96,15 @@ const useStyles = makeStyles({
     ":hover": {
       backgroundColor: "rgba(255,255,255,0.08)",
     },
+    "@media (max-width: 768px)": {
+      ...shorthands.padding(
+        tokens.spacingVerticalXS,
+        tokens.spacingHorizontalS,
+      ),
+      gap: tokens.spacingHorizontalXS,
+      fontSize: tokens.fontSizeBase200,
+      whiteSpace: "nowrap",
+    },
   },
   navItemActive: {
     backgroundColor: "rgba(255,255,255,0.16)",
@@ -84,6 +115,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     minWidth: 0,
+    minHeight: "100vh",
   },
   header: {
     display: "flex",
@@ -92,16 +124,58 @@ const useStyles = makeStyles({
     ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalXL),
     backgroundColor: tokens.colorNeutralBackground1,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    "@media (max-width: 768px)": {
+      flexWrap: "wrap",
+      gap: tokens.spacingHorizontalS,
+      ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalM),
+    },
   },
   tenant: {
     marginLeft: "auto",
     display: "flex",
     alignItems: "center",
     gap: tokens.spacingHorizontalS,
+    "@media (max-width: 768px)": {
+      marginLeft: 0,
+      width: "100%",
+      flexWrap: "wrap",
+      gap: tokens.spacingHorizontalXS,
+    },
+  },
+  userIdCaption: {
+    "@media (max-width: 768px)": {
+      display: "none",
+    },
+  },
+  fieldBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalXS,
+    "@media (max-width: 768px)": {
+      flex: 1,
+      minWidth: 0,
+    },
+  },
+  fieldInput: {
+    width: "160px",
+    "@media (max-width: 768px)": {
+      width: "100%",
+      minWidth: 0,
+    },
+  },
+  fieldInputShort: {
+    width: "120px",
+    "@media (max-width: 768px)": {
+      width: "100%",
+      minWidth: 0,
+    },
   },
   content: {
     flex: 1,
     minWidth: 0,
+    minHeight: 0,
+    display: "flex",
+    flexDirection: "column",
   },
   disclosure: {
     ...shorthands.padding(tokens.spacingVerticalXS, tokens.spacingHorizontalXL),
@@ -153,23 +227,29 @@ export function AppShell({ children }: { children: ReactNode }) {
             {tenant.sector} / {tenant.unit}
           </Badge>
           <div className={styles.tenant}>
-            <Caption1>{tenant.user_id}</Caption1>
-            <Label htmlFor="t-sector">sector</Label>
-            <Input
-              id="t-sector"
-              size="small"
-              value={tenant.sector}
-              onChange={(_, d) => setTenant({ ...tenant, sector: d.value })}
-              style={{ width: 160 }}
-            />
-            <Label htmlFor="t-unit">unit</Label>
-            <Input
-              id="t-unit"
-              size="small"
-              value={tenant.unit}
-              onChange={(_, d) => setTenant({ ...tenant, unit: d.value })}
-              style={{ width: 120 }}
-            />
+            <Caption1 className={styles.userIdCaption}>
+              {tenant.user_id}
+            </Caption1>
+            <div className={styles.fieldBox}>
+              <Label htmlFor="t-sector">sector</Label>
+              <Input
+                id="t-sector"
+                size="small"
+                value={tenant.sector}
+                onChange={(_, d) => setTenant({ ...tenant, sector: d.value })}
+                className={styles.fieldInput}
+              />
+            </div>
+            <div className={styles.fieldBox}>
+              <Label htmlFor="t-unit">unit</Label>
+              <Input
+                id="t-unit"
+                size="small"
+                value={tenant.unit}
+                onChange={(_, d) => setTenant({ ...tenant, unit: d.value })}
+                className={styles.fieldInputShort}
+              />
+            </div>
           </div>
         </header>
         <main className={styles.content}>{children}</main>

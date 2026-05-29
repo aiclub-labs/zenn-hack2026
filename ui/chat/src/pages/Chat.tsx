@@ -22,7 +22,8 @@ import { useTenantCtx } from "../shell/TenantContext";
 const useStyles = makeStyles({
   root: {
     display: "flex",
-    height: "calc(100vh - 60px)",
+    flex: 1,
+    minHeight: 0,
   },
   main: {
     display: "flex",
@@ -30,12 +31,23 @@ const useStyles = makeStyles({
     flex: 1,
     minWidth: 0,
   },
+  sidebarWrap: {
+    "@media (max-width: 768px)": {
+      display: "none",
+    },
+  },
   toolbar: {
     display: "flex",
     justifyContent: "flex-end",
     ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalXL),
     backgroundColor: tokens.colorNeutralBackground1,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    "@media (max-width: 768px)": {
+      ...shorthands.padding(
+        tokens.spacingVerticalXS,
+        tokens.spacingHorizontalM,
+      ),
+    },
   },
   composer: {
     ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalXL),
@@ -44,6 +56,9 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     gap: tokens.spacingVerticalS,
+    "@media (max-width: 768px)": {
+      ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalM),
+    },
   },
   composerRow: {
     display: "flex",
@@ -172,7 +187,9 @@ export function ChatPage() {
           </div>
         </div>
       </div>
-      <SchemaHistorySidebar sector={ctx.sector} unit={ctx.unit} />
+      <div className={styles.sidebarWrap}>
+        <SchemaHistorySidebar sector={ctx.sector} unit={ctx.unit} />
+      </div>
       {hearoutOpen && hearoutSessionId && (
         <HearoutModal
           sessionId={hearoutSessionId}

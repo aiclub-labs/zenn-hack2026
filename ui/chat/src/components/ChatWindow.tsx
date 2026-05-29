@@ -30,6 +30,9 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     ...shorthands.gap(tokens.spacingVerticalM),
+    "@media (max-width: 768px)": {
+      ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalM),
+    },
   },
   emptyState: {
     flex: 1,
@@ -49,6 +52,9 @@ const useStyles = makeStyles({
     ...shorthands.gap(tokens.spacingHorizontalS),
     alignItems: "flex-start",
     maxWidth: "78%",
+    "@media (max-width: 768px)": {
+      maxWidth: "92%",
+    },
   },
   userRow: {
     alignSelf: "flex-end",
