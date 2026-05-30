@@ -2,13 +2,15 @@ import { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Title3,
-  Input,
+  Combobox,
+  Option,
   Label,
   Badge,
   makeStyles,
   tokens,
   shorthands,
 } from "@fluentui/react-components";
+
 import {
   Chat24Regular,
   Settings24Regular,
@@ -16,6 +18,10 @@ import {
   Trophy24Regular,
 } from "@fluentui/react-icons";
 import { useTenantCtx } from "./TenantContext";
+
+const SECTOR_OPTIONS = ["manufacturing-s8b", "strategy-poc", "fintech-poc"];
+const UNIT_OPTIONS = ["line-A", "line-B", "auto-mfg", "retail-bank"];
+const USER_OPTIONS = ["haruka@example.com", "shigeru.dev", "takeshi.dev"];
 
 const NAV = [
   { to: "/chat", label: "Chat", icon: <Chat24Regular /> },
@@ -146,21 +152,30 @@ const useStyles = makeStyles({
     alignItems: "center",
     gap: tokens.spacingHorizontalXS,
     "@media (max-width: 768px)": {
-      flex: 1,
+      flexBasis: "100%",
+      width: "100%",
       minWidth: 0,
     },
   },
-  fieldInput: {
-    width: "160px",
+  fieldLabel: {
+    minWidth: "48px",
     "@media (max-width: 768px)": {
-      width: "100%",
+      minWidth: "56px",
+    },
+  },
+  fieldInput: {
+    width: "180px",
+    "@media (max-width: 768px)": {
+      flex: 1,
+      width: "auto",
       minWidth: 0,
     },
   },
   fieldInputShort: {
     width: "120px",
     "@media (max-width: 768px)": {
-      width: "100%",
+      flex: 1,
+      width: "auto",
       minWidth: 0,
     },
   },
@@ -222,34 +237,90 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Badge>
           <div className={styles.tenant}>
             <div className={styles.fieldBox}>
-              <Label htmlFor="t-sector">sector</Label>
-              <Input
+              <Label htmlFor="t-sector" className={styles.fieldLabel}>
+                sector
+              </Label>
+              <Combobox
                 id="t-sector"
                 size="small"
+                freeform
                 value={tenant.sector}
-                onChange={(_, d) => setTenant({ ...tenant, sector: d.value })}
+                selectedOptions={[tenant.sector]}
+                onOptionSelect={(_, d) =>
+                  d.optionValue &&
+                  setTenant({ ...tenant, sector: d.optionValue })
+                }
+                onChange={(e) =>
+                  setTenant({
+                    ...tenant,
+                    sector: (e.target as HTMLInputElement).value,
+                  })
+                }
                 className={styles.fieldInput}
-              />
+              >
+                {SECTOR_OPTIONS.map((s) => (
+                  <Option key={s} value={s}>
+                    {s}
+                  </Option>
+                ))}
+              </Combobox>
             </div>
             <div className={styles.fieldBox}>
-              <Label htmlFor="t-unit">unit</Label>
-              <Input
+              <Label htmlFor="t-unit" className={styles.fieldLabel}>
+                unit
+              </Label>
+              <Combobox
                 id="t-unit"
                 size="small"
+                freeform
                 value={tenant.unit}
-                onChange={(_, d) => setTenant({ ...tenant, unit: d.value })}
+                selectedOptions={[tenant.unit]}
+                onOptionSelect={(_, d) =>
+                  d.optionValue && setTenant({ ...tenant, unit: d.optionValue })
+                }
+                onChange={(e) =>
+                  setTenant({
+                    ...tenant,
+                    unit: (e.target as HTMLInputElement).value,
+                  })
+                }
                 className={styles.fieldInputShort}
-              />
+              >
+                {UNIT_OPTIONS.map((u) => (
+                  <Option key={u} value={u}>
+                    {u}
+                  </Option>
+                ))}
+              </Combobox>
             </div>
             <div className={styles.fieldBox}>
-              <Label htmlFor="t-user">user</Label>
-              <Input
+              <Label htmlFor="t-user" className={styles.fieldLabel}>
+                user
+              </Label>
+              <Combobox
                 id="t-user"
                 size="small"
+                freeform
                 value={tenant.user_id}
-                onChange={(_, d) => setTenant({ ...tenant, user_id: d.value })}
+                selectedOptions={[tenant.user_id]}
+                onOptionSelect={(_, d) =>
+                  d.optionValue &&
+                  setTenant({ ...tenant, user_id: d.optionValue })
+                }
+                onChange={(e) =>
+                  setTenant({
+                    ...tenant,
+                    user_id: (e.target as HTMLInputElement).value,
+                  })
+                }
                 className={styles.fieldInput}
-              />
+              >
+                {USER_OPTIONS.map((u) => (
+                  <Option key={u} value={u}>
+                    {u}
+                  </Option>
+                ))}
+              </Combobox>
             </div>
           </div>
         </header>
