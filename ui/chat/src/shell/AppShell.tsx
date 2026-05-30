@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Title3,
-  Caption1,
   Input,
   Label,
   Badge,
@@ -142,11 +141,6 @@ const useStyles = makeStyles({
       gap: tokens.spacingHorizontalXS,
     },
   },
-  userIdCaption: {
-    "@media (max-width: 768px)": {
-      display: "none",
-    },
-  },
   fieldBox: {
     display: "flex",
     alignItems: "center",
@@ -227,9 +221,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             {tenant.sector} / {tenant.unit}
           </Badge>
           <div className={styles.tenant}>
-            <Caption1 className={styles.userIdCaption}>
-              {tenant.user_id}
-            </Caption1>
             <div className={styles.fieldBox}>
               <Label htmlFor="t-sector">sector</Label>
               <Input
@@ -248,6 +239,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                 value={tenant.unit}
                 onChange={(_, d) => setTenant({ ...tenant, unit: d.value })}
                 className={styles.fieldInputShort}
+              />
+            </div>
+            <div className={styles.fieldBox}>
+              <Label htmlFor="t-user">user</Label>
+              <Input
+                id="t-user"
+                size="small"
+                value={tenant.user_id}
+                onChange={(_, d) => setTenant({ ...tenant, user_id: d.value })}
+                className={styles.fieldInput}
               />
             </div>
           </div>
