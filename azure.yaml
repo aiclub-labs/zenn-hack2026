@@ -23,6 +23,7 @@ services:
     host: containerapp
     docker:
       path: Dockerfile
+      remoteBuild: true
   web-admin:
     project: ui/admin
     language: ts

@@ -12,6 +12,79 @@
 
 ---
 
+## 📍 Affordance Map (UAT 実行前に必ず確認)
+
+各シナリオが要求する操作と、UI 上で実際にそれを実現する affordance の対応表。**ここに「該当 UI 無し」のものが残っていたら、シナリオ実行は dev shortcut を使わずブロック報告すべき。**
+
+### グローバル (ヘッダー / ナビ)
+
+| 操作 | UI affordance | 場所 | モバイル可視性 |
+|---|---|---|---|
+| sector 切替 | テキスト Input | ヘッダー右側 (Title3 下) | ✅ 折返し後も見える |
+| unit 切替 | テキスト Input | ヘッダー右側 | ✅ |
+| user_id (ペルソナ) 切替 | テキスト Input ← 2026-05-30 追加 | ヘッダー右側 | ✅ |
+| route 切替 | NavLink ボタン | サイドバー (mobile では上端に横並び) | ✅ |
+| 現在 tenant 可視化 | Badge `sector / unit` | ヘッダー左 | ✅ |
+
+### Chat (Persona B)
+
+| 操作 | UI affordance | コンポーネント |
+|---|---|---|
+| 質問送信 | Input + 送信ボタン | `Chat.tsx` composer |
+| Redact ON/OFF | トグル (🔒 アイコン) | `RedactToggle.tsx` toolbar |
+| HearoutModal 起動 | 自動 (`gap_detected=true` で自動 open) | `HearoutModal.tsx` |
+| HearoutModal で skip | 「skip」ボタン | `HearoutModal.tsx` |
+| 5W1H 回答送信 | 「送信」ボタン | `HearoutModal.tsx` |
+| citation 詳細遷移 | citation バッジ tap → `/records/:id` | `CitationCard.tsx` |
+| 矛盾 inline 表示 | 応答上部/下部に banner | `ConflictInline.tsx` |
+| schema 更新通知 | 画面上部 banner + 「確認」ボタン | `SchemaUpdateBanner.tsx` |
+| 履歴サイドバー | 右ペイン (mobile では非表示) | `SchemaHistorySidebar.tsx` |
+
+### Admin (Persona A)
+
+| 操作 | UI affordance | route |
+|---|---|---|
+| schema 一覧 | テーブル (mobile は横スクロール) | `/admin/schemas` |
+| schema 新規追加 | 「新規追加」ボタン → modal | `/admin/schemas` |
+| schema 編集 | 行内 編集ボタン → modal | `/admin/schemas` |
+| schema 無効化 | is_active トグル | `/admin/schemas` |
+| revision 履歴 | テーブル | `/admin/history` |
+| バルクインポート | JSON 入力 textarea + 「適用」 | `/admin/import` |
+| 自己承認率 KPI | カード + チャート | `/admin/self-approval` |
+
+### Review (Persona C)
+
+| 操作 | UI affordance | route |
+|---|---|---|
+| 通常レビュー一覧 | テーブル | `/review` |
+| record 詳細 | 行 tap → 右ペイン or modal | `/review` |
+| 承認 | 「承認」ボタン | `/review` |
+| 編集後承認 | 「編集」→ 「保存して承認」 | `/review` |
+| 拒否 | 「拒否」ボタン | `/review` |
+| 矛盾比較 | タブ切替 + 並列比較 | `/review/conflict` |
+| 自己承認率 KPI | カード + チャート | `/review/self-approval` |
+
+### その他
+
+| 操作 | UI affordance | route |
+|---|---|---|
+| Ranking 閲覧 | カード列 | `/popular` |
+| schema changelog | テーブル | `/changelog` |
+| record 詳細 | 全画面 | `/records/:id` |
+
+### ⚠️ 既知 affordance 制限 / 検証 TODO
+
+| 項目 | 状態 |
+|---|---|
+| バルク CSV インポート | 未確認 (JSON のみ実装の可能性) |
+| 24h SLA expired の業務 U 側通知 | UI 経路未確認 (Discord webhook のみか?) |
+| Persona B → C 兼任時の self-approve UI block | gating 無いと想定 (audit log のみ) |
+| モバイルで modal を背景タップで誤閉鎖 | 要確認 |
+
+> **UAT 実行ルール**: シナリオ手順が要求する操作と上表を突き合わせ、「affordance 無し」なら手順を実行せず Skip + UI 改善 issue を切る。dev shortcut (localStorage, DevTools 直書き) は使わない。
+
+---
+
 ## S1. Persona A — Admin (シゲル) シナリオ
 
 ### S1.1 [HIGH] マス開設: 5-10 件 schema 初期定義 (A1)
