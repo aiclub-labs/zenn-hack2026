@@ -21,7 +21,7 @@ ENDPOINT = os.environ.get(
 )
 DATABASE = os.environ.get("COSMOS_DATABASE", "dialogue_delta")
 
-TENANT_PK = "manufacturing-s8b#line-A"
+TENANT_PK = "general#general"
 USER_ID = "haruka@example.com"
 
 
@@ -43,29 +43,33 @@ async def main() -> int:
         "gap_event_id": gap_event_id,
         "session_id": hearout_id,
         "transcript": [
-            {"role": "ai", "content": "5/22 ライン A クラック、いつ気付いた?"},
-            {"role": "user", "content": "朝のシフト切替直後、08:15 ごろ"},
-            {"role": "ai", "content": "どの工程で発見した?"},
             {
-                "role": "user",
-                "content": "表面処理後の目視検査ライン (拡大鏡使用)",
+                "role": "ai",
+                "content": "Power Query の日付テキスト揺れ正規化、どの場面で書きました?",
             },
-            {"role": "ai", "content": "原因として何を疑った?"},
-            {"role": "user", "content": "焼付温度ドリフト (165℃ 付近で密着不良)"},
-            {"role": "ai", "content": "暫定対応は何を決めた?"},
             {
                 "role": "user",
-                "content": "焼付温度を 172℃ に上げ、膜厚再測定を全数実施",
+                "content": "先週の 提案案件、月次集計の前処理。日付列が '2026/5/1', '2026-05-01', 'May 1 2026' が混在",
+            },
+            {"role": "ai", "content": "どんな関数で揃えました?"},
+            {
+                "role": "user",
+                "content": "Table.TransformColumns で Text.Replace 二段 + Date.From、その後 try ... otherwise null でガード",
+            },
+            {"role": "ai", "content": "気をつけたポイントは?"},
+            {
+                "role": "user",
+                "content": "ロケール依存になりがちなので Date.FromText に明示的に 'en-US' を渡す。あと null を残すと downstream で SUM が落ちるので 0 fallback を別列で",
             },
         ],
         "who": USER_ID,
-        "what": "ライン A 表面処理後クラック、焼付温度ドリフト疑い",
-        "when": "2026-05-22 08:15",
-        "where": "ライン A 目視検査 (拡大鏡)",
-        "why": "焼付温度 165℃ 付近で密着不良",
-        "how": "焼付 172℃ 上げ + 全数膜厚再測定",
+        "what": "Power Query で日付テキスト揺れを Table.TransformColumns + try で正規化する自分のレシピ",
+        "when": "2026 年 5 月 提案案件 月次集計フェーズ",
+        "where": "Power Query M / Excel データ取得",
+        "why": "日付列のロケール / 区切り混在で Date.FromText が随所で落ちるため",
+        "how": "Text.Replace 二段で区切り正規化 → Date.FromText with 'en-US' → try otherwise null → 0 fallback 別列",
         "outcome": "completed",
-        "turn_count": 4,
+        "turn_count": 3,
         "created_at": now.isoformat(),
     }
 

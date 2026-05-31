@@ -78,11 +78,17 @@ class CorpusIndex:
         exclude_superseded: bool = True,
         shareability_min: Shareability = "private",
     ) -> list[dict[str, Any]]:
-        """Hybrid vector query with partition + visibility filters."""
-        filters: list[str] = [
-            f"sector eq '{tenant.sector}'",
-            f"unit eq '{tenant.unit}'",
-        ]
+        """Hybrid vector query with partition + visibility filters.
+
+        Tenant scope is current tenant ∪ ``general/general`` so that
+        org-agnostic tips (Excel LET / Power Query / Copilot prompt
+        patterns) ride along with tenant-specific knowledge.
+        """
+        tenant_clause = (
+            f"(sector eq '{tenant.sector}' and unit eq '{tenant.unit}')"
+            " or (sector eq 'general' and unit eq 'general')"
+        )
+        filters: list[str] = [f"({tenant_clause})"]
         if filter_active:
             filters.append("is_active eq true")
         if exclude_superseded:
