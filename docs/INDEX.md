@@ -1,6 +1,6 @@
 # ハッカソン — インデックス
 
-> **Microsoft Agent Hackathon Japan 2026 (Zenn)** · KPMG AI部 · 法人部門 · 2026-06-01 提出 · 3 名
+> **Microsoft Agent Hackathon Japan 2026 (Zenn)** · 法人 AI部 · 法人部門 · 2026-06-01 提出 · 3 名
 
 このフォルダはオペレータの企画用ワークスペース。チームメンバーは GitHub リポジトリ (`aiclub-labs/zenn-hack2026`) を参照する想定です。企画ドキュメントは Phase B（GitHub Projects bootstrap）でリポジトリ側にオンボード予定。
 

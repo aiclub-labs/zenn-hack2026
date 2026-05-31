@@ -12,7 +12,7 @@
 
 > agent が過去 **SharePoint / 会議 transcript / chat** を漁り、ドメイン × クライアント軸で **毎朝 push 配信**（問題出題 or 要約）。ユーザーの解答 / 反応をログし、苦手・関心領域を個人プロファイルに更新 → 翌朝の配信に反映する **個人化ループ**。
 >
-> **核**: 「KPMG 固有 corpus × 個人化学習プロファイル × 毎朝 push」の 3 点セット。push 型 + 個人化は他社（McKinsey Lilli 等の pull 型 RAG）との差別化軸。
+> **核**: 「法人 固有 corpus × 個人化学習プロファイル × 毎朝 push」の 3 点セット。push 型 + 個人化は他社（McKinsey Lilli 等の pull 型 RAG）との差別化軸。
 
 ---
 
@@ -199,7 +199,7 @@
 | 2:00-2:30 | **場面転換: 翌朝** | 配信が「あなたは tech に関心が高く retail KPI が弱い → tech 案件における retail KPI 設計事例」と個人化 |
 | 2:30-3:00 | admin 視点（副次） | プロファイル全体ビュー、組織で誰がどの domain に強い / 弱いの heatmap |
 
-**判定基準**: 「個人化が demo 内で見える」か（→ 翌朝の場面転換が肝）/ 「KPMG 固有 corpus が effective」と即理解できるか。
+**判定基準**: 「個人化が demo 内で見える」か（→ 翌朝の場面転換が肝）/ 「法人 固有 corpus が effective」と即理解できるか。
 
 ---
 
@@ -226,7 +226,7 @@
 
 ## 10. Differentiation hook
 
-> **「KPMG 固有 corpus × 個人化学習プロファイル × 毎朝 push」**
+> **「法人 固有 corpus × 個人化学習プロファイル × 毎朝 push」**
 >
 > 他社製品（McKinsey Lilli / 各社内 LLM RAG）は **pull 型 RAG**（聞かれたら答える）が中心。本案は **push 型 + 個人化ループ** で habit loop を形成する。Sotaro テーゼ（domain-specialty prevalence）の最も直接的な instantiation。
 

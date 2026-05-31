@@ -1,5 +1,9 @@
 # UAT Scenarios — dialogue-delta-formalization
 
+> ⚠️ **Note (2026-05-31 pivot)**: 本文中のシナリオ S1–S6 は **製造業 (manufacturing-s8b / line-A)** 例で初期作成された。**プロジェクトは 2026-05-29 に「業務遂行ノウハウ (Excel / Power Query / Copilot / Power Automate / HTML スライド型) を扱う consulting tacit knowledge」へ pivot 済**。最新の正規シナリオは **`general#general` partition + `seed_consultant_*.py` のデータセット** を前提とする。提出デモは `output/demo/demo-s41-live-v5.mp4` (Excel LET + Power Query レシピ題材) が定本。
+>
+> 製造業例の S1–S6 は「シナリオ骨格 (起承転結 / persona 役割 / KPI 定義 / Affordance Map 構造)」の reference として保持。実 UAT は pivot 後ドメインで読み替え実施。
+>
 > 別紙: `../.kiro/specs/dialogue-delta-formalization/handoff-uat.md`
 > 対象: 統合 SPA https://ca-hack2026-dev-web-chat.victoriousbeach-c5de1386.swedencentral.azurecontainerapps.io/
 > 各シナリオ: PRIORITY (HIGH/MED/LOW) / persona / 関連 Story / 関連 Req / 前提 / 手順 / 期待 / KPI / 失敗時 fallback

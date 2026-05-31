@@ -2,11 +2,11 @@
 
 > **ライブ実行状態。** 毎セッション更新。タイムラインは [ROADMAP.md](./ROADMAP.md) を、ナビゲーションは [INDEX.md](./INDEX.md) を参照。
 
-**最終更新:** 2026-05-20（実装現況反映: discord-bot の Phase B1/B2/B3/C1 + meeting recap pipeline は既に main に landing 済。ADR-0001 の bridge 層は `/spec` `/review` を除いて稼働中）
+**最終更新:** 2026-05-12（M6 テーマ確定: 暗黙知形式化 dialogue-monitoring 方式 + idea-f 作成 + Kiro spec init + 先行事例リサーチ #1 完了）
 
 ## 完了したこと
 
-- **M0** ✅ 部門選択: 法人部門 (KPMG AI部) — 2026-04-23
+- **M0** ✅ 部門選択: 法人部門 (法人 AI部) — 2026-04-23
 - **M1** ✅ Azure アカウント開設; $200 クレジットを portal の Cost Management → Credits で確認済
 - **M2** ✅ GitHub リポジトリ `aiclub-labs/zenn-hack2026`（private）作成; scaffold を `main` に push（58 ファイル、77 オブジェクト、~59 KiB）
 - **M2.1** ✅ 3 名分の GitHub collaborator 配線完了（オペレータ + `Suzuki-Sotaro` + メンバー 3）on `aiclub-labs/zenn-hack2026` — 2026-04-29
@@ -24,19 +24,6 @@
 - **先行事例リサーチ #1** ✅ 2026-05-12 — `research/tacit-knowledge-ai-prior-art.md`。Kunumi (arXiv 2507.03811) の自己批評スコア + EffiARA の信頼度集約 + GraphCheck/FactCheck の正誤判定方式を spec ベースラインに反映済
 - **対象セクター×ユニット候補マトリクス** ✅ 2026-05-12 — `research/sector-unit-candidates.md`。5 候補（A/D/B 推奨順）。5/14 セッション議論材料
 - **リサーチ #2 Azure Agent Platform 選定** ✅ 2026-05-12 — `research/azure-agent-platform-decision.md`。**Microsoft Agent Framework 1.0 (2026-04-03 GA、SK + AutoGen 統合後継) + Foundry Agent Service (本体無料) のハイブリッド構成**を採用候補に確定。HITL は MAF 標準機能 (`RequestInfoEvent`) で自前実装不要。Week 1 flag day (2026-05-18) で Hosted agent 実機検証後に最終判断。requirements.md + idea-f §4 に反映済
-
-## Discord bot dev-loop bridge — 実装現況（ADR-0001 layer 3）
-
-> コードは `personal-hub/ai-club/discord-bot/`（local-only ホスト、Azure Container Apps 移設は deferred）。以下は `main` に landing 済の機能。
-
-- **Meeting recap pipeline** ✅ 2026-05-07 → 05-08 — `src/meeting/`。Discord voice → Whisper（240s チャンク、25MB 制限回避）→ Claude 要約 → `MEETINGS_REPO` に commit。~2h ミーティング対応スケール調整済。`/recap` slash command
-- **Phase B1 OAuth bridges** ✅ 2026-05-12 — `/connect azure`（device code, MSAL silent refresh）+ `/connect github`（device flow, Octokit）。Per-user token を `src/auth/storage.ts` に永続化
-- **Phase B2 read-only ops** ✅ 2026-05-12 — `/az status`（sub health: RG / AOAI accounts + deployments + locks）、`/gh status`（自分 PR / 他 PR / 最新 5 workflow runs）
-- **Phase B3 write ops with reaction approval** ✅ 2026-05-12 — `/az lock-create` / `/az lock-remove` / `/gh pr-merge` がすべて ✅ reaction 承認ゲート（`src/handlers/approval.ts`、5 分タイムアウト）を経由
-- **Phase C1 agent team `/deploy`** ✅ 2026-05-12 — `src/agents/{planner,executor,verifier}.ts` + orchestrator。自然言語指示 → `az deployment sub what-if` → リスクレベル付きプレビュー → reaction 承認 → 実 deploy → verifier
-- **登録済 slash command 9 個**: `ask`, `role`, `channel`, `members`, `connect`, `az`, `gh`, `deploy`, `recap`（`src/commands/index.ts`）
-- **Admin tools 9 個**: ADR の `list_roles` / `create_role` / `assign_role` / `remove_role` / `list_members` / `set_channel_permissions` / `create_channel` / `create_category` + member の `fetch_channel_messages`
-- **その他**: `src/handlers/hack-pm.ts`（hack-pm チャンネル handler）、server-context、GitHub webhook / notify-webhook セットアップスクリプト
 
 ## デプロイ済 Azure リソース（カノニカル名一覧）
 
@@ -97,7 +84,7 @@ Track C — 管理（オペレータ）:
 
 - **チームメンバーの招待受諾** — M2/M3 とも `PendingAcceptance`（Microsoft からメール送信済、クリック待ち）。受諾するまで `az login` 不可。RBAC とリソースは既にセットアップ済 — クリックだけがゲート。30 分経ってもメールが来なければ迷惑メール確認（送信元: `invites@microsoft.com`）
 - ~~**Discord ユーザー ID 収集**~~ ✅ 解決済 — 3 名とも `Hackathon Team` ロール付与済
-- **A1** Zenn エントリーフォーム登録（KPMG名義、法人部門） — 成果物提出フォーム URL + 5/14 entry-session 案内が届く。iPad 可。[HANDOFF.md §A](./HANDOFF.md)
+- **A1** Zenn エントリーフォーム登録（法人名義、法人部門） — 成果物提出フォーム URL + 5/14 entry-session 案内が届く。iPad 可。[HANDOFF.md §A](./HANDOFF.md)
 - **A2** Zenn org ハンドル `ai-club`（または代替）の確保
 - **A3** 社内確認のフォローアップ（4 件未確定: 表記 / 登壇 / IP / 利益相反）
 - **D2–D4** Discord サーバー構築の残タスク per [discord-bot/docs/server-setup-execution-guide.md](../../../../discord-bot/docs/server-setup-execution-guide.md)（D1 ロール付与は完了済）
@@ -110,8 +97,7 @@ Track C — 管理（オペレータ）:
 - ~~**phantom OID `36fc9993-...` の orphan RBAC 4 件削除**~~ ✅ 2026-05-11 完了。`az role assignment delete --ids` は `MissingSubscription` で失敗するため `az rest --method DELETE` で直接呼出。shared RG は `nodelete-shared` lock で `ScopeLocked` ブロックされたため、一時的に `az lock delete` → 30s 伝播待ち → 3 件削除 → `az lock create` で再適用。dev RG の 1 件はロック対象外なので即削除。合計 4 件削除済、新 Sotaro OID `20f478f8-...` の RBAC 4 件は無傷を再確認
 - ~~**テーマ確定**~~ ✅ 2026-05-11 解決。idea-f（dialogue-monitoring 方式 暗黙知形式化）採択。詳細は [problem-statement.md](./problem-statement.md) / [.kiro/specs/dialogue-delta-formalization/](../.kiro/specs/dialogue-delta-formalization/)
 - ~~**D7（AOAI リージョン）** — `swedencentral` がデフォルトだが gpt-4o-mini + gpt-4o + text-embedding-3-small の availability 未確認。M5（2026-05-05）前に確認。~~ ✅ **2026-04-28 確定** via `az cognitiveservices model list --location swedencentral`。3 モデルすべて存在。注意点: このリージョンの `text-embedding-3-small` は `GlobalStandard`/`DataZoneStandard` SKU のみ — `azure-setup.md` §6.1 を `--sku-name Standard` → `--sku-name GlobalStandard` にパッチ。容量クォータ（`--sku-capacity 50`）は未確認 — 初回デプロイ失敗時にポータルからリクエスト（24h リードタイム）
-- **社内確認 #2–#5** — KPMG マーケ部門が確認中。開発はブロックしないが、提出時の表記 / 登壇 / IP の選択肢に影響
-- **Discord bot ADR-0001 残タスク** — (a) `/spec` slash command（Discord 議論 → GitHub PR ドラフト自動生成）未実装、(b) `/review` slash command（`@claude-review` 呼出 wrapper）未実装、(c) 週次 ADR digest cron（金曜 `decisions/YYYY-Www.md` 自動生成）未実装、(d) Azure Container Apps 移設（local-only ホストから） deferred
+- **社内確認 #2–#5** — 法人 マーケ部門が確認中。開発はブロックしないが、提出時の表記 / 登壇 / IP の選択肢に影響
 
 ## オープンクエスチョン（Top 5; 全リストは [dev-prep.md §9](./dev-prep.md) §12）
 

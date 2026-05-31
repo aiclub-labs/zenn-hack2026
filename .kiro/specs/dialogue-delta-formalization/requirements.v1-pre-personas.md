@@ -123,7 +123,7 @@ Glean 等のエンタープライズ製品は **explicit knowledge の検索 / �
 本 spec は、特定セクター×ユニットに属する業務対話を AI agent が監視し、
 人間の入力と AI の出力の差分から暗黙知を抽出して形式知化する MVP の要件を定義する。
 Microsoft Agent Hackathon 2026 提出物として 6 週間で実装し、
-KPMG AI 部の組織的暗黙知活用の POC として位置付ける。
+対象組織 (例: AI 推進部門)の組織的暗黙知活用の POC として位置付ける。
 Microsoft Agent Framework 1.0 と Foundry Agent Service Workflow agent を採用し、
 HITL ループを標準機能で構成する。
 先行事例（Kunumi arXiv 2507.03811 / EffiARA / GraphCheck）の手法を採用基準として援用する。
@@ -166,7 +166,7 @@ HITL ループを標準機能で構成する。
 
 ### Requirement 1: 暗黙知スキーマの事前定義
 
-**Objective:** As an admin (KPMG AI 部の知識管理担当), I want セクター×ユニット単位で「捕捉したい暗黙知データ項目」を事前定義する, so that 対話監視中のエージェントが暴走せずスキーマに沿った差分のみ検出できる
+**Objective:** As an admin (対象組織 (例: AI 推進部門)の知識管理担当), I want セクター×ユニット単位で「捕捉したい暗黙知データ項目」を事前定義する, so that 対話監視中のエージェントが暴走せずスキーマに沿った差分のみ検出できる
 
 #### Acceptance Criteria
 1. When admin がスキーマ定義 UI から新規 schema field を登録する, the system shall `{field_name, description, sector, unit, expected_value_type, example, ai_baseline_assumption}` を Cosmos DB に upsert する

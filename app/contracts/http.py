@@ -19,6 +19,10 @@ class SchemaUpdateBanner(_HTTPBase):
     unseen_revision_ids: list[int]
     changed_fields_summary: str
     history_url: str
+    # UI badge counts updated *fields* (what the user actually cares about),
+    # not the number of distinct revision numbers. A single revision can carry
+    # many field changes; previously the badge showed 1 even when 5 fields moved.
+    unseen_fields_count: int = 0
 
 
 class TurnRequest(_HTTPBase):
@@ -34,7 +38,7 @@ class TurnResponse(_HTTPBase):
     turn_id: str
     ai_response: str
     self_critic_score: float
-    # KPMG Explainability / Issue #38: surface judge rationale to Chat UI.
+    # 法人 Explainability / Issue #38: surface judge rationale to Chat UI.
     # Tooltip shown when score < 5 (low-confidence answers).
     self_critic_reason: Optional[str] = None
     citations: list[CitationRef]

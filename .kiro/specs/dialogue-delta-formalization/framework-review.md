@@ -82,7 +82,7 @@
 
 | Phase | 状態 |
 |-------|------|
-| Impact scoping | 🟡 — `personas-stories.md` で 3 persona + リスク台帳は揃うが、KPMG AI 部全体への bias / 業務阻害 impact は形式 assessment 化されていない |
+| Impact scoping | 🟡 — `personas-stories.md` で 3 persona + リスク台帳は揃うが、対象組織 (例: AI 推進部門)全体への bias / 業務阻害 impact は形式 assessment 化されていない |
 | Model selection | ✅ — `design.md:136` |
 | Customization | 🟡 — `prompt_templates` のみ、Fine-tune / DPO 等は考慮外 (ハッカソンスケール妥当) |
 | Integration | ✅ — MAF + Foundry Workflow + BYO Cosmos の三層 |
@@ -93,7 +93,7 @@
 
 ## 3. KPMG Trusted AI Framework — 10 Pillars
 
-ソース: [KPMG Trusted AI](https://kpmg.com/xx/en/what-we-do/services/ai/trusted-ai-framework.html) 10 ethical pillars。AI 部が KPMG 配下である以上、本フレームワークが審査員 (含 Sotaro) の自然な評価軸になりやすい。
+ソース: [KPMG Trusted AI](https://__法人COM__/xx/en/what-we-do/services/ai/trusted-ai-framework.html) 10 ethical pillars。AI 部が 対象組織配下である以上、本フレームワークが審査員 の自然な評価軸になりやすい。
 
 | Pillar | 状態 | 根拠 / Gap | 説明責任シナリオ |
 |--------|------|------------|--------------------|
@@ -108,7 +108,7 @@
 | **Fairness** | 🔴 | Bias test なし。sector×unit を跨いだ承認率/拒否率の差分監視なし。Reviewer の自己承認率 > 30% warning (`requirements.md:254`) は最も近い | 「自己承認率 KPI が唯一の fairness proxy。本格的 bias audit は Phase 2」 |
 | **Accountability** | ✅ | 3 段 HITL (Hearout → HITL approve → TJ verdict)、`schema_audit_log` (`tasks.md:36`)、`citation_audit_log` (`requirements.md:273`)、reviewer scope (`requirements.md:389`)、`allow_self_approval` env-flag (`requirements.md:253`) | 「人の判断を必ず通過、誰がいつ承認したかは audit log で trace 可能」 |
 
-**KPMG 視点 Top Risk**: Fairness 監査の不在。デモ後に「sector A の reject 率と sector B の reject 率に有意差があった場合どう検知するか」と聞かれて答えられない。
+**法人 視点 Top Risk**: Fairness 監査の不在。デモ後に「sector A の reject 率と sector B の reject 率に有意差があった場合どう検知するか」と聞かれて答えられない。
 
 ---
 
@@ -119,8 +119,8 @@
 | Goal | 状態 | 根拠 / Gap |
 |------|------|------------|
 | **Accountability** | 🟡 | Audit log 2 種 + HITL 3 段 + spec の 3-phase approval は強い。一方 **Impact Assessment (template に基づく) は未実施** — RAI Standard が GA 後に最も重視するもの。`personas-stories.md` がそれに最も近い |
-| **Transparency** | 🟡 | KPMG §Transparency と同。**Gap**: AI が応答生成していることの常時 notice (chat UI 上に「AI が自己批評スコアを付けています」等) |
-| **Fairness** | 🔴 | KPMG §Fairness と同 |
+| **Transparency** | 🟡 | 法人 §Transparency と同。**Gap**: AI が応答生成していることの常時 notice (chat UI 上に「AI が自己批評スコアを付けています」等) |
+| **Fairness** | 🔴 | 法人 §Fairness と同 |
 | **Reliability & Safety** | 🟡 | §1.1 Reliability + §3 Safety と同。Adversarial / red-teaming は未実施 |
 | **Privacy & Security** | ✅ / 🟡 | Security は強。Privacy は scrubber 弱点 (§3 参照) |
 | **Inclusiveness** | 🔴 | 言語 = ja 固定 (`spec.json`, `handoff-uat.md:108`)、accessibility (WCAG / スクリーンリーダー) は未検証。3 persona は社内ロールベースで demographic 多様性は議論外 |
@@ -148,12 +148,12 @@
 
 | # | Gap | 指摘 framework | Priority | 根拠 |
 |---|-----|----------------|----------|------|
-| 1 | ~~**Evaluation harness 不在**~~ ✅ **2026-05-27 着手 (T1)** — TJ golden 10 件 + pytest harness (`tests/test_tj_golden.py`, `tests/fixtures/tj_golden.json`)。10/10 match、aggregation 決定論を担保。real-LLM eval は Phase 2 | Azure WAF (AI eval) / AWS GenAI / NIST (Measure) / KPMG (Reliability) | **P1 ✅** | aggregation/cold-start/hot-path 3 経路をカバー |
-| 2 | **PII scrubber が regex のみ** (Req 16.6 の "LLM scrubbing" と乖離) | KPMG (Privacy) / MS RAI (Privacy & Security) / Azure WAF (Security) | **P1** | `app/util/pii.py:14-31` 漢字氏名ヒューリスティックは false negative 多発。最低 1 段の LLM scrubbing pass を Phase 2 と明示するか、要件 16.6 を MVP では正規表現のみと書き換える整合作業必要 |
-| 3 | ~~**Fairness / Bias audit 不在**~~ ✅ **2026-05-28 着手 (T3)** — `docs/observability-kql.md` §1 で reviewer × sector × decision 別の approve/reject 比率 KQL を 3 本提供。`app/api/reviews.py` の `/decision` endpoint で `review.decision` customMetric を emit するよう instrument | KPMG (Fairness) / MS RAI (Fairness) / AWS GenAI (Responsible AI) | **P2 ✅** | proxy として fairness dashboard 化。本格 bias audit は Phase 2 |
-| 4 | ~~**Impact Assessment 文書なし**~~ ✅ **2026-05-28 完了 (T2)** — `scaffold/docs/impact-assessment.md` (12 harm × mitigation × file:line 出典、out-of-scope 利用明記、残存リスク 5 件開示) | MS RAI / KPMG / NIST | **P1 ✅** | MS RAI v2 Impact Assessment 構造に準拠 |
-| 5 | ~~**Sustainability に対する明示的設計判断なし**~~ ✅ **2026-05-28 完了 (T5)** — `README.md` Sustainability セクション + `app/util/cost.py:19` `aggregate_aoai_tokens_daily` で AOAI token を customMetric として日次集計。scale-to-zero + serverless + gpt-5.4-mini routing + max_completion_tokens 上限を明示化 | AWS GenAI / KPMG | **P3 ✅** | carbon 計測そのものは Phase 2 だが、設計判断を文書化 |
-| 6 | ~~**AI 関与の常時 disclosure UI なし**~~ ✅ **2026-05-28 完了 (T6)** — `ui/chat/src/shell/AppShell.tsx` に persistent disclosure footer 追加（全 surface = Chat/Admin/Review でカバー）+ ChatWindow per-message self-critic スコアバッジは既存 | MS RAI (Transparency) / KPMG (Transparency) | **P2 ✅** | 言語 ja-JP + accessibility Phase 2 も同 footer で開示 |
+| 1 | ~~**Evaluation harness 不在**~~ ✅ **2026-05-27 着手 (T1)** — TJ golden 10 件 + pytest harness (`tests/test_tj_golden.py`, `tests/fixtures/tj_golden.json`)。10/10 match、aggregation 決定論を担保。real-LLM eval は Phase 2 | Azure WAF (AI eval) / AWS GenAI / NIST (Measure) / 法人 (Reliability) | **P1 ✅** | aggregation/cold-start/hot-path 3 経路をカバー |
+| 2 | **PII scrubber が regex のみ** (Req 16.6 の "LLM scrubbing" と乖離) | 法人 (Privacy) / MS RAI (Privacy & Security) / Azure WAF (Security) | **P1** | `app/util/pii.py:14-31` 漢字氏名ヒューリスティックは false negative 多発。最低 1 段の LLM scrubbing pass を Phase 2 と明示するか、要件 16.6 を MVP では正規表現のみと書き換える整合作業必要 |
+| 3 | ~~**Fairness / Bias audit 不在**~~ ✅ **2026-05-28 着手 (T3)** — `docs/observability-kql.md` §1 で reviewer × sector × decision 別の approve/reject 比率 KQL を 3 本提供。`app/api/reviews.py` の `/decision` endpoint で `review.decision` customMetric を emit するよう instrument | 法人 (Fairness) / MS RAI (Fairness) / AWS GenAI (Responsible AI) | **P2 ✅** | proxy として fairness dashboard 化。本格 bias audit は Phase 2 |
+| 4 | ~~**Impact Assessment 文書なし**~~ ✅ **2026-05-28 完了 (T2)** — `scaffold/docs/impact-assessment.md` (12 harm × mitigation × file:line 出典、out-of-scope 利用明記、残存リスク 5 件開示) | MS RAI / 法人 / NIST | **P1 ✅** | MS RAI v2 Impact Assessment 構造に準拠 |
+| 5 | ~~**Sustainability に対する明示的設計判断なし**~~ ✅ **2026-05-28 完了 (T5)** — `README.md` Sustainability セクション + `app/util/cost.py:19` `aggregate_aoai_tokens_daily` で AOAI token を customMetric として日次集計。scale-to-zero + serverless + gpt-5.4-mini routing + max_completion_tokens 上限を明示化 | AWS GenAI / 法人 | **P3 ✅** | carbon 計測そのものは Phase 2 だが、設計判断を文書化 |
+| 6 | ~~**AI 関与の常時 disclosure UI なし**~~ ✅ **2026-05-28 完了 (T6)** — `ui/chat/src/shell/AppShell.tsx` に persistent disclosure footer 追加（全 surface = Chat/Admin/Review でカバー）+ ChatWindow per-message self-critic スコアバッジは既存 | MS RAI (Transparency) / 法人 (Transparency) | **P2 ✅** | 言語 ja-JP + accessibility Phase 2 も同 footer で開示 |
 | 7 | **Cold start 以外の latency / availability SLO 未定義** | Azure WAF (Reliability/Performance) / AWS GenAI (Reliability) | **P3** | ハッカソンスコープでは UAT で機能性が通れば OK。pitch で問われたら「次フェーズ」 |
 | 8 | ~~**Hearout 介入の Inclusiveness / accessibility 未検証**~~ ✅ **2026-05-28 部分対応 (T6)** — AppShell footer に「言語: 日本語 (ja-JP) 固定、accessibility は Phase 2」を明示開示。WCAG audit 本体は Phase 2 | MS RAI (Inclusiveness) | **P3 ✅** | scope 制限の transparency で対応 |
 
@@ -168,7 +168,7 @@
 | # | Item | コスト | 審査インパクト | 担当推奨 |
 |---|------|--------|---------------|----------|
 | ~~A~~ ✅ | **Eval harness 最小版** — **完了 2026-05-27**。`tests/fixtures/tj_golden.json` (10 件: 5 supported / 3 novel / 2 conflict, 製造ライン domain) + `tests/test_tj_golden.py` (verdict ≥ 80% assert + hot-path retrieval heuristic test)。**結果 10/10 match**。スクリプト LLM 応答上での aggregation 決定論を担保 (real-LLM 品質評価は Phase 2) | M | Hi | dev メンバー |
-| ~~B~~ ✅ | **Impact Assessment 1 pager** — **完了 2026-05-28**。`scaffold/docs/impact-assessment.md` (12 harm × mitigation table + 意図利用 / out-of-scope / 残存リスク 5 件 / フレームワーク対応表)。MS RAI v2 + KPMG Accountability + NIST Map を解消 | S | Hi | オペレータ |
+| ~~B~~ ✅ | **Impact Assessment 1 pager** — **完了 2026-05-28**。`scaffold/docs/impact-assessment.md` (12 harm × mitigation table + 意図利用 / out-of-scope / 残存リスク 5 件 / フレームワーク対応表)。MS RAI v2 + 法人 Accountability + NIST Map を解消 | S | Hi | オペレータ |
 | C | **PII scrubber の現状を要件に整合**: `requirements.md:375` の「LLM scrubbing」を MVP 行きにせず Phase 2 に降格させる差分 PR、もしくは LLM fallback を 1 関数追加 | S | Mid | dev メンバー |
 | ~~D~~ ✅ | **Chat UI に AI disclosure footer 1 行** — **完了 2026-05-28**。`AppShell.tsx` に persistent footer 追加 (T6) | S | Mid | dev メンバー |
 | ~~E~~ ✅ | **本書 (framework-review.md) を README から link** — **完了 2026-05-28**。README の Sustainability/RAI セクションから link (T5) | S | Mid | オペレータ |
@@ -213,13 +213,13 @@
 | Priority | Item | 関連 framework |
 |----------|------|----------------|
 | H | Truth Judgment golden set 100 件まで拡張 + precision/recall/F1 ダッシュボード | Azure WAF (Eval) / NIST (Measure) |
-| H | PII scrubber に LLM fallback pass 実装 (requirements 16.6 と完全整合) | KPMG / MS RAI Privacy |
-| H | Fairness audit framework: sector × user dimension で reject/approval 率の差分検知 | KPMG / MS RAI Fairness |
+| H | PII scrubber に LLM fallback pass 実装 (requirements 16.6 と完全整合) | 法人 / MS RAI Privacy |
+| H | Fairness audit framework: sector × user dimension で reject/approval 率の差分検知 | 法人 / MS RAI Fairness |
 | M | Impact Assessment を MS RAI v2 template 準拠で再構成 (model card 兼用) | MS RAI |
 | M | Adversarial red-team (prompt injection / data exfiltration) シナリオ 5 件 | MS RAI Safety |
 | M | Continuous iteration loop: 閾値 (`response_self_critic_low/mid`, `embedding_distance_threshold`) を週次 hit-rate から自動提案 | AWS GenAI Continuous iteration |
 | M | Chat UI に AI 関与 disclosure を全 turn 表示 | MS RAI Transparency |
-| L | Sustainability: AOAI token consumption から推定 CO2e を customMetrics に追加 | AWS GenAI / KPMG |
+| L | Sustainability: AOAI token consumption から推定 CO2e を customMetrics に追加 | AWS GenAI / 法人 |
 | L | Accessibility: WCAG 2.1 AA 相当の audit を Chat UI に実施 | MS RAI Inclusiveness |
 | L | Foundry preview 障害時の Container Apps 直 MAF 切替を chaos test で実証 | Azure WAF Reliability |
 
@@ -229,7 +229,7 @@
 
 - [Azure Well-Architected Framework — AI Workloads](https://learn.microsoft.com/en-us/azure/well-architected/ai/) (2026 update)
 - [AWS Well-Architected Generative AI Lens](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html) (2025-12 更新)
-- [KPMG Trusted AI Framework](https://kpmg.com/xx/en/what-we-do/services/ai/trusted-ai-framework.html) (10 pillars)
+- [KPMG Trusted AI Framework](https://__法人COM__/xx/en/what-we-do/services/ai/trusted-ai-framework.html) (10 pillars)
 - [Microsoft Responsible AI Standard v2](https://www.microsoft.com/en-us/ai/responsible-ai) (6 goals / 14 sub-goals)
 - [NIST AI Risk Management Framework 1.0](https://www.nist.gov/itl/ai-risk-management-framework) (Govern / Map / Measure / Manage)
 

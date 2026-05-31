@@ -352,7 +352,7 @@
 </table>
 <blockquote class="note">
   <p><strong>alternative</strong>: SharePoint dev tenant を立てる選択肢もある（operator action item に記載）。立てられれば「実 SPO 連携」として pitch 価値↑。立たなければ Blob + mock UI で代替。<strong>MVP は mock UI で確定</strong>、SPO dev tenant が間に合えば Day 28 で swap。</p>
-  <p><strong>合成データの NDA 安全性</strong>: 全データは AOAI 生成。実 KPMG 案件の固有名詞・数値は一切含めない。「業界 + 案件タイプ + 一般的契約パターン」の組み合わせで 15-20 種類生成。Submission 公開時に reviewable な corpus サンプルとして同梱。</p>
+  <p><strong>合成データの NDA 安全性</strong>: 全データは AOAI 生成。実 法人 案件の固有名詞・数値は一切含めない。「業界 + 案件タイプ + 一般的契約パターン」の組み合わせで 15-20 種類生成。Submission 公開時に reviewable な corpus サンプルとして同梱。</p>
 </blockquote>
 
 <h2 id="s6">6. Corpus（データソース・合成量・index）</h2>
@@ -406,7 +406,7 @@
     <tr><td>2:30-3:00</td><td>Retrieval 結果</td><td>過去 3 案件が relevance スコア + <strong>共有可 clause への citation</strong> 付きで表示。1 件をクリック → 「契約書のこの clause で共有可と判断済」と表示</td></tr>
   </tbody>
 </table>
-<blockquote class="note"><p><strong>判定基準</strong>: 観客が「KPMG じゃなくても自社で動かしたい」と思えるか / 「contract-aware が独自」と即理解できるか。</p></blockquote>
+<blockquote class="note"><p><strong>判定基準</strong>: 観客が「法人 じゃなくても自社で動かしたい」と思えるか / 「contract-aware が独自」と即理解できるか。</p></blockquote>
 
 <h2 id="s9">9. 6週ビルドリスク（R/Y/G）</h2>
 <table>

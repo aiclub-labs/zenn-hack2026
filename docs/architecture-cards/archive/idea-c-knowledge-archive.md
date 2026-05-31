@@ -132,7 +132,7 @@
 
 **alternative**: SharePoint dev tenant を立てる選択肢もある（operator action item に記載）。立てられれば「実 SPO 連携」として pitch 価値↑。立たなければ Blob + mock UI で代替。**MVP は mock UI で確定**、SPO dev tenant が間に合えば Day 28 で swap。
 
-**合成データの NDA 安全性**: 全データは AOAI 生成。実 KPMG 案件の固有名詞・数値は一切含めない。「業界 + 案件タイプ + 一般的契約パターン」の組み合わせで 15-20 種類生成。Submission 公開時に reviewable な corpus サンプルとして同梱。
+**合成データの NDA 安全性**: 全データは AOAI 生成。実 法人 案件の固有名詞・数値は一切含めない。「業界 + 案件タイプ + 一般的契約パターン」の組み合わせで 15-20 種類生成。Submission 公開時に reviewable な corpus サンプルとして同梱。
 
 ---
 
@@ -186,7 +186,7 @@
 | 2:00-2:30 | 場面転換：6 ヶ月後の別 PM | 新規提案フォーム入力「業界: retail / 内容: AI 戦略策定」→ 検索 |
 | 2:30-3:00 | Retrieval 結果 | 過去 3 案件が relevance スコア + **共有可 clause への citation** 付きで表示。1 件をクリック → 「契約書のこの clause で共有可と判断済」と表示 |
 
-**判定基準**: 観客が「KPMG じゃなくても自社で動かしたい」と思えるか / 「contract-aware が独自」と即理解できるか。
+**判定基準**: 観客が「法人 じゃなくても自社で動かしたい」と思えるか / 「contract-aware が独自」と即理解できるか。
 
 ---
 

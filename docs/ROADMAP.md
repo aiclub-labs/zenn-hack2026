@@ -7,7 +7,7 @@
 
 | # | 日付 | マイルストーン | 成果物 | オーナー | 状態 | 詳細 |
 |---|---|---|---|---|---|---|
-| M0 | 2026-04-23 | 部門選択 frozen | 法人部門 (KPMG AI部) で参加 | オペレータ | ✅ done | [action-plan.md §フェーズ1](./action-plan.md) |
+| M0 | 2026-04-23 | 部門選択 frozen | 法人部門 (法人 AI部) で参加 | オペレータ | ✅ done | [action-plan.md §フェーズ1](./action-plan.md) |
 | M1 | 2026-04-28 | Azure アカウント開設 | Free Trial sub + $200 クレジット + テナント + AI-club MS account | オペレータ | ✅ done | [azure-setup.md §2.1](./azure-setup.md)（D9） |
 | M2 | 2026-04-28 | GitHub repo + scaffold push | `aiclub-labs/zenn-hack2026`（private）、58 ファイルの初回コミット | オペレータ | ✅ done | [HANDOFF.md §C](./HANDOFF.md), [INDEX.md](./INDEX.md) |
 | M3 | 2026-04-30 | モックスタイルガイド確定 | `../tests/fixtures/demo-style-guide.yaml` に値が入った状態 | メンバー 3 | ⏳ in progress | [dev-prep.md §10](./dev-prep.md) |

@@ -22,7 +22,7 @@ Microsoft の各種サービスにサインインするときに使うメール�
 - その他、Microsoft アカウントを持っている任意のメール
 
 ❌ NG:
-- **KPMG コーポレートメール**（`*@jp.kpmg.com` など） — KPMG テナントとハッカソン作業が混ざるため、法人部門エントリでは明示的に避けています。個人アイデンティティを使ってください。
+- **法人 コーポレートメール**（`*@jp.__法人COM__` など） — 法人 テナントとハッカソン作業が混ざるため、法人部門エントリでは明示的に避けています。個人アイデンティティを使ってください。
 
 持っていない・分からない場合 → `https://signup.live.com` で無料の outlook.com を新規作成（3 分）。クレジットカード不要。
 
@@ -83,7 +83,6 @@ winget install -e --id GitHub.cli
 winget install -e --id jqlang.jq
 winget install -e --id Python.Python.3.11
 winget install -e --id Git.Git
-winget install -e --id OpenJS.NodeJS   # Claude Code が npm パッケージなので必要
 az bicep install
 ```
 
@@ -95,7 +94,7 @@ az version; azd version; gh --version; jq --version; python --version; git --ver
 ### macOS
 
 ```bash
-brew install azure-cli azd gh jq python@3.11 git bicep node
+brew install azure-cli azd gh jq python@3.11 git bicep
 ```
 
 ### WSL Ubuntu / Linux
@@ -103,38 +102,9 @@ brew install azure-cli azd gh jq python@3.11 git bicep node
 ```bash
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 curl -fsSL https://aka.ms/install-azd.sh | bash
-sudo apt install -y jq gh python3.11 git nodejs npm
+sudo apt install -y jq gh python3.11 git
 az bicep install
 ```
-
-### Claude Code (強く推奨)
-
-このリポジトリは Claude Code を「主要な開発インタフェース」として設計されています。`/kiro:spec-*` などの slash command が `.claude/commands/` に **repo 同梱**されており、`git clone` した repo の **ルートで** `claude` を起動するだけで spec-driven workflow が走ります。リポジトリルートの `CLAUDE.md` も自動 context として読み込まれます。
-
-```bash
-# 各 OS 共通（npm パッケージ。Node.js が install 済みの前提）
-npm install -g @anthropic-ai/claude-code
-
-# 認証 — Anthropic Max/Pro サブスクリプションがある場合（推奨）
-claude auth login
-# → ブラウザが開く → Anthropic アカウントでサインイン → 完了
-
-# Max/Pro が無い場合（API 課金、~$5–20/月想定）
-claude auth login --console
-# → Anthropic Console で API key を作成 → CLI に貼り付け
-
-# ログイン状態確認
-claude auth status
-# → {"loggedIn": true, "authMethod": "claude.ai", ...} が返れば OK
-```
-
-**Max/Pro 加入が確認できているメンバー**: オペレータ (MaoMao)。他メンバー (Sotaro / Daichi) は加入有無を `#hack-dev-log` で共有してください — 未加入なら `--console` でも問題なく動きます。
-
-**`/kiro:*` コマンドは repo ローカルなので、必ず `cd zenn-hack2026` してから `claude` を起動してください**。別ディレクトリで起動すると spec-driven workflow が読み込まれません。`~/.claude/` 側に何かを追加する必要はありません — repo 同梱で完結しています。
-
-**Claude Code と Discord bot の使い分け:**
-- **メイン (開発作業)**: 各自ローカルで Claude Code — コード編集、spec 駆動、git/az/gh の任意操作
-- **補助 (Discord bot)**: `/az status` `/gh status` で状態確認、`/deploy` で承認ゲート付き Bicep deploy、`/recap` でミーティング議事録自動化。Step 6 参照
 
 ### 任意: VS Code 拡張
 
@@ -181,20 +151,6 @@ uvicorn app.main:app --reload
 # http://localhost:8000/health → {"status":"ok"} が返ればOK
 ```
 
-```bash
-# Claude Code が repo の slash command を認識しているか確認
-cd zenn-hack2026     # 必須 — 別ディレクトリだと /kiro:* が見えない
-claude
-# 起動後、Claude のプロンプトで以下を叩く:
-#   /kiro:spec-status dialogue-delta-formalization
-#
-# 期待: spec のフェーズ (Requirements / Design / Tasks / Implementation) と
-# 各フェーズの完了状況・次のアクションが Markdown で返る。
-# エラー例:
-#   "/kiro:spec-status not found" → cwd を repo root に直す
-#   "spec not found" → git pull で最新 main を取得 (.kiro/specs/ が無い)
-```
-
 いずれかで失敗したら、Discord の `#hack-dev-log` に `infra` タグでエラーを貼ってください。
 
 ---
@@ -209,7 +165,6 @@ claude
 | [ROADMAP.md](./ROADMAP.md) | 全マイルストーンと日付、自分の RACI | 今 (3 分) |
 | [problem-statement.md](./problem-statement.md) | 採択テーマの As-Is / To-Be / Gap | 今 (5 分) |
 | [architecture-cards/idea-f-dialogue-monitoring.md](./architecture-cards/idea-f-dialogue-monitoring.md) | 採択アーキテクチャの構成と工数（wall-clock + human review） | 今週中 (10 分) |
-| [../CLAUDE.md](../CLAUDE.md) + [../.kiro/specs/dialogue-delta-formalization/](../.kiro/specs/dialogue-delta-formalization/) | Kiro spec-driven workflow のルールと、本テーマの requirements / design / personas-stories | 実装着手前 (15 分) |
 
 より深い文脈が知りたい場合: [INDEX.md](./INDEX.md) がナビゲーションのエントリーポイントです。
 
@@ -307,7 +262,7 @@ Discord から `/az status` `/gh status` `/gh pr-merge` `/az lock-*` `/deploy` �
 ## ステップ 7 — 境界線 (やってはいけないこと)
 
 - ❌ オペレータの `aiclub-labs` GitHub 認証情報を流用しない（あなたには別途 collaborator アクセスがあります）
-- ❌ KPMG コーポレートアイデンティティで `az login` しない。常にオペレータが招待した個人 MSA を使用
+- ❌ 法人 コーポレートアイデンティティで `az login` しない。常にオペレータが招待した個人 MSA を使用
 - ❌ `az group delete` / `azd down` を実行しない — teardown はオペレータ（Subscription Owner）のみ。あなたは dev RG の Contributor 権限を持っているため `rg-hack2026-dev` 内のリソースの作成・変更・削除は可能ですが、RG 自体や shared リソースは触れません
 - ❌ `.env` ファイル、AOAI キー、その他シークレットを commit しない。`.gitignore` で除外済みですが、commit 前に必ず確認
 - ❌ デモ前（2026-06-01）まで GitHub リポジトリ URL をチーム外に共有しない。デモ後にショーケース用に公開予定
@@ -341,8 +296,8 @@ A: 迷惑メールを確認してください。Microsoft の招待メールは 
 **Q: Claude Code / Codex / Cursor を開発に使っていい？**
 A: はい — むしろそういう設計です。AI 開発ツールは開発時の協働ツールとしてのみ使用。ハッカソン提出物（提出ルール上 Microsoft AI のみで構成）には乗せません。
 
-**Q: KPMG との利益相反が心配です**
-A: オペレータが KPMG マーケ部門と確認済（社内確認 4 項目中 1 つ確定、3 つ進行中）。**法人部門 (KPMG AI部)** として組織承諾あり。個人 MS アカウント・個人 PC・業務時間外 — この 3 条件を守ること。KPMG コーポレートアイデンティティ・KPMG リポジトリ・KPMG クライアントデータを混ぜなければ、線の中にいます。
+**Q: 法人 との利益相反が心配です**
+A: オペレータが 法人 マーケ部門と確認済（社内確認 4 項目中 1 つ確定、3 つ進行中）。**法人部門 (法人 AI部)** として組織承諾あり。個人 MS アカウント・個人 PC・業務時間外 — この 3 条件を守ること。法人 コーポレートアイデンティティ・法人 リポジトリ・法人 クライアントデータを混ぜなければ、線の中にいます。
 
 **Q: 想定される週あたり工数は？**
 A: 2026-05-22 までは ~5–8 時間/週、その後 2026-05-23 → 2026-06-01 は 8–12 時間/週（最終統合・デモ準備・提出）。非同期前提。固定ミーティングは任意の 30 分週次同期くらい。

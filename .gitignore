@@ -27,3 +27,6 @@ artifacts/
 .playwright-profile/
 screenshots/
 node_modules/
+cost-daily.json
+books/.keep
+tests/uat_results/perf_*

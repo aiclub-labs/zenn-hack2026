@@ -12,13 +12,13 @@ Everything below requires your auth or is browser/portal-only — it can't be au
 
 ## A. Hackathon entry (no compute needed)
 
-- [ ] **A1 — Zenn entry form** (KPMG名義・法人部門) — [ipad-ok]
+- [ ] **A1 — Zenn entry form** (法人名義・法人部門) — [ipad-ok]
   - One person submits as team rep
   - Confirms 5/14 entry-session invite + receives the "成果物提出フォーム" URL by email
   - File the confirmation email somewhere shared
 - [ ] **A2 — Reserve `ai-club` Zenn org handle** — [ipad-ok]
-  - Check availability first; fall back to e.g. `kpmg-ai-club` or `aiclub-jp`
-  - Hold off on full org creation until social check #2 confirms KPMG branding is OK
+  - Check availability first; fall back to e.g. `aiclub-jp` or `aiclub-jp`
+  - Hold off on full org creation until social check #2 confirms 法人 branding is OK
 - [ ] **A3 — Internal-confirmation follow-ups** (4 still open: 表記 / 登壇 / IP / 利益相反) — [ipad-ok]
   - Owner: marketing-channel contact
   - Block none of A1/B/C — none of those publish anything externally yet

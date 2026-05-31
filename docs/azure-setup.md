@@ -64,7 +64,7 @@ Open items / not-yet-locked:
 - Teammate UPNs + GitHub usernames not yet collected → step 2 can run with placeholders or be deferred
 - D7 (AOAI region) still pending task #6 closure
 - `hello_agent.py` needs Managed Identity auth fallback before May 5 demo wiring (S2 from review — not push-blocking, captured as TODO)
-- **Business-problem selection still open** — infra is generic; the actual hackathon project (which business pain agent technology will address) has not been frozen. Existing artifacts: `idea-shortlist.md` (candidates) + `ideation-workbook.md` (KPMG-context constraints + scoring rubric). This is the long-pole for the next 1–2 weeks; infra build-out continues in parallel under the assumption that whatever theme wins fits the SK + MCP + AOAI + CAE stack already declared in `tech-stack-matrix.md`.
+- **Business-problem selection still open** — infra is generic; the actual hackathon project (which business pain agent technology will address) has not been frozen. Existing artifacts: `idea-shortlist.md` (candidates) + `ideation-workbook.md` (法人-context constraints + scoring rubric). This is the long-pole for the next 1–2 weeks; infra build-out continues in parallel under the assumption that whatever theme wins fits the SK + MCP + AOAI + CAE stack already declared in `tech-stack-matrix.md`.
 
 ---
 
@@ -110,7 +110,7 @@ Avoid **Git Bash** for this stack — `azd` and `az` have known PTY/path quirks 
 
 Implications:
 - The Microsoft account that signs up for Azure must be **fresh-to-Azure-paid-services** (any Microsoft account that has never had a paid Azure sub on it). If the AI-club account previously held a Pay-As-You-Go sub, the $200 will not be granted.
-- ¥50,000 法人クレジット does **not** apply to KPMG (existing Microsoft alliance — `overview.md` §7 disqualifies it). Plan only on $200.
+- ¥50,000 法人クレジット does **not** apply to 法人 (existing Microsoft alliance — `overview.md` §7 disqualifies it). Plan only on $200.
 - $200 → 30-day window. Day 31 the trial sub becomes read-only unless converted to PAYG. Plan demos before day 30.
 
 Prereq checklist:
@@ -192,7 +192,7 @@ So Phase 0's irreducible portal surface is **one click-through**: the signup for
 This single signup flow creates **all four** at once: a Microsoft account → an Entra tenant → a first subscription named "Free Trial" → the $200 credit attached to it. There is no separate "redeem credit" step afterward; the credit is the *consequence* of completing this form.
 
 **Pre-flight (do not skip):**
-- Open a private/incognito window so you don't accidentally bind to your KPMG or personal Microsoft account.
+- Open a private/incognito window so you don't accidentally bind to your 法人 or personal Microsoft account.
 - Confirm the AI-club Microsoft account has never had a paid Azure sub. Quickest test: sign into `https://portal.azure.com` first; if the "Subscriptions" blade is empty, you're clean. If you see any sub (even an old free trial that already expired), the $200 will be denied.
 
 **Manual fallback walkthrough** (if Playwright script fails):
