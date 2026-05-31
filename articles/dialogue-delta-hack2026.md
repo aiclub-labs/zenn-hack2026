@@ -58,7 +58,7 @@ Azure マネージドサービス縛りで以下構成:
 
 ```
 general#general   ← 業務一般 (Excel / Power Query / Copilot / Office Scripts / Power Automate)
-{sector}#{unit}   ← セクター・部門固有 (consulting/kpmg-genai 等)
+{sector}#{unit}   ← セクター・部門固有 (consulting/firm-a 等)
 ```
 
 Chat の retrieval は **`{current tenant} ∪ general#general`** を `OR` で引く。汎用 tips は全テナントに自動的に届き、組織固有ノウハウは漏れない。
@@ -199,9 +199,9 @@ Fluent UI v9 の `Combobox` は `onOptionSelect` (リスト選択) と `onChange
 |---|---|
 | 起 (A) | Admin で 5 schema (Excel数式 / PowerQuery / OfficeScripts / Copilot / PowerAutomate) を確認 |
 | 承1 (B) | Chat「Excel で長い数式を可読化するコツは?」→ LET / LAMBDA を citation 3 件付きで応答 |
-| 承2 (B) | Chat「先週の KPMG 案件で自分は LET をどう使ったか?」→ gap 検知 |
+| 承2 (B) | Chat「先週の提案案件で自分は LET をどう使ったか?」→ gap 検知 |
 | Ranking | `/popular` で人気ノウハウを weight 順表示 |
-| Cutaway | tenant を `consulting/kpmg-genai` に切替 → 組織固有領域も存在することを瞬間提示 |
+| Cutaway | tenant を `consulting/firm-a` に切替 → 組織固有領域も存在することを瞬間提示 |
 | 転 (C) | Review queue で 1 件承認 → corpus 反映 |
 | 結 (B) | Chat「Power Query で日付テキスト揺れを直す自分のレシピは?」→ 自分の暗黙知が citation で返る |
 
