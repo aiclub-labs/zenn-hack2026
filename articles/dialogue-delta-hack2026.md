@@ -74,6 +74,13 @@ Chat の retrieval は **`{current tenant} ∪ general#general`** を `OR` で�
 | `schema_gate` / `schema_manager` | スキーマ revision 管理 |
 | `notification` | 24h SLA expired → Discord webhook |
 
+**認証 + ネットワーク境界**:
+
+- **UI (Web Chat) Container App** に **Microsoft Easy Auth** (Microsoft Identity Provider) を有効化。Entra のアプリ登録は **`AzureADandPersonalMicrosoftAccount`** sign-in audience で multi-tenant + 個人 Microsoft アカウントを許容
+- **未認証アクセス** は `RedirectToLoginPage` で `login.microsoftonline.com` に強制リダイレクト
+- **API Container App** は ingress を **internal-only** に変更し、外部 FQDN を消滅させた。UI の nginx が同 Container Apps Environment 内から HTTP で proxy 経由でのみ呼べる構成にし、API 直叩きを物理的に遮断
+- アプリ内部の sector/unit/user 切替 (Combobox) は **認証通過後** に有効。Easy Auth は入り口のみ守る薄い境界として動く (内部のテナント分離は別途 partition key で構造防御)
+
 ## 対話 → スキーマ抽出のしくみ
 
 ### 1. self-critic + gap 判定
@@ -147,11 +154,15 @@ tenant_clause = (
 
 これにより、個人テナントの暗黙知が組織知に「**ボトムアップで昇格していく**」 構造が生まれる。
 
-### g. Cosmos partition で構造的なテナント隔離
+### g. Cosmos partition で構造的なテナント隔離 + Easy Auth で外部攻撃面の縮減
 
 コンサル業務だと「クライアントの方法論を別クライアントに見せない」「法人内でも事業部間で隔離」のガバナンスが必須。
 
-これを RBAC ではなく **partition key そのもの** で構造的に防ぐ。`pk eq '{sector}#{unit}'` を AI Search filter / Cosmos query の全経路に強制し、誤って別 partition が見える可能性を物理的に消した。`DEV_SKIP_AUTH=true` を切れば Entra ID app_role による gating も入る (現状デモ環境は素通り)。
+これを RBAC ではなく **partition key そのもの** で構造的に防ぐ。`pk eq '{sector}#{unit}'` を AI Search filter / Cosmos query の全経路に強制し、誤って別 partition が見える可能性を物理的に消した。
+
+提出のタイミングでもう 1 段、**Microsoft Easy Auth + Entra アプリ登録 (multi-tenant + MSA)** を Container App 入口に被せ、未認証 URL アクセスを login.microsoftonline.com に強制リダイレクトするようにした。**API 側 Container App は ingress を internal-only にし、UI の nginx が同 Environment 内から HTTP proxy で呼ぶ経路のみ残した** ことで、API URL の直叩きを物理遮断。
+
+この 2 層 (入口 = Easy Auth、データ層 = partition key) で、URL の偶発露出から AOAI コスト爆発まで一気に塞ぐ構成にしている。
 
 ## ハマったところ
 
@@ -188,6 +199,12 @@ Fluent UI v9 の `Combobox` は `onOptionSelect` (リスト選択) と `onChange
   {SECTOR_OPTIONS.map((s) => <Option key={s} value={s}>{s}</Option>)}
 </Combobox>
 ```
+
+### H5. 雑な sed scrub が import path まで書き換えて build を壊した
+
+提出前の機密スクラブで `KPMG → 法人` を全 tracked files に一括 sed した結果、`main.tsx` の `import { ... } from "./theme/kpmg"` まで `"./theme/法人"` に書き換わってしまった。**ファイル名のほうは `kpmg.ts` のまま** だったので TS が module を解決できず、ACR build 失敗 → ImagePullBackOff → Container App revision が unhealthy になり、提出直前にユーザが「ページが開けない」状態に。
+
+対策はシンプルで `kpmg.ts` を `corporate.ts` にリネームして import path を揃えるだけだが、教訓は **「一括 sed scrub の後は CI build を必ず通す」**。今回はちょうど Easy Auth 設定 + 再ビルドのタイミングで露出して気付けた。
 
 ## デモ
 
@@ -241,8 +258,31 @@ self-critic 文化はチームにも持ち込んだ。「これは自信ある /
 
 1. **self-critic prompt 改修** — 「知らないことを知らないと答えた」を高評価できるよう書き直し
 2. **「個人 → 全社昇格」のガバナンス設計** — ranking 上位 record の `general` 昇格を reviewer フローに乗せる (自動 vs 手動の境界設計)
-3. **Entra ID 統合** — 現状 `DEV_SKIP_AUTH=true` で素通り、本番では app_role による gating
+3. **Entra ID `app_role` gating** — 現状 Easy Auth は「ログインしてれば通す」だけ。本番では Persona A/B/C を Entra の `app_role` claim に対応させ、`/admin/*` `/review/*` のアクセス層を分ける
 4. **5W1H の自動充足** — hearout で再質問なしに dialogue 履歴から補完
+5. **能動投稿 UI の MVP** — Phase 2 の Markdown editor + schema テンプレを早期に試作、受動 / 能動の比率を計測
+
+## 審査員の方へ ─ アクセス手順
+
+成果物 URL:
+**https://ca-hack2026-dev-web-chat.victoriousbeach-c5de1386.swedencentral.azurecontainerapps.io/**
+
+1. ブラウザで上記 URL を開くと、**Microsoft のサインイン画面** に自動リダイレクトされます
+2. **任意の Microsoft アカウント** (組織アカウント `*@*.onmicrosoft.com` 等、または個人アカウント `*@outlook.com`, `*@hotmail.com` 等) でサインイン可能です
+3. 初回サインイン時に「このアプリ Dialogue Delta Demo が以下にアクセス: openid / profile / email」という同意画面が出ます。**最小権限の認証情報のみ参照** するもの (メール本文等にはアクセスしません) で、ご承認ください
+4. サインイン後、Chat / Admin / Review / Ranking の各ページが利用できます
+
+### トラブルシュート
+
+| 症状 | 対処 |
+|---|---|
+| 組織アカウントで「管理者承認が必要です」 | 個人 Microsoft アカウント (outlook.com 等) で再度お試しください。multi-tenant + 個人 MSA 両対応で構成しています |
+| サインイン後ループする | ブラウザの cookie / cache をクリアして再アクセス |
+| AI 応答が返らない | Container App scale-to-zero からの cold start です。30 秒ほど待って再送信ください |
+
+### デモナラティブ (動画)
+
+成果物の動画は Zenn 記事内に埋め込んでいます。**サインイン手順自体もキャプチャ** しているので、流れを把握してから実機を触ると分かりやすいかもしれません。
 
 ---
 
