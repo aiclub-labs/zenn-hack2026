@@ -2,7 +2,7 @@
 
 - **Date**: 2026-04-29
 - **Status**: Accepted
-- **Driver**: operator (`maumao76`); team (`Suzuki-Sotaro`, `daichinakamura34`)
+- **Driver**: operator (`operator`); team (`member-a`, `member-b`)
 - **Discord thread**: TBD (この ADR を merge した後に `#hack-dev-log` でアナウンス予定)
 
 ## Context
