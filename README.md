@@ -1,6 +1,25 @@
-# Microsoft Agent Hackathon 2026 — Scaffold
+# Dialogue Delta — Microsoft Agent Hackathon Japan 2026 提出物
 
-ハッカソンプロジェクト用のテーマ非依存スキャフォールド。テーマは 2026-05-11 に確定予定で、現時点の候補（新案A 人材マッチング / 新案C 知見アーカイブ / 新案D ドメイン学習）の比較は `../problem-statement.md` 参照。スキャフォールド自体は特定テーマを前提としておらず、候補間の pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。
+業務 AI 利用の最中に「自分が再発見した方法論」を捕まえる Azure ベースの Agent アプリ。プロジェクト全容は [Zenn 記事 (`articles/dialogue-delta-hack2026.md`)](./articles/dialogue-delta-hack2026.md) を参照。
+
+## 🔑 審査員の方へ ─ アクセス手順
+
+**成果物 URL**: <https://ca-hack2026-dev-web-chat.victoriousbeach-c5de1386.swedencentral.azurecontainerapps.io/>
+
+1. 上記 URL にブラウザでアクセス → Microsoft サインイン画面に自動リダイレクト
+2. **任意の Microsoft アカウント** (組織アカウント or 個人アカウント `*@outlook.com` / `*@hotmail.com` 等) でサインイン
+3. 初回サインイン時に `openid / profile / email` の最小権限同意画面が出るので承認 (メール本文等にはアクセスしません)
+4. サインイン後、Chat / Admin / Review / Ranking が利用可能
+
+詳細手順 + トラブルシュート + アーキテクチャ判断は [`docs/access-for-judges.md`](./docs/access-for-judges.md) を参照。
+
+> **デモ動画** は Zenn 記事に埋め込んでいます。サインイン手順自体も含まれているので、手元で触る前にナラティブ把握しておくと分かりやすいです。
+
+---
+
+## 開発者向け技術スタック概要
+
+ハッカソンプロジェクト用のテーマ非依存スキャフォールドから、`feat/domain-pivot-consultant-tacit` ブランチで consultant tacit knowledge ドメインへピボット (2026-05-29)。スキャフォールド自体は特定テーマを前提としておらず、候補間の pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。
 
 ## 技術スタック
 
@@ -15,15 +34,6 @@
 - **オブザーバビリティ**: Application Insights via OpenTelemetry
 - **IaC**: Bicep
 - **CI**: GitHub Actions
-
-## Sustainability / Responsible AI
-
-- **Scale-to-zero**: Azure Container Apps を min-replicas=0 で運用。アイドル時の compute フットプリントゼロ。
-- **Serverless data plane**: Cosmos DB serverless + AI Search free tier。常時稼働 capacity を持たず、リクエスト単位で課金 = 環境負荷も従量。
-- **トークン効率**: デフォルトは `gpt-5.4-mini` に routing、必要時のみ `gpt-5.4` にエスカレート。`max_completion_tokens` は Hearout=400 / 自己批評=120 と厳格に制限（`app/api/turn.py`）。
-- **観測可能性**: `aoai.token.total` を customMetric として日次集計（`app/util/cost.py:19` `aggregate_aoai_tokens_daily`）。Tier A/C 縮退条件 ($200 上限) は `infra/modules/budget.bicep:17-42` で alert 連動。Fairness proxy (reviewer × sector × decision) + Continuous iteration workbook 用 KQL 一式は `docs/observability-kql.md` 参照。
-- **Responsible AI 自己評価**: MS RAI Standard v2 / KPMG Trusted AI / NIST AI RMF を統合した Impact Assessment は `docs/impact-assessment.md` 参照。12 harm × mitigation × file:line 出典、5 残存リスクを開示。
-- **フレームワーク準拠レビュー**: Azure WAF AI / AWS GenAI Lens / KPMG / MS RAI / NIST AI RMF の 5 framework 横断 gap 分析を `.kiro/specs/dialogue-delta-formalization/framework-review.md` に記録。
 
 ## ディレクトリ構成
 
@@ -91,6 +101,12 @@ az deployment sub create \
   --parameters @infra/main.parameters.json
 ```
 
+## ドキュメント
+
+- [docs/cost-model.md](docs/cost-model.md) — PoC 実測 + Enterprise 投影 (¥1,750/user/月) + Discord→Teams 移行
+- [docs/pitch-cost-appendix.md](docs/pitch-cost-appendix.md) — 審査 Q&A 用スライド lift 素材
+- [docs/genai-app-best-practices.md](docs/genai-app-best-practices.md) — AWS/Azure 資格ベース 8 領域 BP scoring
+
 ## このスキャフォールドに**含まれない**もの（テーマ確定後に追加）
 
 - テーマ別データソース・ツール（候補確定後に追加）:
@@ -98,5 +114,3 @@ az deployment sub create \
   - 新案C 知見アーカイブ: SharePoint API / NDA・機密分類 (Azure AI Document Intelligence) / retrieval ranker
   - 新案D ドメイン学習: scheduled jobs (Functions) / Teams 通知 / transcript ingest
 - 個別エージェントの persona（テーマ確定後、`app/agents/` 配下に追加）
-
-<!-- B3 /gh pr-merge smoke test 2026-05-12T08:16:07Z -->

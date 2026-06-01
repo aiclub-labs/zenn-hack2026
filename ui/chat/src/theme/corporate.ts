@@ -4,10 +4,10 @@ import {
   Theme,
 } from "@fluentui/react-components";
 
-// KPMG Global brand ramp — anchored on KPMG Navy (#00338D, slot 80) and
+// 法人 Global brand ramp — anchored on 法人 Navy (#00338D, slot 80) and
 // Medium Blue (#0091DA, used as the brighter interactive accent at slot 70).
 // Other slots interpolated to keep Fluent's contrast guarantees.
-const kpmgBrand: BrandVariants = {
+const 法人Brand: BrandVariants = {
   10: "#040A1F",
   20: "#0A1530",
   30: "#0F1F4D",
@@ -26,14 +26,14 @@ const kpmgBrand: BrandVariants = {
   160: "#EEF4FF",
 };
 
-export const kpmgLightTheme: Theme = {
-  ...createLightTheme(kpmgBrand),
+export const 法人LightTheme: Theme = {
+  ...createLightTheme(法人Brand),
   fontFamilyBase:
     "'Segoe UI', 'Yu Gothic UI', 'Hiragino Sans', Meiryo, Arial, sans-serif",
 };
 
 // Secondary accents (used directly via tokens — not part of the brand ramp).
-export const kpmgAccents = {
+export const 法人Accents = {
   purple: "#483698",
   pink: "#C800A1",
   green: "#00A3A1",
