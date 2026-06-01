@@ -8,13 +8,13 @@
 
 ## 0. Executive Summary
 
-5 フレームワーク (Azure WAF AI Workload / AWS WAF GenAI Lens / KPMG Trusted AI 10 / Microsoft RAI Standard v2 / NIST AI RMF) を当てた総合評価:
+5 フレームワーク (Azure WAF AI Workload / AWS WAF GenAI Lens / 主要 Trusted AI 10 / Microsoft RAI Standard v2 / NIST AI RMF) を当てた総合評価:
 
 | Framework | Grade (初版 → 2026-05-28) | 一言 |
 |-----------|-------|------|
 | **Azure WAF (AI Workload)** | **B-** → **B** | T1 で Evaluation harness 着手、SLO は依然 Phase 2 |
 | **AWS WAF GenAI Lens** | **C+** → **B-** | T4 で Continuous iteration KQL 文書化、T5 で Sustainability 明示 |
-| **KPMG Trusted AI 10** | **C+** → **B-** | T3 Fairness proxy KQL、T6 Transparency footer で Explainability 補強 |
+| **主要 Trusted AI 10** | **C+** → **B-** | T3 Fairness proxy KQL、T6 Transparency footer で Explainability 補強 |
 | **MS RAI Standard v2** | **C** → **B-** | T2 Impact Assessment + T6 disclosure footer で Transparency / Inclusiveness を底上げ |
 | **NIST AI RMF (G/M/M/M)** | **C** → **B-** | Map (Impact Assessment) と Measure (golden set) が着地 |
 
@@ -43,7 +43,7 @@
 |--------|------|----------------------------------------|---------------------|
 | **Reliability** | 🟡 部分的 | Foundry checkpoint で HITL pause/resume (`design.md:117-127`)、24h SLA + 5min lock TTL (`requirements.md:251-256`)。一方 SLO は cold-start ≤ 3 秒 (`requirements.md:402`) のみで availability / 5xx 率は未定義 | 「HITL 部分は Foundry preview の checkpoint で耐性を持たせている。可用性目標はハッカソンスコープでは個別 SLO 未定義」 |
 | **Security** | ✅ 強い | Managed Identity 全面 (`containerapps.bicep:4`)、Key Vault `kv-hack2026-tyu3o4` で 4 Discord webhook + AOAI + Cosmos secret 管理 (`contracts.md:466-473`)、per-agent Entra identity (`requirements.md:385`)、reviewer RBAC scope (`requirements.md:389`)、`enablePurgeProtection=true` (STATUS.md 2026-04-29 ログ) | 「全 6 サービス MI 経由、API キー直接利用は KV 経由のフォールバック 1 種類のみ」 |
-| **Cost Optimization** | 🟡 部分的 | $200 上限 / 想定 $143 / バッファ $57 (`requirements.md:36`)、累積 $120 / $150 で `cost.alert.fired` (`requirements.md:371`)、Tier A/C 縮退 (`requirements.md:396-398`)、Budget bicep 80%/100%/forecast100% notification (`budget.bicep:17-42`)、scale-to-zero (`containerapps.bicep:3`)。一方で 250k TPM × gpt-5.4 の **実消費レート計測は未実装** (STATUS.md は gpt-4o-mini のみ provisioned 状態) | 「forecast budget + 2-tier alert + scale-to-zero。実消費は M8 タスク 8.4 で着手予定」 |
+| **Cost Optimization** | 🟡 部分的 | $200 上限 / 想定 $143 / バッファ $57 (`requirements.md:36`)、累積 $120 / $150 で `cost.alert.fired` (`requirements.md:371`)、Tier A/C 縮退 (`requirements.md:396-398`)、Budget bicep 80%/100%/forecast100% notification (`budget.bicep:17-42`)、scale-to-zero (`containerapps.bicep:3`)。一方で 250k TPM × gpt-4o の **実消費レート計測は未実装** (STATUS.md は gpt-4o-mini のみ provisioned 状態) | 「forecast budget + 2-tier alert + scale-to-zero。実消費は M8 タスク 8.4 で着手予定」 |
 | **Operational Excellence** | 🟡 部分的 | App Insights + Log Analytics、customMetrics リスト (`design.md:550`)、PII scrubber emit 直前 (`requirements.md:375`)、GitHub Actions lint/typecheck/Bicep what-if (`tasks.md:18`)。Agent tracing は MAF 自動 export (`requirements.md:370`) に依存しており、構造化 trace の自分側設計は希薄 | 「telemetry は MAF + App Insights に任せ、business metric (`hearout.intervention.count`, `self_approval_rate.weekly` 等) を customMetrics で補強」 |
 | **Performance Efficiency** | 🟡 部分的 | cold-start ≤ 3 秒 SLO、業務時間帯 min_replicas=1 (`containerapps.bicep:4`)、partition key `{sector}#{unit}` で水平展開 (`requirements.md:357`)、Cosmos Serverless + AI Search Basic。一方で **Hearout 1 セッション平均 < 2000 token は design.md:577 でターゲット化のみ**、実測なし | 「ハッカソンスコープでは partition 設計 + serverless 採用が主、本番負荷試験は UAT 非スコープ (`handoff-uat.md:60`)」 |
 
@@ -51,7 +51,7 @@
 
 | 観点 | 状態 | 根拠 |
 |------|------|------|
-| **Model selection** | ✅ 強い | gpt-5.4 = Hearout/Formalization、gpt-5.4-mini = Delta scoring/Truth assist、`text-embedding-3-small` 固定 (`design.md:136`)。Tier A/C で gpt-4o → gpt-4o-mini fallback 設計 (`requirements.md:398`)。embedding 切替は index 全再構築コストで Phase 2 化 (`requirements.md:400-401`) — 根拠付きの判断 |
+| **Model selection** | ✅ 強い | gpt-4o = Hearout/Formalization、gpt-4o-mini = Delta scoring/Truth assist、`text-embedding-3-small` 固定 (`design.md:136`)。Tier A/C で gpt-4o → gpt-4o-mini fallback 設計 (`requirements.md:398`)。embedding 切替は index 全再構築コストで Phase 2 化 (`requirements.md:400-401`) — 根拠付きの判断 |
 | **Grounding** | 🟡 部分的 | GraphCheck atomic claim 分解 + AI Search corpus 検索 (`requirements.md:337-340`)、冷起動期は FactCheck 3-LLM ensemble (`requirements.md:339`)。**Web/KG hybrid (Bing/Wikipedia) は Phase 2 行き** (`tasks.md:103`) |
 | **Evaluation** | 🔴 不足 | golden set 20 件は `contracts.md:543` に「明日着手」と書かれたまま。Self-critic / Truth Judgment の precision/recall 測定計画なし。RAG retrieval recall@k 等の番号もなし |
 | **Responsible AI 統合** | 🔴 不足 | §4 RAI で詳述 |
@@ -91,9 +91,9 @@
 
 ---
 
-## 3. KPMG Trusted AI Framework — 10 Pillars
+## 3. Trusted AI Framework — 10 Pillars
 
-ソース: [KPMG Trusted AI](https://__法人COM__/xx/en/what-we-do/services/ai/trusted-ai-framework.html) 10 ethical pillars。AI 部が 対象組織配下である以上、本フレームワークが審査員 の自然な評価軸になりやすい。
+ソース: [Trusted AI](https://example.com/trusted-ai/en/what-we-do/services/ai/trusted-ai-framework.html) 10 ethical pillars。AI 部が 対象組織配下である以上、本フレームワークが審査員 の自然な評価軸になりやすい。
 
 | Pillar | 状態 | 根拠 / Gap | 説明責任シナリオ |
 |--------|------|------------|--------------------|
@@ -152,7 +152,7 @@
 | 2 | **PII scrubber が regex のみ** (Req 16.6 の "LLM scrubbing" と乖離) | 法人 (Privacy) / MS RAI (Privacy & Security) / Azure WAF (Security) | **P1** | `app/util/pii.py:14-31` 漢字氏名ヒューリスティックは false negative 多発。最低 1 段の LLM scrubbing pass を Phase 2 と明示するか、要件 16.6 を MVP では正規表現のみと書き換える整合作業必要 |
 | 3 | ~~**Fairness / Bias audit 不在**~~ ✅ **2026-05-28 着手 (T3)** — `docs/observability-kql.md` §1 で reviewer × sector × decision 別の approve/reject 比率 KQL を 3 本提供。`app/api/reviews.py` の `/decision` endpoint で `review.decision` customMetric を emit するよう instrument | 法人 (Fairness) / MS RAI (Fairness) / AWS GenAI (Responsible AI) | **P2 ✅** | proxy として fairness dashboard 化。本格 bias audit は Phase 2 |
 | 4 | ~~**Impact Assessment 文書なし**~~ ✅ **2026-05-28 完了 (T2)** — `scaffold/docs/impact-assessment.md` (12 harm × mitigation × file:line 出典、out-of-scope 利用明記、残存リスク 5 件開示) | MS RAI / 法人 / NIST | **P1 ✅** | MS RAI v2 Impact Assessment 構造に準拠 |
-| 5 | ~~**Sustainability に対する明示的設計判断なし**~~ ✅ **2026-05-28 完了 (T5)** — `README.md` Sustainability セクション + `app/util/cost.py:19` `aggregate_aoai_tokens_daily` で AOAI token を customMetric として日次集計。scale-to-zero + serverless + gpt-5.4-mini routing + max_completion_tokens 上限を明示化 | AWS GenAI / 法人 | **P3 ✅** | carbon 計測そのものは Phase 2 だが、設計判断を文書化 |
+| 5 | ~~**Sustainability に対する明示的設計判断なし**~~ ✅ **2026-05-28 完了 (T5)** — `README.md` Sustainability セクション + `app/util/cost.py:19` `aggregate_aoai_tokens_daily` で AOAI token を customMetric として日次集計。scale-to-zero + serverless + gpt-4o-mini routing + max_completion_tokens 上限を明示化 | AWS GenAI / 法人 | **P3 ✅** | carbon 計測そのものは Phase 2 だが、設計判断を文書化 |
 | 6 | ~~**AI 関与の常時 disclosure UI なし**~~ ✅ **2026-05-28 完了 (T6)** — `ui/chat/src/shell/AppShell.tsx` に persistent disclosure footer 追加（全 surface = Chat/Admin/Review でカバー）+ ChatWindow per-message self-critic スコアバッジは既存 | MS RAI (Transparency) / 法人 (Transparency) | **P2 ✅** | 言語 ja-JP + accessibility Phase 2 も同 footer で開示 |
 | 7 | **Cold start 以外の latency / availability SLO 未定義** | Azure WAF (Reliability/Performance) / AWS GenAI (Reliability) | **P3** | ハッカソンスコープでは UAT で機能性が通れば OK。pitch で問われたら「次フェーズ」 |
 | 8 | ~~**Hearout 介入の Inclusiveness / accessibility 未検証**~~ ✅ **2026-05-28 部分対応 (T6)** — AppShell footer に「言語: 日本語 (ja-JP) 固定、accessibility は Phase 2」を明示開示。WCAG audit 本体は Phase 2 | MS RAI (Inclusiveness) | **P3 ✅** | scope 制限の transparency で対応 |
@@ -199,7 +199,7 @@
 > 各 1 文。pitch スクリプト / README / Zenn 記事から再利用可。
 
 1. **Security**: 「Azure WAF の Security pillar に沿って、全 5 サービスを Managed Identity + Key Vault (`kv-hack2026-tyu3o4`) + per-agent Entra identity + RG `CanNotDelete` lock + `deny-storage-public` policy assignment で多層化した (`infra/main.bicep:75-101`)。」
-2. **Accountability**: 「KPMG Trusted AI の Accountability pillar に対応し、Hearout → Formalization HITL → Truth Judgment → Reviewer の 4 段で人間判断を強制、`schema_audit_log` + `citation_audit_log` + `truth_judgment_logs` の 3 audit log で trace 可能 (`design.md:489-499`)。」
+2. **Accountability**: 「Trusted AI の Accountability pillar に対応し、Hearout → Formalization HITL → Truth Judgment → Reviewer の 4 段で人間判断を強制、`schema_audit_log` + `citation_audit_log` + `truth_judgment_logs` の 3 audit log で trace 可能 (`design.md:489-499`)。」
 3. **Privacy**: 「Persona B の redact フラグ + 論理削除 (`is_active=false`) + 引用先連鎖 (`superseded_by`) + emit 直前 PII scrubbing の 4 段で privacy by design (`requirements.md:215-219, 387-388, 375`)。」
 4. **Cost**: 「$200 上限に対し forecast budget 100% 通知 + 累積 $120/$150 で Tier A/C 縮退提案 + scale-to-zero (idle 5min) で予算ガードレールを多層化 (`budget.bicep:17-42`, `requirements.md:396-398`)。」
 5. **Explainability**: 「重み breakdown (A×B×C) tooltip + TJ verdict バッジ (supported / novel / conflict) + Citation ID クリックで出典 turn 表示 (`requirements.md:247-252, 206`) — レビュアーが「なぜこの record か」を 1 画面で判断可能。」
@@ -229,7 +229,7 @@
 
 - [Azure Well-Architected Framework — AI Workloads](https://learn.microsoft.com/en-us/azure/well-architected/ai/) (2026 update)
 - [AWS Well-Architected Generative AI Lens](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html) (2025-12 更新)
-- [KPMG Trusted AI Framework](https://__法人COM__/xx/en/what-we-do/services/ai/trusted-ai-framework.html) (10 pillars)
+- [Trusted AI Framework](https://example.com/trusted-ai/en/what-we-do/services/ai/trusted-ai-framework.html) (10 pillars)
 - [Microsoft Responsible AI Standard v2](https://www.microsoft.com/en-us/ai/responsible-ai) (6 goals / 14 sub-goals)
 - [NIST AI Risk Management Framework 1.0](https://www.nist.gov/itl/ai-risk-management-framework) (Govern / Map / Measure / Manage)
 

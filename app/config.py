@@ -13,8 +13,8 @@ class Settings(BaseSettings):
 
     azure_openai_endpoint: str = ""
     azure_openai_api_key: str = ""
-    azure_openai_deployment_small: str = "gpt-5.4-mini"
-    azure_openai_deployment_large: str = "gpt-5.4"
+    azure_openai_deployment_small: str = "gpt-4o-mini"
+    azure_openai_deployment_large: str = "gpt-4o"
     azure_openai_api_version: str = "2025-04-01-preview"
 
     azure_storage_account: str = ""

@@ -7,21 +7,21 @@
 | システム | リソース | 必要な権限 |
 |---|---|---|
 | GitHub | `aiclub-labs/zenn-hack2026`（プライベートリポジトリ） | コラボレーターとして招待された GitHub アカウント |
-| Azure | サブスクリプション `2c29a97c-08b6-4bc3-88ea-266eb1cfd730` | テナント `moarond4selfdiciplinegmail.onmicrosoft.com` のゲストユーザー |
+| Azure | サブスクリプション `2c29a97c-08b6-4bc3-88ea-266eb1cfd730` | テナント `tenant-redacted.onmicrosoft.com` のゲストユーザー |
 | Azure | リソースグループ `rg-hack2026-dev` | Contributor |
 | Azure | リソースグループ `rg-hack2026-shared` | Storage Blob Data Contributor |
 | Azure | リソースグループ `rg-hack2026-prod` | （チームアクセスなし。オーナー専用） |
 
 ## 現在のメンバー
 
-UPN サフィックスはすべて `@moarond4selfdiciplinegmail.onmicrosoft.com` です。
+UPN サフィックスはすべて `@tenant-redacted.onmicrosoft.com` です。
 
 | 名前 | GitHub | Azure UPN（プレフィックス部分） |
 |---|---|---|
-| Mao（オーナー） | `maumao76` | `moarond4selfdicipline_gmail.com#EXT#` |
-| Mao（テスト用） | — | `maoando76_gmail.com#EXT#` |
-| arumakan | `daichinakamura34` | `arumakan.34_gmail.com#EXT#` |
-| sotaroo | `Suzuki-Sotaro` | `sotaroo.ai_outlook.com#EXT#` |
+| Mao（オーナー） | `operator` | `tenant-redacted_gmail.com#EXT#` |
+| Mao（テスト用） | — | `operator_gmail.com#EXT#` |
+| member-b | `member-b` | `member-b_gmail.com#EXT#` |
+| member-a | `member-a` | `member-a_outlook.com#EXT#` |
 
 ---
 
@@ -48,13 +48,13 @@ gh api repos/aiclub-labs/zenn-hack2026/collaborators -q '.[].login'   # アク�
 ## Azure
 
 ### 初回のみ: テナント招待を承諾
-1. `invites@microsoft.com` から届く招待メール（件名にテナント名 `moarond4selfdiciplinegmail` が含まれます）を開きます。
+1. `invites@microsoft.com` から届く招待メール（件名にテナント名 `tenant-redacted` が含まれます）を開きます。
 2. 個人の Google／メールアカウントでサインインすると、テナントにゲストユーザーとして登録されます。
 3. 同意プロンプトが出たら承認します。
 
 ### GUI（Azure Portal）
 1. `https://portal.azure.com` を開きます。
-2. 右上のアカウントメニュー → **ディレクトリの切り替え** → `moarond4selfdicipline (Default Directory)` を選択。
+2. 右上のアカウントメニュー → **ディレクトリの切り替え** → `tenant-redacted (Default Directory)` を選択。
 3. **サブスクリプション** → `Azure subscription 1` → **リソースグループ** → `rg-hack2026-dev` を開きます。
 4. ここから Contributor 権限の範囲内でデプロイ・ログ確認・リソース編集が可能です。
 
@@ -78,7 +78,7 @@ az role assignment list --assignee $(az ad signed-in-user show --query id -o tsv
 
 `az login` が別テナントに入ってしまう場合:
 ```bash
-az login --tenant moarond4selfdiciplinegmail.onmicrosoft.com
+az login --tenant tenant-redacted.onmicrosoft.com
 ```
 
 ### CLI（azd — Azure Developer CLI）

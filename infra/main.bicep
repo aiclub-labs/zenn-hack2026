@@ -47,8 +47,8 @@ param containerRegistryServer string = ''
 param azureOpenAIEndpoint string = ''
 
 @description('Azure OpenAI small/large deployment names.')
-param azureOpenAIDeploymentSmall string = 'gpt-5.4-mini'
-param azureOpenAIDeploymentLarge string = 'gpt-5.4'
+param azureOpenAIDeploymentSmall string = 'gpt-4o-mini'
+param azureOpenAIDeploymentLarge string = 'gpt-4o'
 
 @description('KV secret URI (versionless) for AOAI API key.')
 param azureOpenAIApiKeySecretUri string = ''

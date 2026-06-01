@@ -139,7 +139,7 @@ async def scrub_async(
     """Two-pass scrub: regex (sync) → optional LLM pass over residual strings.
 
     `use_llm=False` makes this equivalent to ``scrub()`` (no network I/O).
-    LLM call uses ``deployment_small`` (gpt-5.4-mini) at temperature 0 and is
+    LLM call uses ``deployment_small`` (gpt-4o-mini) at temperature 0 and is
     best-effort: on any failure the regex-only result is returned.
     """
     base = scrub(payload)

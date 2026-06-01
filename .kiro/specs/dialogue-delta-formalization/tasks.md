@@ -1,6 +1,6 @@
 # Implementation Tasks
 
-> Source: `requirements.md` v2（Req 1–18, Sotaro/Daichi 承認版 2026-05-25）+ `design.md` v2（Notification Dispatcher / Schema Revision Gate / MVP 境界 §1 反映）+ `personas-stories.md`（Persona A/B/C）+ `research.md`。
+> Source: `requirements.md` v2（Req 1–18, 実装担当/ドメインエキスパート 承認版 2026-05-25）+ `design.md` v2（Notification Dispatcher / Schema Revision Gate / MVP 境界 §1 反映）+ `personas-stories.md`（Persona A/B/C）+ `research.md`。
 > 言語: ja（spec.json）。
 > Fast-track: spec-tasks は `-y` で自動生成・自動承認。実装着手前にチーム共有レビュー（hack-pm 投下）。
 > マイルストーン: M2-M8 = 今回ビルド（MVP）/ M9-M12 = Follow-up（design §1 表）。
@@ -39,7 +39,7 @@
 
 ---
 
-## M4: Notification Dispatcher（Daichi review R2 AC#5/#6/#7 中核, Week 2 後半）
+## M4: Notification Dispatcher（ドメインエキスパート review R2 AC#5/#6/#7 中核, Week 2 後半）
 
 - [ ] **4.1 [P]** Discord webhook URL 4 種を Key Vault に格納（`DISCORD_WEBHOOK_URL_{SCHEMA_UPDATES,PENDING_REVIEW,EXPIRED,COST_ALERT}`）+ 参照 helper（Req 17.2, design §4.6）
 - [ ] **4.2 [S→3.2,4.1]** `NotificationDispatcher` 実装: subscribe(`schema.updated`/`record.pending_review`/`record.expired`/`cost.alert.fired`) → PII scrub → webhook POST → 3 回 backoff retry → 失敗時 `error_logs` + admin channel 二次通知（design §4.6 + §6 Error）

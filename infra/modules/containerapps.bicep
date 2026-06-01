@@ -45,10 +45,10 @@ param containerRegistryServer string = ''
 param azureOpenAIEndpoint string = ''
 
 @description('Azure OpenAI small deployment name. Defaults aligned with infra/main.bicep (Issue #42).')
-param azureOpenAIDeploymentSmall string = 'gpt-5.4-mini'
+param azureOpenAIDeploymentSmall string = 'gpt-4o-mini'
 
 @description('Azure OpenAI large deployment name. Defaults aligned with infra/main.bicep (Issue #42).')
-param azureOpenAIDeploymentLarge string = 'gpt-5.4'
+param azureOpenAIDeploymentLarge string = 'gpt-4o'
 
 @description('KV secret URI (versionless) for Azure OpenAI API key. Empty disables KV-backed AOAI key.')
 param azureOpenAIApiKeySecretUri string = ''

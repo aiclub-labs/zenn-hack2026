@@ -15,7 +15,7 @@
 ローカル shell で:
 
 ```bash
-cd C:/Users/sshuser/personal-hub/ai-club/events/microsoft-agent-hackathon-2026/scaffold
+cd <redacted-path>/personal-hub/ai-club/events/microsoft-agent-hackathon-2026/scaffold
 python scripts/reset_tenant.py --sector manufacturing-s8b --unit line-A --confirm --include-schemas
 ```
 

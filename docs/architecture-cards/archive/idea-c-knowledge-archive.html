@@ -414,7 +414,7 @@
   <tbody>
     <tr class="risk-row-green"><td>Document Intelligence pipeline</td><td><span class="badge badge-green">G</span></td><td>managed・実績多数</td></tr>
     <tr class="risk-row-yellow"><td>Contract shareability LLM 判断</td><td><span class="badge badge-yellow">Y</span></td><td>prompt 設計 + 合成契約書で iteration 必要、3-5 日確保</td></tr>
-    <tr class="risk-row-red row-emphasis"><td><strong>合成契約書 corpus（15-20 件）</strong></td><td><span class="badge badge-red">R</span></td><td><strong>最大変数</strong>。"realistic enough" な phrasing 設計に 1 週間。daichi がリードする想定</td></tr>
+    <tr class="risk-row-red row-emphasis"><td><strong>合成契約書 corpus（15-20 件）</strong></td><td><span class="badge badge-red">R</span></td><td><strong>最大変数</strong>。"realistic enough" な phrasing 設計に 1 週間。ドメインエキスパートがリードする想定</td></tr>
     <tr class="risk-row-yellow"><td>合成プロジェクト知見 corpus</td><td><span class="badge badge-yellow">Y</span></td><td>量 × tag consistency。AOAI structured output で量産可だが sanity check に時間</td></tr>
     <tr class="risk-row-green"><td>AI Search 設計 + indexing</td><td><span class="badge badge-green">G</span></td><td>well-trodden、Bicep に追加するだけ</td></tr>
     <tr class="risk-row-yellow"><td>HITL UI（clause-by-clause table）</td><td><span class="badge badge-yellow">Y</span></td><td>カスタム React + 修正 UX が demo の見せ場 → 削れない、3-5 日</td></tr>
@@ -450,7 +450,7 @@
 
 <h2 id="s11">11. このカードからの Open question</h2>
 <ol>
-  <li><strong>6週で合成契約書 15-20 件を realistic に作れるか</strong> → daichi の sample data 検討と紐づき。Day 7 までに 5 件試作を mandatory に</li>
+  <li><strong>6週で合成契約書 15-20 件を realistic に作れるか</strong> → ドメインエキスパートの sample data 検討と紐づき。Day 7 までに 5 件試作を mandatory に</li>
   <li><strong>AI Search Basic ($75/mo) を Day 1 から走らせるか、Day 14 開始で半額に抑えるか</strong> → MVP 開発初期は in-memory FAISS で代替する選択肢あり</li>
   <li><strong>clause-level の判断精度は何 % で許容か</strong> → 契約 review の世界では 95%+ 期待されるが、demo では 80% + HITL でカバーで成立。pitch でどう語るか</li>
   <li><strong>新案D との統合をこのカードに含めるか、別カードに切るか</strong> → 含めるなら corpus 共有設計（mock SPO + transcript / chat）を §6 に追加し、push 配信機構を §3 topology に追加。<strong>推奨: C+D 統合カードを別途作成し、本カードは C 単独として維持</strong>（変数を分離）</li>

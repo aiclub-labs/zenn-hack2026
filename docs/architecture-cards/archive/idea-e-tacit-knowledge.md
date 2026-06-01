@@ -17,7 +17,7 @@
 > - **検索 (pull)**: 営業/PM が「過去にこの種の案件あった?」と自然文で聞ける。共有可と判断された範囲のみ surfaces
 > - **生成 (push)**: ジュニア層に毎朝、同じ corpus から個人化された朝刊カード（要約 / クイズ）を配信
 >
-> **核**: 「暗黙知の形式化」を **agent + HITL の本業** とし、形式化された corpus を pull/push の両出口で再利用。Sotaro テーゼ（domain-specialty prevalence）の直接実装。
+> **核**: 「暗黙知の形式化」を **agent + HITL の本業** とし、形式化された corpus を pull/push の両出口で再利用。domain-specialty prevalence 前提（domain-specialty prevalence）の直接実装。
 
 ---
 
@@ -297,7 +297,7 @@
 
 | レイヤ | リスク | 理由 / 緩和 |
 |------|------|-----------|
-| **合成 corpus 量（4 種類）** | 🔴 R | Day 7 までに 50% 整備 / daichi リード |
+| **合成 corpus 量（4 種類）** | 🔴 R | Day 7 までに 50% 整備 / ドメインエキスパート リード |
 | Ingest 句単位判定の精度 | 🟡 Y | 判定 prompt の試行錯誤、Day 14 まで反復 |
 | Pull の回答品質 | 🟡 Y | 引用 link 必須 / Day 21 試走 |
 | Push 個人化（simplified） | 🟢 G | 静的 profile 前提なら容易 |
@@ -310,7 +310,7 @@
 
 | 部位 | 概算 h | 担当目安 |
 |------|------|--------|
-| 合成 corpus 整備 | 40-50h | daichi リード + 1 名 |
+| 合成 corpus 整備 | 40-50h | ドメインエキスパート リード + 1 名 |
 | Ingest + Contract Analyzer | 50-60h | 1 名 専任 |
 | Pull agent + 検索 SPA | 40-50h | 1 名 |
 | Push agent + 朝刊 UI | 25-35h | 1 名（simplified） |
@@ -328,7 +328,7 @@
 >
 > 他チームは「検索 bot」「Q&A bot」を出してくる可能性が高い。本案は **agent の本業を "暗黙知 → 形式知の変換"** に置く（kill switch 判定ではなく句単位判断 + HITL）。形式化済 corpus が pull/push の両出口に流れるのは結果。
 >
-> Sotaro テーゼ（domain-specialty prevalence）に対し、**「ドメイン暗黙知を形式化する agent こそが差別化資産」** という構造的応答。
+> domain-specialty prevalence 前提（domain-specialty prevalence）に対し、**「ドメイン暗黙知を形式化する agent こそが差別化資産」** という構造的応答。
 
 **主張可能な独自性**:
 1. **形式化が本業**: 検索/生成は出口、形式化が agent 価値

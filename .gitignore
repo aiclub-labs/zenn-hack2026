@@ -30,3 +30,6 @@ node_modules/
 cost-daily.json
 books/.keep
 tests/uat_results/perf_*
+
+# Stale compiled output from TS sources
+ui/*/src/**/*.js

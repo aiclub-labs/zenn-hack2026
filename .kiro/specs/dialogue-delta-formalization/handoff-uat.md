@@ -21,7 +21,7 @@
 | Web UI (統合 SPA) | `https://ca-hack2026-dev-web-chat.victoriousbeach-c5de1386.swedencentral.azurecontainerapps.io/` | Chat / Admin / Review すべてここから |
 | API | `ca-hack2026-dev-api` (同 FQDN /turn 等で nginx proxy) | FastAPI |
 | Agent Runner | `ca-hack2026-dev-agent-runner` | Hearout / Delta Detector 等 |
-| AOAI | swedencentral / gpt-5.4 + gpt-5.4-mini (Global Standard 250k TPM) | Main + self-critic |
+| AOAI | swedencentral / gpt-4o + gpt-4o-mini (Global Standard 250k TPM) | Main + self-critic |
 | Cosmos | `cosmos-hack2026-dev-ytzykj` / db=`dialogue_delta` | 12 container (うち 2 未作成: conflicts, cost_ledger) |
 | Key Vault | Discord webhook 4 種 + AOAI / Cosmos secrets | Managed Identity 経由 |
 

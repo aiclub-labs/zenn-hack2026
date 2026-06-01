@@ -375,7 +375,7 @@ teammate（M2/M3）はゲスト招待を accept してから上記。RG-scope Co
 3. 実装 → push → PR open
 4. **GitHub-side**:
    - `@claude review` で AI 1 次レビュー
-   - 人間 SME 1名 approval (`Suzuki-Sotaro` or `member 3`)
+   - 人間 SME 1名 approval (`member-a` or `member 3`)
 5. **Discord-side** (`#hack-dev-log` forum):
    - PR opened webhook が `#github-feed` に流れる
    - 議論が必要なら forum thread を立てる（`infra` / `agent` / `prompt` のタグ付き）

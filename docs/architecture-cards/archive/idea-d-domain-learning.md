@@ -1,6 +1,6 @@
 # 新案D — 毎朝のドメイン学習エージェント（Architecture Card）
 
-> **目的**: 新案C / 新案A カードと同じ 12 セクション format で並置。本カードは新案D（Sotaro 提案・**横串前提 "domain-specialty prevalence" の最直接 instantiation**・drop 不可制約あり）。
+> **目的**: 新案C / 新案A カードと同じ 12 セクション format で並置。本カードは新案D（member-a 提案・**横串前提 "domain-specialty prevalence" の最直接 instantiation**・drop 不可制約あり）。
 >
 > 関連: [problem-statement.md §2](../../problem-statement.md#候補のマトリクスkickoff-後4-候補で再構成) · [.html 版](./idea-d-domain-learning.html)
 
@@ -228,7 +228,7 @@
 
 > **「法人 固有 corpus × 個人化学習プロファイル × 毎朝 push」**
 >
-> 他社製品（McKinsey Lilli / 各社内 LLM RAG）は **pull 型 RAG**（聞かれたら答える）が中心。本案は **push 型 + 個人化ループ** で habit loop を形成する。Sotaro テーゼ（domain-specialty prevalence）の最も直接的な instantiation。
+> 他社製品（McKinsey Lilli / 各社内 LLM RAG）は **pull 型 RAG**（聞かれたら答える）が中心。本案は **push 型 + 個人化ループ** で habit loop を形成する。domain-specialty prevalence 前提（domain-specialty prevalence）の最も直接的な instantiation。
 
 **主張可能な独自性**:
 1. **Push 型 + 個人化**: pull 型 RAG との構造差別化

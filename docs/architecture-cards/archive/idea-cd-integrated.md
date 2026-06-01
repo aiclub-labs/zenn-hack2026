@@ -14,7 +14,7 @@
 > - **C path（pull）**: PM がプロジェクト完了時に契約書 AI 判断 + curation → 新規提案時に共有可な範囲だけが検索可能
 > - **D path（push）**: コンサル個人に毎朝、同じ corpus から個人化学習配信
 >
-> **核**: 「1 corpus × 2 出力モード」の lifecycle 訴求 + Sotaro テーゼ（domain-specialty prevalence）の **組織化（C）+ 個人化（D）の同時実装**。
+> **核**: 「1 corpus × 2 出力モード」の lifecycle 訴求 + domain-specialty prevalence 前提（domain-specialty prevalence）の **組織化（C）+ 個人化（D）の同時実装**。
 
 ---
 
@@ -42,7 +42,7 @@
 
 1. **corpus lifecycle**: 蓄積 → 多面活用（pull + push）
 2. **contract-aware が D 側にも効く**: 個人配信も share-safe で安全
-3. **組織化 + 個人化の同時実装**: Sotaro テーゼの構造的応答
+3. **組織化 + 個人化の同時実装**: domain-specialty prevalence 前提の構造的応答
 
 ---
 
@@ -218,7 +218,7 @@ C カード §4 + D カード §4 の **和集合**（重複: `document_intellig
 
 > **「1 corpus × 2 出力モード」の lifecycle 訴求**
 >
-> 他チームは「単機能 agent」を出してくる可能性が高い。本案は **同じ knowledge corpus が pull（C 提案検索）と push（D 朝刊配信）の両モードで活きる lifecycle 設計** を構造的差別化として提示。Sotaro テーゼ（domain-specialty prevalence）の **組織化（C）+ 個人化（D）の同時実装**。
+> 他チームは「単機能 agent」を出してくる可能性が高い。本案は **同じ knowledge corpus が pull（C 提案検索）と push（D 朝刊配信）の両モードで活きる lifecycle 設計** を構造的差別化として提示。domain-specialty prevalence 前提（domain-specialty prevalence）の **組織化（C）+ 個人化（D）の同時実装**。
 
 **主張可能な独自性**:
 1. **「1 corpus × 2 出力モード」**: lifecycle 訴求（他チームの単機能 agent との構造差別化）

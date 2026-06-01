@@ -196,7 +196,7 @@
 |------|------|-----------|
 | Document Intelligence pipeline | 🟢 G | managed・実績多数 |
 | Contract shareability LLM 判断 | 🟡 Y | prompt 設計 + 合成契約書で iteration 必要、3-5 日確保 |
-| **合成契約書 corpus（15-20 件）** | 🔴 R | **最大変数**。"realistic enough" な phrasing 設計に 1 週間。daichi がリードする想定 |
+| **合成契約書 corpus（15-20 件）** | 🔴 R | **最大変数**。"realistic enough" な phrasing 設計に 1 週間。ドメインエキスパートがリードする想定 |
 | 合成プロジェクト知見 corpus | 🟡 Y | 量 × tag consistency。AOAI structured output で量産可だが sanity check に時間 |
 | AI Search 設計 + indexing | 🟢 G | well-trodden、Bicep に追加するだけ |
 | HITL UI（clause-by-clause table） | 🟡 Y | カスタム React + 修正 UX が demo の見せ場 → 削れない、3-5 日 |
@@ -225,7 +225,7 @@
 
 ## 11. このカードからの Open question
 
-1. **6週で合成契約書 15-20 件を realistic に作れるか** → daichi の sample data 検討と紐づき。Day 7 までに 5 件試作を mandatory に
+1. **6週で合成契約書 15-20 件を realistic に作れるか** → ドメインエキスパートの sample data 検討と紐づき。Day 7 までに 5 件試作を mandatory に
 2. **AI Search Basic ($75/mo) を Day 1 から走らせるか、Day 14 開始で半額に抑えるか** → MVP 開発初期は in-memory FAISS で代替する選択肢あり
 3. **clause-level の判断精度は何 % で許容か** → 契約 review の世界では 95%+ 期待されるが、demo では 80% + HITL でカバーで成立。pitch でどう語るか
 4. **新案D との統合をこのカードに含めるか、別カードに切るか** → 含めるなら corpus 共有設計（mock SPO + transcript / chat）を §6 に追加し、push 配信機構を §3 topology に追加。**推奨: C+D 統合カードを別途作成し、本カードは C 単独として維持**（変数を分離）

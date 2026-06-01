@@ -22,7 +22,7 @@ azd auth login        # ブラウザ SSO
 | `env` | `dev` | parameters.json |
 | `kvName` | `kv-hack2026-tyu3o4` | 既存 KV (作成しない) |
 | `memberObjectIds` | 3 GUID | Entra members |
-| `ownerObjectId` | df9f49d3-... | maoando76 |
+| `ownerObjectId` | df9f49d3-... | operator |
 | `budgetAmount` | 180 USD | 月予算 |
 
 追加で `azd env` に入れる値:

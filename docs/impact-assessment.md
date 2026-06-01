@@ -1,6 +1,6 @@
 # Impact Assessment — dialogue-delta-formalization
 
-> 作成: 2026-05-28 / 用途: Microsoft Agent Hackathon 提出向け Responsible AI 自己評価。MS RAI Standard v2 / KPMG Trusted AI / NIST AI RMF (Map) の Impact Assessment 要件を 1 枚に圧縮。
+> 作成: 2026-05-28 / 用途: Microsoft Agent Hackathon 提出向け Responsible AI 自己評価。MS RAI Standard v2 / Trusted AI / NIST AI RMF (Map) の Impact Assessment 要件を 1 枚に圧縮。
 > 関連: `personas-stories.md`, `risks.md` (R-01〜R-07), `framework-review.md` (gap matrix #4)
 
 ---
@@ -32,7 +32,7 @@
 | H6 | Persona C | 重み breakdown 不可解で全件承認 → corpus 汚染 | H | M | Self-approval 率 > 30% で warning、breakdown tooltip (A×B×C)、TJ verdict バッジ、Citation ID で出典 turn 表示 | `requirements.md:252-254, 247, 206` |
 | H7 | **供給側 (R-01)** | 「自分の知見を共有 → 自分の希少性低下」懸念で協力拒否 → corpus 不毛 | H | M | Citation 数の可視化 (Phase 2)、完全匿名化オプション、共有しない選択を許容 | `risks.md:R-01`, `design.md` (Phase 2) |
 | H8 | **組織 / 経営層** | Corpus が偏ったベテラン view に固定化 → 多様な意見が排除 → 組織意思決定の単一化 | M | L | sector×reviewer 別 approval/reject 率 KPI、conflict_detected の coexist 選択肢 (`requirements.md:271`) | `requirements.md:254, 271`, T3 (Phase 2 で監視ダッシュボード) |
-| H9 | **AI モデル (gpt-5.4 / gpt-5.4-mini)** | プロンプトインジェクションで PII 流出 or 不正な corpus 投入 | H | L | Foundry content filter + Truth Judgment 検証 + 3 段 HITL ゲート | `design.md:117-127, 489-499` |
+| H9 | **AI モデル (gpt-4o / gpt-4o-mini)** | プロンプトインジェクションで PII 流出 or 不正な corpus 投入 | H | L | Foundry content filter + Truth Judgment 検証 + 3 段 HITL ゲート | `design.md:117-127, 489-499` |
 | H10 | **個人 (一般)** | 言語固定 ja-JP、accessibility 未検証 → スクリーンリーダー利用者・非日本語話者が排除 | M | H | 提出時は scope 限定 (3 persona × ja-JP) を明示、WCAG 監査は Phase 2 | `spec.json` language=ja, `handoff-uat.md:108` |
 | H11 | **データ (Cosmos partition)** | テナント越境で他マスの corpus が混入 | H | L | partition key `{sector}#{unit}` を全 12 collection で強制 + AI Search filter | `requirements.md:357, 360`, `contracts.md:228` |
 | H12 | **コスト / 環境** | AOAI トークン暴発で予算超過 / carbon footprint 増 | M | M | $200 上限 + forecast budget + Tier A/C 縮退 + scale-to-zero + serverless | `budget.bicep:17-42`, `requirements.md:36, 396-398` |
@@ -62,7 +62,7 @@
 | フレームワーク | 該当要件 | 本 doc 対応セクション |
 |---|---|---|
 | MS RAI Standard v2 | Accountability / Impact Assessment | §1 (意図利用)、§2 (Harm × Mitigation)、§3 (残存リスク) |
-| KPMG Trusted AI | Accountability / Safety / Fairness | §2 H1-H8, §3.1 |
+| Trusted AI | Accountability / Safety / Fairness | §2 H1-H8, §3.1 |
 | NIST AI RMF | Map function (context, risks, stakeholders) | §1, §2 全体 |
 | Azure WAF AI Workload | Responsible AI 統合 | §2 H9, H11 (Security / Reliability) |
 | AWS GenAI Lens | Impact scoping phase | §1, §2 (responsibilities) |

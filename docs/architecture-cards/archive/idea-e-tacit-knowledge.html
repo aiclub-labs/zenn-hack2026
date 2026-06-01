@@ -94,7 +94,7 @@
     <li><span class="badge badge-pull">Pull 検索</span> 営業/PM が「過去にこの種の案件あった?」と自然文で聞ける。共有可と判断された範囲のみ surfaces</li>
     <li><span class="badge badge-push">Push 朝刊</span> ジュニア層に毎朝、同じ corpus から個人化された朝刊カード（要約 / クイズ）を配信</li>
   </ul>
-  <p><strong>核</strong>: <span class="key">「暗黙知の形式化」を agent + HITL の本業</span> とし、形式化された corpus を pull/push の両出口で再利用。Sotaro テーゼ（domain-specialty prevalence）の直接実装。</p>
+  <p><strong>核</strong>: <span class="key">「暗黙知の形式化」を agent + HITL の本業</span> とし、形式化された corpus を pull/push の両出口で再利用。domain-specialty prevalence 前提（domain-specialty prevalence）の直接実装。</p>
 </div>
 
 <h2 id="s1">1. As-Is → To-Be</h2>
@@ -356,7 +356,7 @@
 <table>
 <thead><tr><th>レイヤ</th><th style="width:10%">リスク</th><th>理由 / 緩和</th></tr></thead>
 <tbody>
-<tr class="row-emphasis"><td><strong>合成 corpus 量（4 種類）</strong></td><td><span class="badge badge-red">🔴 R</span></td><td>Day 7 までに 50% 整備 / daichi リード</td></tr>
+<tr class="row-emphasis"><td><strong>合成 corpus 量（4 種類）</strong></td><td><span class="badge badge-red">🔴 R</span></td><td>Day 7 までに 50% 整備 / ドメインエキスパート リード</td></tr>
 <tr><td>Ingest 句単位判定の精度</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>判定 prompt の試行錯誤、Day 14 まで反復</td></tr>
 <tr><td>Pull の回答品質</td><td><span class="badge badge-yellow">🟡 Y</span></td><td>引用 link 必須 / Day 21 試走</td></tr>
 <tr><td>Push 個人化（simplified）</td><td><span class="badge badge-green">🟢 G</span></td><td>静的 profile 前提なら容易</td></tr>
@@ -371,7 +371,7 @@
 <table>
 <thead><tr><th>部位</th><th>概算 h</th><th>担当目安</th></tr></thead>
 <tbody>
-<tr><td>合成 corpus 整備</td><td>40-50h</td><td>daichi リード + 1 名</td></tr>
+<tr><td>合成 corpus 整備</td><td>40-50h</td><td>ドメインエキスパート リード + 1 名</td></tr>
 <tr><td>Ingest + Contract Analyzer</td><td>50-60h</td><td>1 名 専任</td></tr>
 <tr><td>Pull agent + 検索 SPA</td><td>40-50h</td><td>1 名</td></tr>
 <tr><td>Push agent + 朝刊 UI</td><td>25-35h</td><td>1 名（simplified）</td></tr>
@@ -386,7 +386,7 @@
 <blockquote class="teal">
 <p><strong>「暗黙知の形式化を本業にした agent」</strong></p>
 <p>他チームは「検索 bot」「Q&A bot」を出してくる可能性が高い。本案は <strong>agent の本業を "暗黙知 → 形式知の変換"</strong> に置く（kill switch 判定ではなく句単位判断 + HITL）。形式化済 corpus が pull/push の両出口に流れるのは結果。</p>
-<p>Sotaro テーゼ（domain-specialty prevalence）に対し、<strong>「ドメイン暗黙知を形式化する agent こそが差別化資産」</strong> という構造的応答。</p>
+<p>domain-specialty prevalence 前提（domain-specialty prevalence）に対し、<strong>「ドメイン暗黙知を形式化する agent こそが差別化資産」</strong> という構造的応答。</p>
 </blockquote>
 <h3>主張可能な独自性</h3>
 <ol>

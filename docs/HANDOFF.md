@@ -27,15 +27,15 @@ Everything below requires your auth or is browser/portal-only — it can't be au
 
 - [x] **B1** Sub `hack2026` (`2c29a97c-08b6-4bc3-88ea-266eb1cfd730`), Free Trial, region `swedencentral`, backed by operator's personal-Gmail MSA per project memory
 - [x] **B2** $200 credit confirmed in Cost Management → Credits (verified 2026-04-28)
-- [x] **B3** All 3 members in tenant: operator (member, Owner) + sotaroo.ai@outlook.com (guest, PendingAcceptance) + arumakan.34@gmail.com (guest, PendingAcceptance). Both guests' invitations dispatched 2026-04-29 11:04 UTC. ⚠️ **2026-05-05 訂正**: Sotaro の正しいアドレスは `outlook.com`（旧 `outlook.jp` で発送した招待は無効 — 旧ゲストオブジェクト削除 + 新アドレスで再招待が必要、OID も変わるため `infra/main.parameters.json` の更新が follow-up で要る）
+- [x] **B3** All 3 members in tenant: operator (member, Owner) + member-a@example.com (guest, PendingAcceptance) + member-b@example.com (guest, PendingAcceptance). Both guests' invitations dispatched 2026-04-29 11:04 UTC. ⚠️ **2026-05-05 訂正**: member-a の正しいアドレスは `outlook.com`（旧 `outlook.jp` で発送した招待は無効 — 旧ゲストオブジェクト削除 + 新アドレスで再招待が必要、OID も変わるため `infra/main.parameters.json` の更新が follow-up で要る）
 - [x] **B4** Designated Owner = operator (sole). Teammates = RG-scope Contributor via Bicep (NOT sub-scope, per operator's "only I have admin auth" preference)
 
 **Phase 1 + Phase 2 completed 2026-04-29.** Full deployed-resource manifest, RBAC matrix, and platform-fix postmortem in [STATUS.md](./STATUS.md).
 
 ## C. GitHub repo — ✅ MOSTLY DONE 2026-04-29
 
-- [x] **C1** `aiclub-labs/zenn-hack2026` (private). Owner: aiclub-labs org (Google-SSO-backed AI-club Gmail; per project memory). Personal handle `maumao76` is `push` collaborator.
-- [x] **C2** All 3 teammate handles (operator + Suzuki-Sotaro + member 3) have `push` collaborator access
+- [x] **C1** `aiclub-labs/zenn-hack2026` (private). Owner: aiclub-labs org (Google-SSO-backed AI-club Gmail; per project memory). Personal handle `operator` is `push` collaborator.
+- [x] **C2** All 3 teammate handles (operator + member-a + member 3) have `push` collaborator access
 - [ ] **C3** Branch protection deliberately skipped — free-tier private repo blocks classic + rulesets API. Social norm + advisory CI substitutes. Revisit post-demo if repo goes public. See [STATUS.md "Recent decisions"](./STATUS.md).
 - [ ] **C4** OIDC App Registration + GitHub vars/secrets — deferred. Optional until M5+; current Bicep was deployed by operator's local `az` session, not CI.
 - [x] **C5** Scaffold pushed to `main` (58 files, 77 objects, ~59 KiB)
@@ -56,7 +56,7 @@ Execution runbook is in `discord-bot/docs/server-setup-execution-guide.md` (~7 p
 
 - [x] **D1 — Hackathon Team role assignment** — 3 メンバー + bot = 4 members 付与済、🏆 カテゴリ閲覧可
 - [x] **D2 — `#welcome` pinned text** — Community + Onboarding 有効、welcome 運用中
-- [x] **D3 — Community-mode 2-moderator requirement** — Admin 3 名（sotaro / mao / daichi）で要件クリア
+- [x] **D3 — Community-mode 2-moderator requirement** — Admin 3 名（3 名）で要件クリア
 - [ ] **D4 — Decide post-hackathon Alumni / public-invite policy** — 残課題（Alumni role = 0 members）
 - [x] **D5 — `#github-feed` webhook target repo** — `aiclub-labs/zenn-hack2026` で配線済
 

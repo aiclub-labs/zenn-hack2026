@@ -56,7 +56,7 @@ Already done in this session:
 - New AI-club Google account created (Gmail-based, free tier, 2FA enabled)
 - New `aiclub-labs` GitHub account created (SSO via Google, 2FA verified, recovery codes saved)
 - Private repo `aiclub-labs/zenn-hack2026` created, full scaffold pushed (initial commit on `main`, 77 objects / ~59 KiB)
-- Personal GitHub handle `maumao76` added as `push` collaborator on the repo
+- Personal GitHub handle `operator` added as `push` collaborator on the repo
 - Branch protection: skipped (free-tier private repo blocks both classic protection and rulesets; team relies on social norms + CI for now — flip to ruleset post-demo if repo goes public, or buy GitHub Pro)
 - Pre-push critical review identified 7 issues, all fixed in scaffold (Dockerfile added, bun-types→@types/bun, policy enforcementMode=DoNotEnforce, ownerObjectId conditional, .gitignore expanded, gpt-4o added to AOAI deployments, devcontainer fixed); Bicep compiles clean (zero warnings, zero errors)
 
