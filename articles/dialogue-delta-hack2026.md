@@ -202,9 +202,9 @@ Fluent UI v9 の `Combobox` は `onOptionSelect` (リスト選択) と `onChange
 
 ### H5. 雑な sed scrub が import path まで書き換えて build を壊した
 
-提出前の機密スクラブで `KPMG → 法人` を全 tracked files に一括 sed した結果、`main.tsx` の `import { ... } from "./theme/kpmg"` まで `"./theme/法人"` に書き換わってしまった。**ファイル名のほうは `kpmg.ts` のまま** だったので TS が module を解決できず、ACR build 失敗 → ImagePullBackOff → Container App revision が unhealthy になり、提出直前にユーザが「ページが開けない」状態に。
+提出前の機密スクラブで `<旧テーマ名> → 法人` を全 tracked files に一括 sed した結果、`main.tsx` の `import { ... } from "./theme/<旧テーマ名>"` まで `"./theme/法人"` に書き換わってしまった。**ファイル名のほうは `<旧テーマ名>.ts` のまま** だったので TS が module を解決できず、ACR build 失敗 → ImagePullBackOff → Container App revision が unhealthy になり、提出直前にユーザが「ページが開けない」状態に。
 
-対策はシンプルで `kpmg.ts` を `corporate.ts` にリネームして import path を揃えるだけだが、教訓は **「一括 sed scrub の後は CI build を必ず通す」**。今回はちょうど Easy Auth 設定 + 再ビルドのタイミングで露出して気付けた。
+対策はシンプルで `<旧テーマ名>.ts` を `corporate.ts` にリネームして import path を揃えるだけだが、教訓は **「一括 sed scrub の後は CI build を必ず通す」**。今回はちょうど Easy Auth 設定 + 再ビルドのタイミングで露出して気付けた。
 
 ## デモ
 

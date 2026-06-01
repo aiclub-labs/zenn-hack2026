@@ -34,7 +34,7 @@
 - **Context**: 8 セクター × 10 ユニットのうち POC で扱う 1-2 マスを選定
 - **Sources**: `../../../docs/research/sector-unit-candidates.md`
 - **Findings**: 5 候補を 4 軸（暗黙知密度 / 差分顕在性 / corpus 作成しやすさ / デモ説得力）で評価。A=戦略×製造業 (人材アサイン) が議事録例示済で最有力
-- **Implications**: 5/14 セッションで KPMG AI 部の実マトリクスとのマッピングを確認し最終確定。requirements は最終マス未確定でも記述可能（partition key 設計で多マス対応のため）
+- **Implications**: 5/14 セッションで 対象組織 AI 部の実マトリクスとのマッピングを確認し最終確定。requirements は最終マス未確定でも記述可能（partition key 設計で多マス対応のため）
 
 ## Architecture Pattern Evaluation
 

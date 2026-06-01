@@ -71,7 +71,7 @@ requirements の EARS 化・design 段階で具体仕様に展開するための
 
 ## Introduction
 
-本 spec は、特定セクター × ユニットに属する業務対話を AI agent が監視し、人間入力と AI 出力の差分から暗黙知を抽出して形式知化する MVP の要件を定義する。Microsoft Agent Hackathon 2026 提出物として 6 週間で実装し、KPMG AI 部の組織的暗黙知活用の POC として位置付ける。
+本 spec は、特定セクター × ユニットに属する業務対話を AI agent が監視し、人間入力と AI 出力の差分から暗黙知を抽出して形式知化する MVP の要件を定義する。Microsoft Agent Hackathon 2026 提出物として 6 週間で実装し、対象組織 AI 部の組織的暗黙知活用の POC として位置付ける。
 
 ### 用語: 暗黙知の定義（2026-05-20 meeting 決定）
 
