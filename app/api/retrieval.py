@@ -1,0 +1,145 @@
+"""GET /retrieve + retrieve_for_turn helper (Req 6, 8)."""
+from __future__ import annotations
+
+import asyncio
+import logging
+from collections import defaultdict
+from typing import Any
+
+from fastapi import APIRouter, Query
+
+from app.contracts.common import Tenant
+from app.contracts.http import CitationRef, RetrieveResponse
+
+router = APIRouter(tags=["retrieval"])
+logger = logging.getLogger(__name__)
+
+
+async def _embed(text: str) -> list[float]:
+    from app.util.embedding import embed as _real_embed
+
+    return await _real_embed(text)
+
+
+_RELEVANCE_MIN = 0.56  # AI Search vector score; tuned from live distribution
+                       # (good hits ~0.58-0.67, off-topic top ~0.54).
+_RELEVANCE_TOP_K = 3   # show only top-3 strong hits
+
+
+async def _aisearch_query(
+    tenant: Tenant, vector: list[float], top_k: int = 10
+) -> list[dict[str, Any]]:
+    from app.util.aisearch import CorpusIndex
+
+    raw = await CorpusIndex().query(
+        tenant=tenant, query_vec=vector, top_k=top_k, shareability_min="private"
+    )
+    # Filter to strong matches only, then cap. If nothing clears the bar we
+    # return [] — chat answers without false-confidence citations.
+    scored: list[tuple[float, dict[str, Any]]] = []
+    for h in raw:
+        score = float(h.get("@search.score", 0.0) or 0.0)
+        scored.append((score, h))
+    scored.sort(key=lambda t: t[0], reverse=True)
+    scored = [(s, h) for s, h in scored if s >= _RELEVANCE_MIN]
+    out: list[dict[str, Any]] = []
+    for _score, h in scored[:_RELEVANCE_TOP_K]:
+        out.append(
+            {
+                "record_id": h.get("id", ""),
+                "schema_field_id": h.get("schema_field_id", "") or "",
+                "weight": float(h.get("weight_final", 0.0) or 0.0),
+                "superseded_by": h.get("superseded_by") or None,
+                "content": h.get("content", "") or "",
+            }
+        )
+    return out
+
+
+async def _increment_referenced_counts(
+    tenant: Tenant, record_ids: list[str]
+) -> None:
+    """Best-effort +1 per unique citation hit (Req 6 AC4 / Issue #29)."""
+    from app.util.aisearch import CorpusIndex
+
+    index = CorpusIndex()
+    for rid in record_ids:
+        await index.increment_referenced_count(rid, tenant.pk)
+
+
+async def _log_truth_judgment_activation(
+    tenant: Tenant, schema_field_id: str, record_ids: list[str]
+) -> None:
+    """activation-time TJ log when retrieval surfaces conflicting views."""
+    logger.info(
+        "tj.activation_time",
+        extra={
+            "pk": tenant.pk,
+            "schema_field_id": schema_field_id,
+            "record_ids": record_ids,
+        },
+    )
+    # TODO(wt-d-import): TruthJudgmentLogRepo.append(pattern="activation-time")
+
+
+async def retrieve_for_turn(
+    *, tenant: Tenant, query: str, user_id: str
+) -> tuple[list[CitationRef], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Top-k retrieval + activation-time conflict detection.
+
+    Conflict: >=2 distinct record viewpoints under one schema_field_id.
+    Returns (citations, conflicts, prompt_ctx) where prompt_ctx is the
+    [{citation_id, snippet}] list consumed by the AOAI system prompt.
+    """
+    vec = await _embed(query)
+    hits = await _aisearch_query(tenant, vec)
+
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    citations: list[CitationRef] = []
+    prompt_ctx: list[dict[str, Any]] = []
+    for h in hits:
+        sfid = str(h["schema_field_id"])
+        rid = str(h["record_id"])
+        grouped[sfid].append(h)
+        citations.append(
+            CitationRef(
+                record_id=rid,
+                schema_field_id=sfid,
+                weight=float(h.get("weight", 0.0)),
+                superseded_by=h.get("superseded_by"),
+            )
+        )
+        prompt_ctx.append(
+            {"citation_id": rid, "snippet": str(h.get("content", ""))[:300]}
+        )
+
+    conflicts: list[dict[str, Any]] = []
+    for sfid, group in grouped.items():
+        distinct = {g["record_id"] for g in group}
+        if len(distinct) >= 2:
+            conflicts.append({"schema_field_id": sfid, "alt_count": len(distinct)})
+            await _log_truth_judgment_activation(tenant, sfid, sorted(distinct))
+
+    # Req 6 AC4 / Issue #29: bump record_referenced_count for each unique hit.
+    # Fire-and-forget so retrieval latency stays unaffected; failures swallowed
+    # inside the CorpusIndex helper.
+    unique_record_ids = sorted({c.record_id for c in citations})
+    if unique_record_ids:
+        asyncio.create_task(_increment_referenced_counts(tenant, unique_record_ids))
+
+    _ = user_id  # reserved for personalization / audit
+    return citations, conflicts, prompt_ctx
+
+
+@router.get("/retrieve", response_model=RetrieveResponse)
+async def get_retrieve(
+    sector: str,
+    unit: str,
+    q: str = Query(..., min_length=1),
+    user_id: str = "anonymous",
+) -> RetrieveResponse:
+    tenant = Tenant(sector=sector, unit=unit)
+    records, conflicts, _ = await retrieve_for_turn(
+        tenant=tenant, query=q, user_id=user_id
+    )
+    return RetrieveResponse(records=records, conflicts=conflicts)

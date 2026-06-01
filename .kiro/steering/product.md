@@ -1,6 +1,6 @@
 # Product Overview
 
-Microsoft Agent Hackathon Japan 2026 提出物。エンタープライズ（対象組織 AI 部）の業務対話から **暗黙知を検知 → 5W1H ヒアリング → 形式化 → corpus 蓄積 → 次回対話で参照** の閉ループを Microsoft Agent Framework 1.0 + Foundry Agent Service で実装する POC。
+Microsoft Agent Hackathon Japan 2026 提出物。エンタープライズ（対象組織 (例: AI 推進部門)）の業務対話から **暗黙知を検知 → 5W1H ヒアリング → 形式化 → corpus 蓄積 → 次回対話で参照** の閉ループを Microsoft Agent Framework 1.0 + Foundry Agent Service で実装する POC。
 
 対象は 8 セクター × 10 ユニットの組織マトリクスのうち、暗黙知密度が高い 1-2 マス（推奨: 戦略 × 製造業 / 人材アサイン）。アーキは多マス展開対応設計とする。
 
@@ -14,7 +14,7 @@ Microsoft Agent Hackathon Japan 2026 提出物。エンタープライズ（対�
 
 ## Target Use Cases
 
-- 対象組織 AI 部のような特定セクター × ユニット業務での暗黙知形式知化
+- 対象組織 (例: AI 推進部門)のような特定セクター × ユニット業務での暗黙知形式知化
 - 形式知化対象の典型: 「アサイン判断時の人間関係考慮」「顧客固有の意思決定癖」「過去案件の red-flag パターン」など
 - ハッカソン審査向け 3 分デモ: 「対話差分 → ヒアリング → 形式化 → 次回参照」の場面転換
 

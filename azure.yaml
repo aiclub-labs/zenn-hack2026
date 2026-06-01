@@ -17,3 +17,22 @@ services:
     host: containerapp
     docker:
       path: Dockerfile
+  web-chat:
+    project: ui/chat
+    language: ts
+    host: containerapp
+    docker:
+      path: Dockerfile
+      remoteBuild: true
+  web-admin:
+    project: ui/admin
+    language: ts
+    host: containerapp
+    docker:
+      path: Dockerfile
+  web-review:
+    project: ui/review
+    language: ts
+    host: containerapp
+    docker:
+      path: Dockerfile

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C+D 統合 — 知見アーカイブ × ドメイン学習 デュアル出力エージェント | Architecture Card</title>
+<style>
+  :root{--bg:#fafafa;--surface:#fff;--border:#e1e4e8;--text:#24292e;--muted:#6a737d;--accent:#0366d6;--accent-soft:#f1f8ff;--highlight:#fff8c5;--red:#d73a49;--yellow:#d4a017;--green:#28a745;--red-bg:#ffeef0;--yellow-bg:#fff8e6;--green-bg:#e6ffed;--code-bg:#f6f8fa;--purple:#6f42c1;--purple-soft:#f5f0ff;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0;font-size:14px;}
+  .container{max-width:1100px;margin:0 auto;padding:32px 40px 80px;}
+  header.title-block{border-bottom:3px solid var(--purple);padding-bottom:20px;margin-bottom:32px;}
+  h1{font-size:26px;margin:0 0 8px;font-weight:700;}
+  h1 .subtle{color:var(--muted);font-weight:400;font-size:18px;}
+  h2{font-size:20px;margin:40px 0 16px;padding:8px 12px;background:var(--purple-soft);border-left:4px solid var(--purple);}
+  h3{font-size:16px;margin:24px 0 10px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+  blockquote{margin:16px 0;padding:12px 18px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 4px 4px 0;}
+  blockquote p{margin:6px 0;}
+  blockquote.note{background:var(--highlight);border-left-color:var(--yellow);}
+  blockquote.integrated{background:var(--purple-soft);border-left-color:var(--purple);}
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;background:var(--surface);font-size:13px;}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top;}
+  th{background:#f6f8fa;font-weight:600;}
+  tr:nth-child(even) td{background:#fafbfc;}
+  code{font-family:"SF Mono",Consolas,Monaco,monospace;background:var(--code-bg);padding:1px 6px;border-radius:3px;font-size:12px;}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:14px 18px;overflow-x:auto;line-height:1.5;font-size:12.5px;font-family:"SF Mono",Consolas,Monaco,monospace;}
+  ul,ol{padding-left:24px;}
+  li{margin:4px 0;}
+  .meta{color:var(--muted);font-size:13px;margin:8px 0 0;}
+  .meta strong{color:var(--text);}
+  .related{font-size:13px;color:var(--muted);margin-top:6px;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px;}
+  .badge-red{background:var(--red-bg);color:var(--red);}
+  .badge-yellow{background:var(--yellow-bg);color:var(--yellow);}
+  .badge-green{background:var(--green-bg);color:var(--green);}
+  .badge-c{background:#e7f3ff;color:#0366d6;}
+  .badge-d{background:#fff0f6;color:#bf3989;}
+  .row-emphasis{background:#fff8e6 !important;}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 22px;margin:16px 0 28px;font-size:13px;}
+  .toc strong{display:block;margin-bottom:8px;}
+  .toc ol{margin:0;padding-left:22px;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .section-summary{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 22px;margin:12px 0;}
+  .section-summary p{margin:4px 0;}
+  .key{color:var(--purple);font-weight:600;}
+  .three-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+  .pillar{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--purple);padding:14px;border-radius:4px;font-size:13px;}
+  .pillar-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+  hr{border:none;border-top:1px solid var(--border);margin:32px 0;}
+  .check{color:var(--green);font-weight:700;}
+  .warn{color:var(--yellow);font-weight:700;}
+  .pin{color:var(--accent);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="title-block">
+  <h1>C+D 統合 — 知見アーカイブ × ドメイン学習 デュアル出力エージェント<br><span class="subtle">Architecture Card（選択肢 Z 候補・1 corpus × 2 出力モード）</span></h1>
+  <p class="meta"><strong>作成日</strong>: 2026-05-11 / <strong>ステータス</strong>: チーム review 用 draft（5/11 決定で本構成 / 単独 C のいずれかを採択）</p>
+  <p class="related"><strong>関連</strong>: <a href="../../problem-statement.md">problem-statement.md</a> · <a href="./idea-cd-integrated.md">.md 版</a> · 兄弟カード: <a href="./idea-c-knowledge-archive.html">C</a> / <a href="./idea-d-domain-learning.html">D</a> / <a href="./idea-a-personnel-matching.html">A</a></p>
+</header>
+
+<div class="toc">
+  <strong>目次</strong>
+  <ol>
+    <li><a href="#s0">30 秒サマリー</a></li>
+    <li><a href="#s1">As-Is → To-Be</a></li>
+    <li><a href="#s2">Azure サービス（具体 SKU）</a></li>
+    <li><a href="#s3">Agent topology</a></li>
+    <li><a href="#s4">Tool / MCP インベントリ</a></li>
+    <li><a href="#s5">擬似コーポレートシステム</a></li>
+    <li><a href="#s6">Corpus</a></li>
+    <li><a href="#s7">HITL surface</a></li>
+    <li><a href="#s8">Demo storyboard（3 分以内）</a></li>
+    <li><a href="#s9">6週ビルドリスク（R/Y/G）</a></li>
+    <li><a href="#s10">Differentiation hook</a></li>
+    <li><a href="#s11">Open question</a></li>
+    <li><a href="#s12">テンプレ妥当性 review への問い</a></li>
+  </ol>
+</div>
+
+<h2 id="s0">0. 30 秒サマリー</h2>
+<div class="section-summary">
+  <p><strong>同一 corpus（SPO + 契約書 + transcript + chat）上で、2 つの出力モードを提供</strong>:</p>
+  <ul>
+    <li><span class="badge badge-c">C path (pull)</span> PM がプロジェクト完了時に契約書 AI 判断 + curation → 新規提案時に共有可な範囲だけが検索可能</li>
+    <li><span class="badge badge-d">D path (push)</span> コンサル個人に毎朝、同じ corpus から個人化学習配信</li>
+  </ul>
+  <p><strong>核</strong>: <span class="key">「1 corpus × 2 出力モード」</span> の lifecycle 訴求 + Sotaro テーゼ（domain-specialty prevalence）の <strong>組織化（C）+ 個人化（D）の同時実装</strong>。</p>
+</div>
+
+<h2 id="s1">1. As-Is → To-Be</h2>
+<h3>As-Is</h3>
+<table>
+<thead><tr><th style="width:25%">段階</th><th style="width:45%">何が起きているか</th><th style="width:30%">痛み</th></tr></thead>
+<tbody>
+<tr><td>プロジェクト完了</td><td>SPO graveyard / curation なし / 守秘判断は kill switch</td><td>reuse 率低い</td></tr>
+<tr><td>新規提案</td><td>ad-hoc な ex-PM ping</td><td>属人探索</td></tr>
+<tr><td>個人のドメイン学習</td><td>過去素材があるのに死蔵 / 動機続かない</td><td>habit 化されない</td></tr>
+<tr class="row-emphasis"><td colspan="3"><strong>共通の根</strong>: corpus は存在するが <strong>lifecycle がない</strong>（蓄積 → 多面活用 がデザインされていない）</td></tr>
+</tbody>
+</table>
+<h3>To-Be</h3>
+<table>
+<thead><tr><th style="width:25%">段階</th><th style="width:45%">何が起きるか</th><th style="width:30%">解決される痛み</th></tr></thead>
+<tbody>
+<tr><td>プロジェクト完了</td><td>PM が contract-aware curation → corpus 充実（<span class="badge badge-c">C</span>）</td><td>reuse 基盤確立</td></tr>
+<tr><td>新規提案時</td><td>共有可な範囲が pull 検索（<span class="badge badge-c">C</span>）</td><td>属人探索 解消</td></tr>
+<tr><td>個人の朝の学習</td><td>同じ corpus から毎朝 push（<span class="badge badge-d">D</span>）</td><td>habit loop 形成</td></tr>
+<tr class="row-emphasis"><td colspan="3"><strong>共通の効用</strong>: corpus が <strong>lifecycle を持つ</strong>（curated → multi-mode consumed）</td></tr>
+</tbody>
+</table>
+<h3>埋まるギャップ（3 点）</h3>
+<div class="three-pillars">
+  <div class="pillar"><div class="pillar-title">① corpus lifecycle</div>蓄積 → 多面活用（pull + push）</div>
+  <div class="pillar"><div class="pillar-title">② contract-aware が D 側にも</div>個人配信も share-safe で安全</div>
+  <div class="pillar"><div class="pillar-title">③ 組織化 + 個人化の同時実装</div>Sotaro テーゼの構造的応答</div>
+</div>
+
+<h2 id="s2">2. Azure サービス（具体 SKU）</h2>
+<table>
+<thead><tr><th>レイヤ</th><th>サービス</th><th>SKU</th><th>月額</th><th>採用根拠</th></tr></thead>
+<tbody>
+<tr><td>文書解析</td><td>Azure AI Document Intelligence</td><td>Standard S0</td><td>〜$15</td><td>契約書 + SPO + transcript</td></tr>
+<tr><td>LLM</td><td>Azure OpenAI</td><td>4.1 + mini</td><td>〜$45</td><td>C 判断 + D 出題の両方</td></tr>
+<tr class="row-emphasis"><td>検索</td><td>Azure AI Search</td><td>Basic</td><td>〜$75</td><td><strong>1 サービスで複数 index</strong></td></tr>
+<tr><td>ホスト</td><td>Container Apps</td><td>Consumption</td><td>〜$15</td><td>両 UI（PM 用 + 朝刊用）</td></tr>
+<tr><td>ストレージ</td><td>Blob</td><td>Hot LRS</td><td>〜$5</td><td>全 corpus</td></tr>
+<tr><td>状態</td><td>Cosmos DB</td><td>Serverless</td><td>〜$8</td><td>HITL + プロファイル</td></tr>
+<tr><td>スケジューリング</td><td>Logic Apps</td><td>Consumption</td><td>〜$5</td><td>毎朝 push</td></tr>
+<tr><td>観測</td><td>App Insights</td><td>Basic</td><td>〜$5</td><td>scaffold 済</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>included</td><td>$0</td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+<blockquote class="note"><p><strong>6週合計見込み: 〜$173 / $200</strong>（バッファ $27、<strong>タイト</strong>）。AI Search 1 service 共有で予算節約効くが、開発工数が単独 1.5x。</p></blockquote>
+
+<h2 id="s3">3. Agent topology</h2>
+<pre>
+                ┌─────────────────────┐
+                │  Orchestrator agent │
+                └─────────────────────┘
+                  │                  │
+            C path                D path
+                  │                  │
+   ┌──────────────┼──────────────┐   │
+   ▼              ▼              ▼   ▼
+┌─────────┐  ┌─────────┐   ┌──────────┐  ┌──────────┐
+│Contract │  │Retrieval│   │Generator │  │Feedback  │
+│Analyzer │  │agent    │   │(quiz +   │  │(profile  │
+│+Curator │  │(pull)   │   │ summary) │  │ update)  │
+└─────────┘  └─────────┘   └──────────┘  └──────────┘
+   │              │              │              │
+   ▼              │              │              │
+[HITL clause]     │              │              │
+   │              │              │              │
+   ▼              ▼              ▼              ▼
+        ┌────────────────────────────┐
+        │   Shared AI Search index   │
+        │  (contracts / knowledge /  │
+        │   learning_profile)        │
+        └────────────────────────────┘
+                    ▲
+                    │
+        ┌──────────────────────┐
+        │ Ingest agent         │
+        │ (SPO + transcript +  │
+        │  chat + contracts)   │
+        └──────────────────────┘
+</pre>
+<p><strong>MVP 構成</strong>: <span class="badge badge-c">C path</span> は完全実装、<span class="badge badge-d">D path</span> は <strong>Generator のみ実装、Profile / Feedback は static demo</strong>（個人化ループは "翌朝の場面転換" で演出のみ）。</p>
+<blockquote class="integrated">
+  <p><strong>「agent である必要」+「統合である必要」の論証</strong>:
+    <br>(a) C と D が <strong>同一 retrieval 基盤を共有</strong> = 統合の物理的接点が存在
+    <br>(b) <code>shareable_only</code> filter が D 側にも効く（contract-aware push）= <strong>データ層の cross-cutting</strong>
+    <br>(c) 双方が <strong>multi-step + stateful</strong>（C: HITL clause / D: profile）</p>
+</blockquote>
+
+<h2 id="s4">4. Tool / MCP インベントリ</h2>
+<p>C カード §4 + D カード §4 の <strong>和集合</strong>（重複: <code>document_intelligence.*</code>, <code>ai_search.*</code>）。Tool 数は単独 9 → 統合 14 程度。</p>
+<h3>新規 / 共通化</h3>
+<table>
+<thead><tr><th>Tool</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><code>ai_search.query_with_share_filter</code></td><td>C 検索 + D 配信両方で <code>shareable_only=true</code> を必須適用</td></tr>
+<tr><td><code>cosmos.cross_log</code></td><td>C HITL 履歴 + D 反応履歴を統合 schema で記録</td></tr>
+</tbody>
+</table>
+
+<h2 id="s5">5. 擬似コーポレートシステム</h2>
+<table>
+<thead><tr><th>実環境</th><th>擬似実装</th><th>lift</th></tr></thead>
+<tbody>
+<tr><td>SharePoint（C+D 共通）</td><td>Blob + Web UI mock</td><td>中</td></tr>
+<tr><td>契約書 repo（C 専用）</td><td>Blob + Web UI</td><td>小</td></tr>
+<tr><td>transcript + chat（D 専用）</td><td>Blob + Cosmos + Web UI</td><td>小</td></tr>
+<tr><td>CRM 新案件 trigger（C 専用）</td><td>Web フォーム</td><td>小</td></tr>
+<tr><td>朝刊配信（D 専用）</td><td>Web UI タブ + Logic Apps</td><td>小</td></tr>
+<tr><td>認証</td><td>Entra ID</td><td>小</td></tr>
+</tbody>
+</table>
+<blockquote class="integrated"><p><strong>lift 評価</strong>: 単独 C の mock 環境 + D の mock 環境を <strong>同じ UI shell に統合</strong> することで C 単独 lift × 1.3x 程度で済む（× 2x 回避）。</p></blockquote>
+
+<h2 id="s6">6. Corpus</h2>
+<h3>共通 corpus（最大の build risk）</h3>
+<table>
+<thead><tr><th>種類</th><th>量</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>SPO doc</td><td>50-80 件</td><td>C: curation 対象 / D: 学習素材</td></tr>
+<tr><td>契約書</td><td>15-20 件</td><td>C: shareability 判断 / <strong>D: share-safe filter</strong></td></tr>
+<tr><td>会議 transcript</td><td>20-30 件</td><td>D: 学習素材 / C: project knowledge 補強</td></tr>
+<tr><td>Teams / Slack chat</td><td>100+ messages</td><td>D: 学習素材</td></tr>
+</tbody>
+</table>
+<h3>統合 schema</h3>
+<ul>
+<li>全 doc / chunk に <strong><code>contract_id</code> を紐付け</strong>（C path で判断された shareable / redact 状態が D path でも効く）</li>
+<li>学習プロファイル <code>domain_weights</code> は C の curation tag（<code>industry</code>, <code>case_type</code>）と vocabulary 共有</li>
+</ul>
+<h3>AI Search index（3 本）</h3>
+<table>
+<thead><tr><th>index</th><th>内容</th><th>metadata 共通</th><th>利用 path</th></tr></thead>
+<tbody>
+<tr><td><code>contracts</code></td><td>clause</td><td><code>contract_id</code>, <code>shareability</code></td><td><span class="badge badge-c">C</span></td></tr>
+<tr class="row-emphasis"><td><code>knowledge</code></td><td>doc/transcript/chat chunk</td><td><code>domain</code>, <code>case_type</code>, <code>contract_id</code>, <strong><code>shareable_only</code></strong></td><td><span class="badge badge-c">C</span> + <span class="badge badge-d">D</span> 両方</td></tr>
+<tr><td><code>learning_profile</code></td><td>user state</td><td><code>user_id</code>, <code>domain_weights</code></td><td><span class="badge badge-d">D</span></td></tr>
+</tbody>
+</table>
+<blockquote class="integrated"><p><strong>統合の物理的接点</strong>: <code>knowledge</code> index に <code>shareable_only</code> フィールドがあり、<strong>C path（提案検索）も D path（朝刊配信）も同じ filter を共有</strong>。</p></blockquote>
+
+<h2 id="s7">7. HITL surface</h2>
+<table>
+<thead><tr><th>ステップ</th><th>path</th><th>UI</th><th>人間がやること</th></tr></thead>
+<tbody>
+<tr><td>契約書 clause 判断</td><td><span class="badge badge-c">C</span></td><td>clause-by-clause table</td><td>承認 / 修正 / 拒否</td></tr>
+<tr><td>知見エントリ pre-publish</td><td><span class="badge badge-c">C</span></td><td>summary + tags</td><td>承認</td></tr>
+<tr><td>Retrieval relevance</td><td><span class="badge badge-c">C</span></td><td>結果 thumbs</td><td>評価</td></tr>
+<tr><td>出題への解答</td><td><span class="badge badge-d">D</span></td><td>4 択 + 自己評価</td><td>解答</td></tr>
+<tr><td>要約への反応</td><td><span class="badge badge-d">D</span></td><td>thumbs</td><td>関心評価</td></tr>
+<tr><td>プロファイル editing</td><td><span class="badge badge-d">D</span></td><td>興味リスト</td><td>明示変更</td></tr>
+</tbody>
+</table>
+<blockquote class="integrated"><p><strong>統合の効果</strong>: C 側 HITL の <code>shareability</code> 判断が <strong>D 側配信にも cascade</strong>（C で「共有不可」と判断された clause は D 側で出題されない）→ 守秘リスクが両 path で同時 bounded。</p></blockquote>
+
+<h2 id="s8">8. Demo storyboard（3 分以内）</h2>
+<table>
+<thead><tr><th style="width:12%">時刻</th><th style="width:25%">シーン</th><th>何を見せる</th></tr></thead>
+<tbody>
+<tr><td>0:00-0:30</td><td>PM 視点: プロジェクト完了</td><td>Archive with Agent 起動</td></tr>
+<tr><td>0:30-1:00</td><td><span class="badge badge-c">C</span> 圧縮: Contract Analyzer + Curator</td><td>clause-by-clause 判断 + curation を <strong>30 秒に圧縮</strong>（要点のみ）</td></tr>
+<tr class="row-emphasis"><td>1:00-1:30</td><td><strong>場面転換 1</strong>: 6 ヶ月後の別 PM 提案検索</td><td>新規案件入力 → 共有可な過去案件 surfaces（C path 完成形）</td></tr>
+<tr class="row-emphasis"><td>1:30-2:00</td><td><strong>場面転換 2</strong>: ジュニアコンサル朝の Web UI</td><td>「本日の朝刊」→ 同じ過去 project から個人化クイズ</td></tr>
+<tr class="row-emphasis"><td>2:00-2:30</td><td>ジュニアが解答 → 解説</td><td>"詳しくは過去 project XX の curated entry（<strong>clause Y で共有可と判断済</strong>）" — <strong>C → D の接続を明示</strong></td></tr>
+<tr><td>2:30-3:00</td><td>admin 視点: lifecycle ビュー</td><td>1 corpus が 2 modes で活用される heatmap + 「contract-aware が D 側にも効く」を 1 行で訴求</td></tr>
+</tbody>
+</table>
+<blockquote class="note"><p><strong>判定基準</strong>: 観客が「1 corpus が 2 modes で活きる」と即理解できるか / 統合の "薄さ" が見えないか（pitch の最大リスク）。</p></blockquote>
+
+<h2 id="s9">9. 6週ビルドリスク（R/Y/G）</h2>
+<table>
+<thead><tr><th>レイヤ</th><th>リスク</th><th>理由 / 緩和</th></tr></thead>
+<tbody>
+<tr class="row-emphasis"><td><strong>全 corpus 量（契約書 + SPO + transcript + chat）</strong></td><td><span class="badge badge-red">R</span></td><td><strong>単独 C より 1.7x の合成負荷</strong>。Day 7 までに C の最小 5 件 + D の最小 30 doc を <strong>並行整備</strong></td></tr>
+<tr><td>C path 完全実装</td><td><span class="badge badge-yellow">Y</span></td><td>単独 C と同じ</td></tr>
+<tr><td>D path simplified 実装</td><td><span class="badge badge-yellow">Y</span></td><td>Generator のみ、Profile / Feedback は static demo</td></tr>
+<tr><td>共通 ingest pipeline</td><td><span class="badge badge-yellow">Y</span></td><td>orchestration 設計が増える、3 日</td></tr>
+<tr><td>統合 demo storyboard</td><td><span class="badge badge-yellow">Y</span></td><td>3 分に 2 path を押し込む脚本、リハ込みで 2-3 日</td></tr>
+<tr><td><strong>予算 ($173 / $200)</strong></td><td><span class="badge badge-yellow">Y</span></td><td>バッファ $27 はタイト → Day 28 で再見積もり mandatory</td></tr>
+<tr><td>HITL UI（C + D）</td><td><span class="badge badge-yellow">Y</span></td><td>共通 shell で実装すれば lift 削減</td></tr>
+<tr><td>Logic Apps</td><td><span class="badge badge-green">G</span></td><td>managed</td></tr>
+<tr><td>Orchestrator</td><td><span class="badge badge-green">G</span></td><td>flow 増えるが各々素直</td></tr>
+<tr><td>認証 / 観測</td><td><span class="badge badge-green">G</span></td><td>scaffold 済</td></tr>
+</tbody>
+</table>
+<blockquote class="note">
+  <p><strong>ボトルネック</strong>: ① corpus 量（R）= 単独 C より重い、② 統合 demo storyboard（Y）= "薄さ" が見えると逆効果。</p>
+  <p><strong>実装量の現実</strong>: 単独 C 比で <strong>1.5-1.7x</strong>。6週で 2 path を回し切る prerequisite は (a) Day 7 corpus 50% / (b) Day 14 で C path MVP / (c) Day 21 で D Generator / (d) Day 28 で統合 demo リハ。</p>
+</blockquote>
+
+<h2 id="s10">10. Differentiation hook</h2>
+<blockquote class="integrated">
+  <p><strong>「1 corpus × 2 出力モード」の lifecycle 訴求</strong></p>
+  <p>他チームは「単機能 agent」を出してくる可能性が高い。本案は <strong>同じ knowledge corpus が pull（C 提案検索）と push（D 朝刊配信）の両モードで活きる lifecycle 設計</strong> を構造的差別化として提示。Sotaro テーゼ（domain-specialty prevalence）の <strong>組織化（C）+ 個人化（D）の同時実装</strong>。</p>
+</blockquote>
+<h3>主張可能な独自性</h3>
+<div class="three-pillars">
+  <div class="pillar"><div class="pillar-title">① 1 corpus × 2 出力モード</div>lifecycle 訴求（他チームの単機能との構造差別化）</div>
+  <div class="pillar"><div class="pillar-title">② Contract-aware が D 側にも</div>share-safe push 配信</div>
+  <div class="pillar"><div class="pillar-title">③ 組織化 + 個人化の同時実装</div>テーゼに対する 2 角形の応答</div>
+</div>
+<p><strong>リスク</strong>: 統合の "<strong>薄さ</strong>" が見えると逆効果（「無理やり繋げた感」）→ pitch で <strong>30 秒以内に「同じ corpus が両側で活きる具体例」</strong> を示せないとマイナス。</p>
+
+<h2 id="s11">11. このカードからの Open question</h2>
+<ol>
+<li><strong>6週 + $200 で本当に 2 path 動かせるか</strong> → 単独 C カード比 1.5-1.7x の現実性。Day 7 / Day 14 / Day 21 / Day 28 の milestone gate を mandatory に</li>
+<li><strong>D path の simplification 度合い</strong> → どこまで切ると "demo only" に見えないか。Profile update を Day 28 で活性化するか諦めるか</li>
+<li><strong>C → D 統合 demo 脚本の説得力</strong> → 「同じ project が両側で…」を 30 秒で見せられるか。リハ 2-3 日確保</li>
+<li><strong>主軸 C 単独 + D pitch hook（選択肢 Y）との比較</strong> → 統合本実装と pitch hook 訴求のどちらが pitch 強いか</li>
+<li><strong>予算バッファ $27 で 6週走り切れるか</strong> → Day 28 で再見積もり、超過時の縮退プラン（D path を pitch hook に縮退 = 選択肢 Y に着地）</li>
+</ol>
+
+<h2 id="s12">12. テンプレ妥当性 review への問い</h2>
+<ul>
+<li><span class="check">✅</span> <strong>12 セクション機能</strong>: 統合カードでも format 維持可能</li>
+<li><span class="warn">⚠️</span> <strong>統合カードは §2 / §5 / §6 の量が単独 1.5x</strong>: 1 ページに圧縮し切るのが難しい → 折りたたみ表記か別ファイル参照を許容するルール追加</li>
+<li><span class="pin">📌</span> <strong>統合カードに「単独カードとの diff サマリ」セクションを追加</strong>: 新規読者が「何が C 単独 / D 単独と違うのか」を 30 秒で把握できる欄</li>
+<li><span class="pin">📌</span> <strong>§9 R/Y/G に "実装量 multiplier" 列を追加</strong>: 統合カードは単独 1.5-1.7x、これを明示する欄</li>
+</ul>
+<blockquote class="integrated">
+  <p><strong>review 後の next action</strong>:</p>
+  <ul>
+    <li>4 カード（C / A / D / C+D）出揃った → チーム alignment</li>
+    <li>5/11 決定: 単独 C / 単独 A / C+D 統合 / 単独 D のいずれかを採択 → problem-statement.md §5「backbone for dev」に最初の entry を書く</li>
+    <li>修正あれば 4 カードに反映 → 採択カードを implementation スペックの起点に</li>
+  </ul>
+</blockquote>
+
+</div>
+</body>
+</html>

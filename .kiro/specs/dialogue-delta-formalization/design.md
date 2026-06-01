@@ -6,7 +6,7 @@
 
 **Purpose**: 業務対話を Microsoft Agent Framework (MAF) 1.0 + Foundry Agent Service Workflow で監視し、AI 出力と人間入力の差分から暗黙知を 5W1H ヒアリングで externalize、重み付き形式化と corpus 投入を HITL でゲートする MVP を提供する。
 
-**Users**: 対象組織 AI 部の業務ユーザー（PM / 営業）が業務対話を行い、知識管理担当（admin）がスキーマとレビュー UI を運用する。ハッカソン審査員には 3 分デモで「対話差分 → ヒアリング → 形式化 → 次回参照」の場面転換を見せる。
+**Users**: 対象組織 (例: AI 推進部門)の業務ユーザー（PM / 営業）が業務対話を行い、知識管理担当（admin）がスキーマとレビュー UI を運用する。ハッカソン審査員には 3 分デモで「対話差分 → ヒアリング → 形式化 → 次回参照」の場面転換を見せる。
 
 **Impact**: 既存の AOAI gpt-4o-mini swedencentral / Container Apps / AI Search / Cosmos / App Insights / Key Vault `kv-hack2026-tyu3o4` 資産を再利用し、新規追加は Foundry Workflow 定義と AI Search corpus index のみ。
 

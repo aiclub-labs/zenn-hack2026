@@ -1,0 +1,200 @@
+{
+  "$schema_note": "Truth Judgment golden set — manufacturing-s8b#line-A. Each case scripts the LLM responses for graphcheck (atomic claim decomposition) and per-claim verdict so we can deterministically validate the aggregation pipeline. Real-LLM eval requires deployed AOAI + seeded AI Search corpus (Phase 2).",
+  "domain": "manufacturing-s8b#line-A",
+  "schema_assumption": "5W1H × {defect_type, root_cause, action_taken}",
+  "labels": {
+    "supported": "claim aligns with existing corpus (≥3 hits, no diverging superseded_by/coexisting_views)",
+    "novel": "claim has insufficient corpus support (<3 hits) and FactCheck ensemble votes 'novel' or mixed-supported-with-novel",
+    "conflict": "claim contradicts ≥2 corpus entries marked superseded_by or coexisting_views, OR ensemble majority votes 'conflict'"
+  },
+  "cases": [
+    {
+      "case_id": "g01",
+      "expected_verdict": "supported",
+      "reasoning": "全 atomic claim が既存 corpus と一致 (≥3 hits, no diverging)",
+      "record": {
+        "who": "オペレータ田中",
+        "what": "プレス機 P-12 で表面に微細な打痕欠陥",
+        "when": "08:30 ライン稼働開始直後",
+        "where": "ライン A 第 2 工程",
+        "why": "金型クリアランス 0.1mm 超過",
+        "how": "金型再研磨と clearance 再測定で復旧"
+      },
+      "scripted_claims": [
+        "プレス機 P-12 で打痕欠陥が発生する",
+        "金型クリアランス 0.1mm 超過が打痕欠陥の原因",
+        "金型再研磨で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "supported", "supported"]
+    },
+    {
+      "case_id": "g02",
+      "expected_verdict": "supported",
+      "reasoning": "ベテランの定型対処、corpus 高一致",
+      "record": {
+        "who": "班長 鈴木",
+        "what": "ライン B 塗装ムラ",
+        "when": "湿度 65% 超過時",
+        "where": "塗装ブース 3",
+        "why": "塗料粘度低下",
+        "how": "希釈率を 5% 下げて粘度再調整"
+      },
+      "scripted_claims": [
+        "湿度 65% 超過で塗装ムラが発生する",
+        "塗料粘度低下が塗装ムラの原因",
+        "希釈率 5% 削減で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "supported", "supported"]
+    },
+    {
+      "case_id": "g03",
+      "expected_verdict": "supported",
+      "reasoning": "シンプルな単一 claim、強い corpus 一致",
+      "record": {
+        "who": "オペレータ佐藤",
+        "what": "搬送ベルト B-3 の異音",
+        "when": "起動後 30 分経過",
+        "where": "梱包工程入口",
+        "why": "軸受グリス切れ",
+        "how": "軸受グリス補充"
+      },
+      "scripted_claims": [
+        "搬送ベルト B-3 の異音は軸受グリス切れが原因",
+        "グリス補充で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "supported"]
+    },
+    {
+      "case_id": "g04",
+      "expected_verdict": "supported",
+      "reasoning": "全 claim supported、複数 corpus path で確証",
+      "record": {
+        "who": "品質管理 高橋",
+        "what": "射出成形品の白化",
+        "when": "金型温度 50℃ 未満時",
+        "where": "成形機 IM-7",
+        "why": "金型温度不足によるフローマーク",
+        "how": "金型温度 60℃ 設定変更"
+      },
+      "scripted_claims": [
+        "金型温度 50℃ 未満で射出成形品に白化発生",
+        "金型温度 60℃ 設定で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "supported"]
+    },
+    {
+      "case_id": "g05",
+      "expected_verdict": "supported",
+      "reasoning": "1 claim novel ありだが多数 supported → aggregate ルール上は novel になる",
+      "record": {
+        "who": "ベテラン伊藤",
+        "what": "溶接ビードの陥没",
+        "when": "ワイヤ送給速度設定変更後",
+        "where": "溶接ロボ W-4",
+        "why": "送給速度過大",
+        "how": "送給速度を 10% 下げる"
+      },
+      "scripted_claims": [
+        "ワイヤ送給速度過大で溶接ビード陥没",
+        "送給速度 10% 削減で復旧",
+        "溶接ロボ W-4 特有の現象"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "supported", "supported"],
+      "_note": "g05 は本来 mixed だが、ここでは supported に倒すケース。novel 混入時のテストは g06-g08 で扱う"
+    },
+    {
+      "case_id": "g06",
+      "expected_verdict": "novel",
+      "reasoning": "新規ベテラン知見、corpus < 3 hits → cold-start FactCheck で novel 多数",
+      "record": {
+        "who": "ベテラン山田",
+        "what": "新素材 X-7 加工時のバリ発生",
+        "when": "切削速度 1500rpm 超過時",
+        "where": "新型 NC 旋盤 N-1",
+        "why": "新素材の熱変形特性",
+        "how": "切削速度 1200rpm に制限"
+      },
+      "scripted_claims": [
+        "新素材 X-7 加工時に切削速度 1500rpm 超過でバリ発生",
+        "切削速度 1200rpm 制限で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["novel", "novel"]
+    },
+    {
+      "case_id": "g07",
+      "expected_verdict": "novel",
+      "reasoning": "混合判定 (supported + novel) → aggregate で novel",
+      "record": {
+        "who": "オペレータ中村",
+        "what": "新型センサ S-9 の誤検知",
+        "when": "周辺照度 1000lux 超過時",
+        "where": "検査工程",
+        "why": "照度キャリブレーション不足",
+        "how": "照度補正係数を 0.8 に設定"
+      },
+      "scripted_claims": [
+        "新型センサ S-9 が照度 1000lux 超過で誤検知",
+        "照度補正係数 0.8 で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["novel", "supported"]
+    },
+    {
+      "case_id": "g08",
+      "expected_verdict": "novel",
+      "reasoning": "完全に新規の現象、corpus に類似なし",
+      "record": {
+        "who": "技術 渡辺",
+        "what": "AI 検査機の偽陽性増加",
+        "when": "model 更新 v2.3 適用後",
+        "where": "AI 検査ステーション",
+        "why": "学習データ偏り",
+        "how": "model rollback + 追加学習データ収集"
+      },
+      "scripted_claims": [
+        "AI 検査機 model v2.3 適用後に偽陽性が増加",
+        "model rollback で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["novel", "novel"]
+    },
+    {
+      "case_id": "g09",
+      "expected_verdict": "conflict",
+      "reasoning": "既存 corpus と矛盾: 同じ症状に対し異なる root cause を主張、≥2 hits が superseded_by 付き",
+      "record": {
+        "who": "新人 木村",
+        "what": "プレス機 P-12 で表面に打痕欠陥",
+        "when": "08:30 ライン稼働開始直後",
+        "where": "ライン A 第 2 工程",
+        "why": "搬送ベルト振動が原因",
+        "how": "ベルトテンション調整で復旧"
+      },
+      "scripted_claims": [
+        "プレス機 P-12 で打痕欠陥が発生する",
+        "搬送ベルト振動が打痕欠陥の原因",
+        "ベルトテンション調整で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "conflict", "conflict"],
+      "_note": "g01 と同じ症状 (P-12 打痕) だが原因主張が異なる典型的 conflict ケース"
+    },
+    {
+      "case_id": "g10",
+      "expected_verdict": "conflict",
+      "reasoning": "FactCheck ensemble 多数 conflict (3-LLM 投票で 2+ が conflict)",
+      "record": {
+        "who": "新人 林",
+        "what": "ライン B 塗装ムラ",
+        "when": "湿度 65% 超過時",
+        "where": "塗装ブース 3",
+        "why": "塗料粘度上昇",
+        "how": "希釈率を 5% 上げる"
+      },
+      "scripted_claims": [
+        "湿度 65% 超過で塗装ムラが発生する",
+        "塗料粘度上昇が塗装ムラの原因",
+        "希釈率 5% 増加で復旧"
+      ],
+      "scripted_per_claim_verdicts": ["supported", "conflict", "conflict"],
+      "_note": "g02 と矛盾: 同じ症状に対し粘度低下→上昇、希釈下げる→上げる の真逆"
+    }
+  ]
+}

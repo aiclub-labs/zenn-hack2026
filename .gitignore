@@ -26,3 +26,7 @@ artifacts/
 # Playwright automation (per-script .gitignore covers most, this catches root-level slips)
 .playwright-profile/
 screenshots/
+node_modules/
+cost-daily.json
+books/.keep
+tests/uat_results/perf_*

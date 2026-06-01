@@ -1,0 +1,22 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", sans-serif;
+  color-scheme: light dark;
+}
+body { margin: 0; }
+nav { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #ddd; background: #fafafa; }
+nav a { text-decoration: none; color: #333; }
+nav a.active { font-weight: 600; color: #0a66c2; }
+main { padding: 16px; max-width: 1200px; margin: 0 auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: #f5f5f5; }
+button { padding: 4px 10px; cursor: pointer; }
+input, select, textarea { padding: 4px 6px; font: inherit; }
+.badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.badge.active { background: #e1f5e1; color: #1a6e1a; }
+.badge.inactive { background: #fde2e2; color: #8a1a1a; }
+.diff { font-family: ui-monospace, monospace; font-size: 12px; white-space: pre-wrap; }
+.row { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin-bottom: 12px; }
+.col { display: flex; flex-direction: column; gap: 4px; }
+.muted { color: #777; font-size: 12px; }
+.card { border: 1px solid #e5e5e5; border-radius: 6px; padding: 12px; margin-bottom: 12px; }

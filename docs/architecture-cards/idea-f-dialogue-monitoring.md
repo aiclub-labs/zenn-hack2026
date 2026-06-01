@@ -326,9 +326,9 @@
 
 | 部位 | Wall-clock | Human review | 構想/演出 主体 |
 |------|-----------|--------------|----------------|
-| スキーマ + 合成 corpus 整備 | 3-4 day | 3-5h（ドメイン妥当性 + サンプル QC） | ドメインエキスパート |
-| Delta Detector + 対話 hook | 1 week | 5-8h（閾値判断 + 偽陽性 review） | 実装担当 |
-| Hearout Agent + Formalization | 1 week | 5-8h（5W1H プロンプト品質 + 重み付け review） | 実装担当 |
+| スキーマ + 合成 corpus 整備 | 3-4 day | 3-5h（ドメイン妥当性 + サンプル QC） | Daichi |
+| Delta Detector + 対話 hook | 1 week | 5-8h（閾値判断 + 偽陽性 review） | Sotaro |
+| Hearout Agent + Formalization | 1 week | 5-8h（5W1H プロンプト品質 + 重み付け review） | Sotaro |
 | HITL UI + 統合 shell | 3-4 day | 3-5h（UX flow review） | UI 担当 |
 | Orchestrator + Container Apps | 2-3 day | 2-4h（IaC / deploy review） | maumau |
 | Demo / 動画収録 | 1 week 最終 | 8-12h（ナラティブ + 演出 + 撮影） | 全員 |

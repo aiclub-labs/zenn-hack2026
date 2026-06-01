@@ -36,7 +36,7 @@
 
 > **優先度: 最上位** — Requirements (`/kiro:spec-requirements`) 着手の前提条件。本判断未確定下では Requirements の Goals / Stakeholders / Acceptance Criteria が成立しない。
 
-> **視点の明示**: 本判断における「As-Is」は **対象 org の As-Is**（= 本プロジェクトのデプロイ対象である業務組織、対象組織 AI 部 を proxy 想定）。ハッカソン参加チーム = AI club としての視点ではない。3 Path はいずれも「**対象 org の業務実態をどう調達するか**」の選択肢。
+> **視点の明示**: 本判断における「As-Is」は **対象 org の As-Is**（= 本プロジェクトのデプロイ対象である業務組織、対象組織 (例: AI 推進部門) を proxy 想定）。ハッカソン参加チーム = AI club としての視点ではない。3 Path はいずれも「**対象 org の業務実態をどう調達するか**」の選択肢。
 
 - **論点**: idea-f Architecture Card §1 As-Is テーブルが「PM / 営業が業務対話の中で AI に判断を聞く」前提に依存しているが、**対象 org における実態**（**M365 Copilot 導入状況 / PM-AI 対話の日常性**）が未確認。As-Is を想像で書くか、実情ヒアリングで埋めるかを team で合意する必要がある
 - **判断材料**:
@@ -103,7 +103,7 @@
 - **判断期限**: 2026-05-19（Week 1 end-of-week）
 - **暫定結論**: A 仮置き、D を「2 マス展開で多マス対応を示唆」する場合の併用候補
 - **判断主体**: チーム async（5/14 セッション参加メンバーから maumau 不在分のフィードバックを集約）
-- **クローズ条件**: 合成 corpus 50-80 件作成主体（ドメインエキスパート 想定）の合意 + ドメイン妥当性チェック
+- **クローズ条件**: 合成 corpus 50-80 件作成主体（Daichi 想定）の合意 + ドメイン妥当性チェック
 - **影響範囲**: `requirements.md` Project Description / 合成 corpus 作成タスク / デモストーリー
 
 ### D4: Foundry preview vs Container Apps 直接デプロイ 最終確定
