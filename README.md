@@ -2,21 +2,6 @@
 
 業務 AI 利用の最中に「自分が再発見した方法論」を捕まえる Azure ベースの Agent アプリ。プロジェクト全容は [Zenn 記事 (`articles/dialogue-delta-hack2026.md`)](./articles/dialogue-delta-hack2026.md) を参照。
 
-## 🔑 審査員の方へ ─ アクセス手順
-
-**成果物 URL**: <https://ca-hack2026-dev-web-chat.victoriousbeach-c5de1386.swedencentral.azurecontainerapps.io/>
-
-1. 上記 URL にブラウザでアクセス → Microsoft サインイン画面に自動リダイレクト
-2. **任意の Microsoft アカウント** (組織アカウント or 個人アカウント `*@outlook.com` / `*@hotmail.com` 等) でサインイン
-3. 初回サインイン時に `openid / profile / email` の最小権限同意画面が出るので承認 (メール本文等にはアクセスしません)
-4. サインイン後、Chat / Admin / Review / Ranking が利用可能
-
-詳細手順 + トラブルシュート + アーキテクチャ判断は [`docs/access-for-judges.md`](./docs/access-for-judges.md) を参照。
-
-> **デモ動画** は Zenn 記事に埋め込んでいます。サインイン手順自体も含まれているので、手元で触る前にナラティブ把握しておくと分かりやすいです。
-
----
-
 ## 開発者向け技術スタック概要
 
 ハッカソンプロジェクト用のテーマ非依存スキャフォールドから、`feat/domain-pivot-consultant-tacit` ブランチで consultant tacit knowledge ドメインへピボット (2026-05-29)。スキャフォールド自体は特定テーマを前提としておらず、候補間の pivot は agents と tools の差し替えのみで済み、インフラやフレームワークの変更は不要です。
