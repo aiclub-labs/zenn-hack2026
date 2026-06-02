@@ -20,7 +20,7 @@ Microsoft Agent Hackathon Japan 2026 (Zenn) 向けに、**Azure Container Apps +
 
 文章を読む前に、何を作ったのか 3 分で見ていただくのが早いです。**課題提示 → 実物ループ → 拡張ビジョン** の 3 幕構成になっています。
 
-@[youtube](JiUVKAjzWpM)
+@[youtube](ct7JCARzmLI)
 
 以下、この動画で起きていることの裏側を、背景 → アーキテクチャ → 仕組み → 工夫 の順に解説していきます。
 
